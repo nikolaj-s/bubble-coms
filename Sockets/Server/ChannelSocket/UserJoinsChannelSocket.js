@@ -1,0 +1,41 @@
+
+const Peer = require("../../../MediaSoup/Peer/Peer");
+
+const Channel = require("../../../MediaSoup/Channel/Channel");
+
+const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasoupWorker, cb) => {
+    try {
+
+        const channel_id = `${data.server_id}/${data.channel_id}`;
+
+        if (!channelList.has(channel_id)) {
+            let worker = await getMediasoupWorker();
+
+            channelList.set(channel_id, new Channel(channel_id, worker, io));
+
+        }
+
+        channelList.get(channel_id).addPeer(new Peer(socket.id, socket.AUTH.username, data.user));
+
+        socket.channel_id = channel_id;
+
+        socket.join(channel_id);
+        console.log(data)
+        const data_to_send = {
+            channel: {_id: data.channel_id},
+            username: socket.AUTH.username,
+            user_image: data.user.user_image,
+            user_banner: data.user.user_banner,
+            display_name: data.user.display_name
+        }
+
+        socket.to(data.server_id).emit('user joins channel', data_to_send);
+
+        cb({success: true, message: "user has joined the channel"});
+    } catch (error) {
+        console.log(error);
+        cb({error: true, errorMessage: "fatal error joining server"})
+    }
+}
+
+module.exports = UserJoinsChannelSocket;
