@@ -27,8 +27,8 @@ module.exports = {
     // Worker settings
     numWorkers: Object.keys(os.cpus()).length,
     worker: {
-      rtcMinPort: 10000,
-      rtcMaxPort: 10100,
+      rtcMinPort: 4000,
+      rtcMaxPort: 4900,
       logLevel: 'warn',
       logTags: [
         'info',
@@ -60,7 +60,19 @@ module.exports = {
           parameters: {
             'x-google-start-bitrate': 1000
           }
-        }
+        },
+        {
+					kind       : 'video',
+					mimeType   : 'video/h264',
+					clockRate  : 90000,
+					parameters :
+					{
+						'packetization-mode'      : 1,
+						'profile-level-id'        : '4d0032',
+						'level-asymmetry-allowed' : 1,
+						'x-google-start-bitrate'  : 1000
+					}
+				},
       ]
     },
     // WebRtcTransport settings

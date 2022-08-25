@@ -7,6 +7,8 @@ const UserCreatesChannel = async (socket, data, cb) => {
     try {
 
         const server = await ServerSchema.findOne({_id: mongoose.Types.ObjectId(data.server_id)})
+
+        if (server.channels.length > 11) return cb({error: true, errorMessage: "You have reached your servers channel limit of 12"})
         
         if (!server) return socket.emit({error: true, errorMessage: "validation error"});
         
@@ -19,7 +21,7 @@ const UserCreatesChannel = async (socket, data, cb) => {
 
         if (server_group === -1) return socket.emit('error', {error: true, errorMessage: "validation error"});
 
-        if (server_group.user_can_create_channel === false) return socket.emit('error', {error: true, errorMessage: "you do not have permissions to perform this action"})
+        if (server_group.user_can_manage_channels === false) return socket.emit('error', {error: true, errorMessage: "you do not have permissions to perform this action"})
 
         const channel_data = {
             channel_name: data.channel_name,

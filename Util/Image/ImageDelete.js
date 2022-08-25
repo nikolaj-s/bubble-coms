@@ -16,11 +16,11 @@ const ImageDelete = async (image) => {
             const id = arr[arr.length - 1].split('.')[0];
 
             Cloudinary.api.delete_resources(id, function(error, result) {
+
                 if (error) return reject({error: true, errorMessage: "error deleting previous image"})
 
-                console.log(result);
-
                 return resolve({success: true})
+                
             })
         })
             

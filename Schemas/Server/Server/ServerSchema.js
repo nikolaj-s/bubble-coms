@@ -5,6 +5,7 @@ const ChannelSchema = require("../Channel/ChannelSchema");
 const MemberSchema = require("../Member/MemberSchema");
 const BanSchema = require("../Ban/BanSchema");
 const ServerGroupSchema = require('../ServerGroup/ServerGroupSchema');
+const WidgetSchema = require('../Widget/WidgetSchema');
 
 const ServerSchema = new mongoose.Schema({
     server_name: {
@@ -27,14 +28,10 @@ const ServerSchema = new mongoose.Schema({
         default: [
             {
                 server_group_name: "Guest",
-                user_can_view_channel_social: false,
-                user_can_view_channel_widgets: false,
+                user_can_view_channel_content: false,
                 user_can_post_channel_social: false,
-                user_can_edit_channel_widgets: false,
-                user_can_create_channel: false,
-                user_can_assign_server_groups: false,
-                user_can_create_server_groups: false,
-                user_can_delete_server_groups: false,
+                user_can_manage_channels: false,
+                user_can_manage_server_groups: false,
                 user_can_kick_user: false,
                 user_can_ban_user: false,
                 user_can_edit_server_banner: false,
@@ -42,14 +39,10 @@ const ServerSchema = new mongoose.Schema({
                 user_can_edit_server_password: false,
             }, {
             server_group_name: "Owner",
-            user_can_view_channel_social: true,
-            user_can_view_channel_widgets: true,
+            user_can_view_channel_content: true,
             user_can_post_channel_social: true,
-            user_can_edit_channel_widgets: true,
-            user_can_create_channel: true,
-            user_can_assign_server_groups: true,
-            user_can_create_server_groups: true,
-            user_can_delete_server_groups: true,
+            user_can_manage_channels: true,
+            user_can_manage_server_groups: true,
             user_can_kick_user: true,
             user_can_ban_user: true,
             user_can_edit_server_banner: true,
@@ -189,10 +182,6 @@ ServerSchema.methods.verify_user_group = function(member_index, action) {
 
     const server_group_index = this.server_groups.findIndex(el => {el._id === server_group});
 
-    if (server_group_index === -1) {
-        return {error: "server group does not exist"}
-    }
-
     return this.server_groups[server_group_index][action]
 
 }
@@ -211,10 +200,8 @@ ServerSchema.methods.create_channel = function(channel_object) {
 
 ServerSchema.methods.get_channel = function(channel_id) {
     try {
-
-        const channel_index = this.channels.findIndex(el => el._id === channel_id)
-
-        if(channel_index === -1) return {error: "Error Channel Does Not Exist"}
+        
+        const channel_index = this.channels.findIndex(el => String(el._id) === channel_id)
 
         return channel_index;
 
@@ -223,10 +210,25 @@ ServerSchema.methods.get_channel = function(channel_id) {
     }
 }
 
+ServerSchema.methods.delete_channel = function(channel_id) {
+    try {
+
+        const updated_channels = this.channels.filter(channel => String(channel._id) !== String(channel_id));
+
+        this.channels = updated_channels;
+
+        return this.save();
+
+    } catch (error) {
+        console.log(error)
+        return {error: true}
+    }
+}
+
 ServerSchema.methods.save_message = function(channel_index, message) {
     try {
 
-        this.channels[channel_index].social.push(message);
+        this.channels[channel_index].social.unshift(message);
 
         return this.save();
 
@@ -236,23 +238,63 @@ ServerSchema.methods.save_message = function(channel_index, message) {
 
 }
 
+ServerSchema.methods.trim_social = function(channel_index) {
+    try {
+
+        const last_social = this.channels[channel_index].social.pop();
+        
+        this.save();
+
+        return last_social;
+    } catch (error) {
+        return error
+    }
+}
+
 ServerSchema.methods.add_widget_to_channel = function(channel_index, widget) {
     try {
 
-        this.channels[channel_index].content.push(widget);
+        this.channels[channel_index].widgets.push(widget);
 
-        return this.save();
+        this.save();
+
+        return this.channels[channel_index].widgets[this.channels[channel_index].widgets.length - 1];
         
     } catch (error) {
         return error;
     }
 }
 
-// server groups
-ServerSchema.methods.add_server_group = function(server_group) {
+ServerSchema.methods.update_channel = function(channel_id, channel) {
     try {
 
-        this.server_groups.push(server_group)
+        const c_index = this.channels.findIndex(c => String(c._id) === channel_id);
+        
+        if (c_index === -1) return {error: true}
+
+        this.channels = this.channels.map(c => {
+            if (String(c._id) === channel_id) {
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets}
+            } else {
+                return c;
+            }
+        })
+
+        this.save();
+
+        return this.channels[c_index];
+
+    } catch (error) {
+        console.log(error)
+        return {error: true}
+    }
+}
+
+// server groups
+ServerSchema.methods.update_server_groups = function(server_groups) {
+    try {
+
+        this.server_groups = server_groups;
 
         return this.save()
 
@@ -305,10 +347,12 @@ ServerSchema.methods.remove_server_group = function(server_group_index) {
     }
 }
 
-ServerSchema.methods.assign_server_group = function(server_group_index, member_index) {
+ServerSchema.methods.assign_server_group = function(server_group, username) {
     try {
 
-        this.members[member_index].server_group = this.server_groups[server_group_index]._id;
+        const index = this.members.findIndex(member => member.username === username)
+
+        this.members[index].server_group = server_group;
 
         return this.save();
 

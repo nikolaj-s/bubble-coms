@@ -7,11 +7,7 @@ const ServerGroupSchema = new mongoose.Schema({
         required: true,
         default: "Guest"
     },
-    user_can_view_channel_social: {
-        type: Boolean,
-        default: false
-    },
-    user_can_view_channel_widgets: {
+    user_can_view_channel_content: {
         type: Boolean,
         default: false
     },
@@ -19,29 +15,13 @@ const ServerGroupSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    user_can_edit_channel_widgets: {
+    user_can_manage_channels: {
         type: Boolean,
-        default: false
+        default: false,
     },
-    user_can_create_channel: {
+    user_can_manage_server_groups: {
         type: Boolean,
-        default: false
-    },
-    user_can_assign_server_groups: {
-        type: Boolean,
-        default: false
-    },
-    user_can_create_server_groups: {
-        type: Boolean,
-        default: false
-    },
-    user_can_edit_server_groups: {
-        type: Boolean,
-        default: false
-    },
-    user_can_delete_server_groups: {
-        type: Boolean,
-        default: false
+        default: false,
     },
     user_can_kick_user: {
         type: Boolean,

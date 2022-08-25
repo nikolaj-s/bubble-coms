@@ -20,7 +20,7 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
         socket.channel_id = channel_id;
 
         socket.join(channel_id);
-        console.log(data)
+
         const data_to_send = {
             channel: {_id: data.channel_id},
             username: socket.AUTH.username,

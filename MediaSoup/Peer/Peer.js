@@ -117,4 +117,8 @@ module.exports = class Peer {
     returnUser() {
         return this.user;
     }
+
+    updateUser(data) {
+        this.user = {...this.user, ...data}
+    }
 }

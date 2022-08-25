@@ -10,15 +10,14 @@ const ChannelSchema = new mongoose.Schema({
         required: true,
         maxlength: 128
     },
-    content: {
-        type: [WidgetSchema],
+    widgets: {
+        type: [],
         default: []
     },
     social: {
-        type: [MessageSchema],
+        type: [],
         default: []
     },
-    edit_auth: [String],
     persist_social: {
         type: Boolean,
         default: false

@@ -120,7 +120,7 @@ const createServer = require('./Routes/Server/CreateServer/CreateServerRoute');
 App.use('/create-server', createServer);
 
 server.listen(config.listenPort, () => {
-    console.log("server is running")
+    console.log(`server is running on ${config.listenPort}`)
 })
 
 

@@ -1,5 +1,6 @@
 
 const config = require('../../Config/config');
+const Bot = require('../Bot/Bot');
 
 module.exports = class Channel {
     constructor(channel_id, worker, io) {
@@ -17,8 +18,28 @@ module.exports = class Channel {
         )
         
         this.peers = new Map();
+
         this.io = io;
 
+        this.social = []
+
+        this.songs = []
+
+        this.bot = new Bot(channel_id, io);
+    }
+
+    cleanUp() {
+        if (this.peers.size === 0 || this.bot.song_queue.length === 0) {
+            clearInterval(this.bot.interval);
+        }
+    }
+
+    getPeersSocketByUserName(username) {
+        for (const peer of this.peers) {
+            if (peer.username === username) {
+                return peer.id;
+            }
+        }
     }
 
     addPeer(peer) {
@@ -196,6 +217,10 @@ module.exports = class Channel {
             id: this.id,
             peers: JSON.stringify([...this.peers])
         }
+    }
+
+    pushMessage(message) {
+        this.social.unshift(message);
     }
 
 }

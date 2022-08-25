@@ -24,12 +24,18 @@ const userJoinsServer = async (socket, server_id, channelList, cb) => {
         }
 
         const channels = server.channels.map(channel => {
+            
             return {
                 _id: channel._id,
                 channel_name: channel.channel_name,
-                users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : []
+                users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : [],
+                social: channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
+                persist_social: channel.persist_social,
+                widgets: channel.widgets
             }
         })
+
+        
 
         const server_data = {
             server_name: server.server_name,
@@ -40,7 +46,7 @@ const userJoinsServer = async (socket, server_id, channelList, cb) => {
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false
         }
-        console.log(server_data)
+        
         socket.current_server = server_id;
 
         socket.join(server_id);

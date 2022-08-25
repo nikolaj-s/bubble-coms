@@ -9,7 +9,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         const query = req.body.query;
 
         const servers = await ServerCardSchema.find({server_name: query})
-
+        
         res.send({success: true, servers: servers});
 
     } catch (error) {

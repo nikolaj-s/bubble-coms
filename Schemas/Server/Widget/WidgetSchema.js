@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const WidgetSchema = new mongoose.Schema({
     content: {
-        type: [String],
+        type: Object,
     },
     type: {
         type: String,
