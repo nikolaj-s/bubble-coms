@@ -138,7 +138,7 @@ module.exports = class Channel {
         return new Promise(
             async function(resolve, reject) {
                 let producer = await this.peers.get(socket_id).createProducer(producerTransportId, rtpParameters, kind)
-
+                
                 resolve(producer.id)
 
                 this.broadCast(socket_id, 'newProducers', [

@@ -14,12 +14,13 @@ const getLocalIp = () => {
       return
     }
   })
+  console.log(localIp)
   return localIp
 }
 
 module.exports = {
   listenIp: '0.0.0.0',
-  listenPort: process.env.PORT || 3016,
+  listenPort: 3016,
   sslCrt: '../ssl/cert.pem',
   sslKey: '../ssl/key.pem',
 
@@ -28,8 +29,8 @@ module.exports = {
     numWorkers: Object.keys(os.cpus()).length,
     worker: {
       rtcMinPort: 4000,
-      rtcMaxPort: 4900,
-      logLevel: 'warn',
+      rtcMaxPort: 4999,
+      logLevel: 'debug',
       logTags: [
         'info',
         'ice',

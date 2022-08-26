@@ -68,22 +68,30 @@ module.exports = class Bot {
     }
 
     trackTime() {
+        try {
+            this.timer = this.timer += 1;
 
-        this.timer = this.timer += 1;
+            if ((this.timer) === (this.song_queue[0].duration + 3)) {
+                this.skipSong();
 
-        if ((this.timer) === (this.song_queue[0].duration + 3)) {
-            this.skipSong();
+                this.timer = 0;
+            }
 
-            this.timer = 0;
-        }
+            if (this.song_queue.length === 0) {
 
-        if (this.song_queue.length === 0) {
+                clearInterval(this.interval);
+                
+                this.interval = null;
+            }
+        } catch (error) {
+            console.log(error);
 
             clearInterval(this.interval);
-            
-            this.interval = null;
-        }
 
+            this.interval = null;
+
+            this.timer = null;
+        }
     }
 
     initTimer() {
