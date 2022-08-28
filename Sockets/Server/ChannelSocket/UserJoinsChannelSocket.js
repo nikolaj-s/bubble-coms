@@ -9,6 +9,7 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
         const channel_id = `${data.server_id}/${data.channel_id}`;
 
         if (!channelList.has(channel_id)) {
+            
             let worker = await getMediasoupWorker();
 
             channelList.set(channel_id, new Channel(channel_id, worker, io));

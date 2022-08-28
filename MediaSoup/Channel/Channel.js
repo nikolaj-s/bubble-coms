@@ -34,10 +34,10 @@ module.exports = class Channel {
         }
     }
 
-    getPeersSocketByUserName(username) {
+    getPeersSocketByUsername(username) {
         for (const peer of this.peers) {
-            if (peer.username === username) {
-                return peer.id;
+            if (peer[1].username === username) {
+                return peer[1].id;
             }
         }
     }
@@ -155,6 +155,7 @@ module.exports = class Channel {
 
     async consume(socket_id, consumer_transport_id, producer_id, rtpCapabilities) {
         // handle null values
+        console.log(producer_id, rtpCapabilities)
         if (!this.router.canConsume({producerId: producer_id, rtpCapabilities})) {
             console.error('can not consume')
 

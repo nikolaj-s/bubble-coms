@@ -28,8 +28,8 @@ module.exports = {
     // Worker settings
     numWorkers: Object.keys(os.cpus()).length,
     worker: {
-      rtcMinPort: 4000,
-      rtcMaxPort: 4999,
+      rtcMinPort: 40000,
+      rtcMaxPort: 49999,
       logLevel: 'debug',
       logTags: [
         'info',

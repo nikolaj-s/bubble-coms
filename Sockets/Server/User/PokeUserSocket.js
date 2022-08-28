@@ -3,7 +3,7 @@
 const PokeUserSocket = async (socket, data, cb, channelList) => {
     try {
 
-        const user_to_poke = await channelList.get(`${data.channel_id}/${socket.current_server}`).getPeersSocketByUsername(data.username);
+        const user_to_poke = await channelList.get(`${socket.current_server}/${data.channel_id}`).getPeersSocketByUsername(data.username);
 
         if (!user_to_poke) return cb({error: true, errorMessage: "error poking user"});
 
