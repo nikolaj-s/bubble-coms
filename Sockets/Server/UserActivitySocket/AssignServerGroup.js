@@ -9,11 +9,11 @@ const assignServerGroup = async (socket, data, cb) => {
         if (!server) return cb({error: true, errorMessage: "Validation Error"});
         
         const member = await server.get_member(socket.AUTH.username);
-
+        
         if (member === -1) return cb({error: true, errorMessage: "Validation Error"});
 
         const permissions = await server.get_server_group(member.server_group);
-
+        
         if (permissions === -1 || permissions.user_can_manage_server_groups === false) return cb({error: true, errorMessage: "Validation Error"});
 
         const member_to_update = await server.get_member(data.username);

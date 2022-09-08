@@ -16,6 +16,7 @@ const userJoinsServer = async (socket, server_id, channelList, cb) => {
         if (memberFile === -1 || memberFile.error) return cb({error: true, errorMessage: "You are not a member of this server"});
 
         const user_object = {
+            _id: memberFile._id,
             display_name: user.display_name,
             user_banner: user.user_banner,
             user_image: user.user_image,

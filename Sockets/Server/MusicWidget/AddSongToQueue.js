@@ -12,7 +12,7 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
         if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
 
-        const song = await fetch(`http://127.0.0.1:8000/fetch-song-info?query=${query}`)
+        const song = await fetch(`https://bubble-music.herokuapp.com/fetch-song-info?query=${query}`)
         .then(response => {
             return response.json();
         })
