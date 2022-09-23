@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const { ServerSchema } = require('../../../Schemas/Server/Server/ServerSchema');
 const { ServerCardSchema } = require('../../../Schemas/Server/ServerCard/ServerCardSchema');
 
@@ -26,6 +27,28 @@ const UpdateServer = async (socket, data, cb) => {
 
         let newServerBanner;
 
+        // validate if password change
+        if (data.server_password !== null) {
+            if (permissions.user_can_server_password === false) return cb({error: true, errorMessage: "You do not have to required permissions to perform this action"});
+
+            const verify_password = await bcrypt.compare(data.server_password, server.server_password);
+
+            if (!verify_password) return cb({error: true, errorMessage: "Incorrect Server Password"});
+
+            if (data.new_server_password !== data.confirm_new_server_password) return cb({error: true, errorMessage: "New Password does not match password confirmation"});
+
+            if (data.new_server_password === data.server_password) return cb({error: true, errorMessage: "New password cannot match old password"});
+
+            if (data.new_server_password.length < 6) return cb({error: true, errorMessage: "New Password cannot be less than 6 characters long"});
+
+            const salt = await new bcrypt.genSalt(10);
+
+            const password_to_update = await bcrypt.hash(data.new_server_password, salt);
+
+            await server.update_server_password(password_to_update);
+
+        }
+
         // validate new data
         if (data.server_name !== null && data.server_name !== server.server_name) {
             if (permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: "you do not have permission to perform that action"});
@@ -42,7 +65,7 @@ const UpdateServer = async (socket, data, cb) => {
 
             if (permissions.user_can_edit_server_banner === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
 
-            if (data.server_banner.byteLenght > 3000000) return cb({error: true, errorMessage: "Server banner cannot be more than 3MB"});
+            if (data.server_banner.byteLength > 3000000) return cb({error: true, errorMessage: "Server banner cannot be more than 3MB"});
 
         }
 

@@ -1,3 +1,4 @@
+const bcryptjs = require('bcryptjs');
 const ImageDelete = require('../../../Util/Image/ImageDelete');
 const ImageUpload = require('../../../Util/Image/ImageUpload');
 const ValidationMiddleWare = require('../../Validation/ValidationMiddleWare');
@@ -12,9 +13,19 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         const images = req.files;
 
+        if (new_data.password) {
+
+            const current_password = await bcryptjs.compare(new_data.password, user.password);
+
+            if (!current_password) return res.send({error: true, errorMessage: "incorrect password"});
+
+            
+
+        }
+
         if (new_data.displayName !== user.display_name) {
 
-            if (new_data.displayName.length > 30) return res.send({error: true, errorMessage: "display name cannot be greater than 30 characters"})
+            if (new_data.displayName.length > 15) return res.send({error: true, errorMessage: "display name cannot be greater than 30 characters"})
 
             await user.update_display_name(new_data.displayName);
 

@@ -175,6 +175,12 @@ ServerSchema.methods.update_server_name = function(name) {
     return this.save();
 }
 
+ServerSchema.methods.update_server_password = function(password) {
+    this.server_password = password;
+    
+    return this.save();
+}
+
 // verify user's permissions
 ServerSchema.methods.verify_user_group = function(member_index, action) {
 

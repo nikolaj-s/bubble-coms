@@ -20,18 +20,6 @@ route.post('/', async (req, res, next) => {
         // validate password
         if (data.password !== data.confirmPassword) return res.send({error: true, errorMessage: "Passwords Do No Match"});
         
-        const re_lower_case = /[a-b]/g;
-
-        const re_upper_case = /[A-B]/g;
-
-        const re_numbers = /[0-9]/g;
-
-        if (!re_lower_case.test(data.password)) return res.send({error: true, errorMessage: "Password Must Include at least one lower case letter"});
-
-        if (!re_upper_case.test(data.password)) return res.send({error: true, errorMessage: "Password Must Include at least one upper case letter"});
-        
-        if (!re_numbers.test(data.password)) return res.send({error: true, errorMessage: "Password Must Include at least one number"});
-
         // check if email is already in use
         const emailInUse = await AccountSchema.findOne({email: data.email})
 
@@ -48,6 +36,8 @@ route.post('/', async (req, res, next) => {
 
         const newAccount = new AccountSchema({
             username: data.username,
+            user_image: "https://res.cloudinary.com/drlkgoter/image/upload/v1663868935/1-Blank-TikTok-Default-PFP_jt6guo.jpg",
+            user_banner: "https://res.cloudinary.com/drlkgoter/image/upload/v1663868935/wood-blog-placeholder_si9ccx.jpg",
             email: data.email,
             display_name: data.username,
             password: hashedPassword

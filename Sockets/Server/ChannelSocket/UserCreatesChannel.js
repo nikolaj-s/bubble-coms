@@ -12,6 +12,10 @@ const UserCreatesChannel = async (socket, data, cb) => {
         
         if (!server) return socket.emit({error: true, errorMessage: "validation error"});
         
+        if (data.channel_name.length < 4) return cb({error: true, errorMessage: "Channel Name Cannot Be less than 4 characters long"});
+
+        if (data.channel_name.includes('/')) return cb({error: true, errorMessage: "Channel Name Cannot Include A Forward Slash"});
+
         // validate users permissions
         const user = await server.get_member(socket.AUTH.username);
 
