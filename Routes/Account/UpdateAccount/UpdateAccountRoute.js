@@ -1,4 +1,4 @@
-const bcryptjs = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const ImageDelete = require('../../../Util/Image/ImageDelete');
 const ImageUpload = require('../../../Util/Image/ImageUpload');
 const ValidationMiddleWare = require('../../Validation/ValidationMiddleWare');
@@ -15,11 +15,15 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         if (new_data.password) {
 
-            const current_password = await bcryptjs.compare(new_data.password, user.password);
+            if (new_data.newPassword === new_data.password) return res.send({error: true, errorMessage: "New password cannot be the same as the old password"});
+
+            if (new_data.newPassword.length < 5) return res.send({error: true, errorMessage: "new password cannot be less than 5 characters long"});
+
+            const current_password = await bcrypt.compare(new_data.password, user.password);
 
             if (!current_password) return res.send({error: true, errorMessage: "incorrect password"});
 
-            
+            if (new_data.newPassword !== new_data.confirmNewPassword) return res.send({error: true, errorMessage: "new password does not match confirmation"})
 
         }
 
@@ -50,6 +54,16 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
                 await user.update_user_banner(userBanner.url);
             }
+        }
+
+        if (new_data.newPassword) {
+
+            const salt = await new bcrypt.genSalt(10);
+
+            const hash = await bcrypt.hash(new_data.newPassword, salt);
+
+            await user.update_user_password(hash);
+
         }
 
         await user.save();

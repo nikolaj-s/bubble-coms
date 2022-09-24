@@ -138,7 +138,7 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
         cb({success: true, data: savedWidget, channel_id: data.channel_id});
 
-        socket.to(socket.current_server).emit('new channel widget', {widget: savedWidget, channel_id: data.channel_id});
+        socket.to(socket.current_server).emit('new channel widget', {widgets: server.channels[channel].widgets, channel_id: data.channel_id});
 
     } catch (error) {
         console.log(error);

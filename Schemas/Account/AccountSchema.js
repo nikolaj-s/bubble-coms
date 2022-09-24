@@ -91,6 +91,12 @@ AccountSchema.methods.update_user_banner = function(image) {
     return this.save();
 }
 
+AccountSchema.methods.update_user_password = function(hash) {
+    this.password = hash;
+
+    return this.save();
+}
+
 AccountSchema.methods.update_display_name = function(new_name) {
     this.display_name = new_name;
 
