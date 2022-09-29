@@ -6,6 +6,10 @@ const ImageDelete = require("../../../Util/Image/ImageDelete");
 
 const MessageSocket = async (socket, data, channelList, cb) => {
     try {
+
+        // prevent large text
+        if (data.content.text.length > 255) return cb({error: true, errorMessage: "Text exceeds character limit of 255"})
+
         // verify user perms
         const server = await ServerSchema.findOne({_id: socket.current_server})
         

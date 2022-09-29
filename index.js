@@ -119,6 +119,10 @@ const createServer = require('./Routes/Server/CreateServer/CreateServerRoute');
 
 App.use('/create-server', createServer);
 
+const FetchReleaseNotes = require('./Routes/Misc/FetchReleaseNotes');
+
+App.use('/fetch-release-notes', FetchReleaseNotes);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })

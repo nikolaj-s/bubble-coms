@@ -8,7 +8,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
     try {
         const query = req.body.query;
 
-        const servers = await ServerCardSchema.find({server_name: query})
+        const servers = await ServerCardSchema.find({server_name: new RegExp(query, 'i')}).collation({locale: `en`, strength: 2});
         
         res.send({success: true, servers: servers});
 
