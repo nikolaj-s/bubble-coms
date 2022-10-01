@@ -71,7 +71,7 @@ module.exports = class Bot {
         try {
             this.timer = this.timer += 1;
 
-            if ((this.timer) === (this.song_queue[0].duration + 3)) {
+            if (this.timer === (this.song_queue[0].duration + 3)) {
                 this.skipSong();
 
                 this.timer = 0;

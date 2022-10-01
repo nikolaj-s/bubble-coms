@@ -59,7 +59,10 @@ module.exports = {
           mimeType: 'video/VP8',
           clockRate: 90000,
           parameters: {
-            'x-google-start-bitrate': 1000
+            'packetization-mode'      : 1,
+						'profile-level-id'        : '4d0032',
+						'level-asymmetry-allowed' : 1,
+						'x-google-start-bitrate'  : 1000
           }
         },
         {
@@ -68,12 +71,9 @@ module.exports = {
 					clockRate  : 90000,
 					parameters :
 					{
-						'packetization-mode'      : 1,
-						'profile-level-id'        : '4d0032',
-						'level-asymmetry-allowed' : 1,
 						'x-google-start-bitrate'  : 1000
 					}
-				},
+				}
       ]
     },
     // WebRtcTransport settings
@@ -84,7 +84,7 @@ module.exports = {
           announcedIp: getLocalIp() // replace by public IP address
         }
       ],
-      maxIncomingBitrate: 1500000,
+      maxIncomingBitrate: 30000000,
       initialAvailableOutgoingBitrate: 1000000
     }
   }
