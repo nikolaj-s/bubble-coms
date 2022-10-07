@@ -21,6 +21,7 @@ const SkipSong = require('./Server/MusicWidget/SkipSong');
 const TogglePlayingMusic = require('./Server/MusicWidget/TogglePlayingMusic');
 const UpdateServer = require('./Server/Settings/UpdateServer');
 const UpdateServerGroups = require('./Server/Settings/UpdateServerGroups');
+const KickUserSocket = require('./Server/User/KickUserSocket');
 const PokeUserSocket = require('./Server/User/PokeUserSocket');
 const UserStatusSocket = require('./Server/User/UserStatusSocket');
 const assignServerGroup = require('./Server/UserActivitySocket/AssignServerGroup');
@@ -90,6 +91,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));
         
         socket.on('poke', async (data, cb) => PokeUserSocket(socket, data, cb, channelList));
+
+        socket.on('kick', async (data, cb) => KickUserSocket(socket, data, cb, channelList));
 
         // music bot
         socket.on('add song to queue', async (data, cb) => AddSongToQueue(socket, data, cb, channelList));

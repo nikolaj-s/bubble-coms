@@ -15,6 +15,8 @@ const UpdateServer = async (socket, data, cb) => {
 
         const server_card = await ServerCardSchema.findOne({server_id: socket.current_server});
 
+        if (!server) return cb({error: true, errorMessage: "fatal error"});
+
         if (!server._id && !server_card._id) return cb({error: true, errorMessage: "fatal error"});
 
         const member = await server.get_member(user);
@@ -28,7 +30,7 @@ const UpdateServer = async (socket, data, cb) => {
         let newServerBanner;
 
         // validate if password change
-        if (data.server_password !== null) {
+        if (data.server_password !== null && data.server_password.length > 1) {
             if (permissions.user_can_server_password === false) return cb({error: true, errorMessage: "You do not have to required permissions to perform this action"});
 
             const verify_password = await bcrypt.compare(data.server_password, server.server_password);
@@ -65,8 +67,6 @@ const UpdateServer = async (socket, data, cb) => {
 
             if (permissions.user_can_edit_server_banner === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
 
-            if (data.server_banner.byteLength > 3000000) return cb({error: true, errorMessage: "Server banner cannot be more than 3MB"});
-
         }
 
         if (data.server_name) {
@@ -78,22 +78,16 @@ const UpdateServer = async (socket, data, cb) => {
         if (data.server_banner) {
             await ImageDelete(server.server_banner);
 
-            newServerBanner = await ImageUpload({data: data.server_banner})
-            .catch(error => {
-                console.log(error);
-                return cb({error: true, errorMessage: "fatal error uploading new banner"});
-            })
-
             if (newServerBanner?.error) return cb({error: true, errorMessage: "fatal error uploading server banner"});
 
-            await server.update_server_banner(newServerBanner.url);
+            await server.update_server_banner(data.server_banner);
 
-            await server_card.update_server_banner(newServerBanner.url);
+            await server_card.update_server_banner(data.server_banner);
 
         }
 
         await server.save();
-
+        
         const data_to_send = {
             success: true, 
             data: {

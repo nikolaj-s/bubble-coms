@@ -123,6 +123,10 @@ const FetchReleaseNotes = require('./Routes/Misc/FetchReleaseNotes');
 
 App.use('/fetch-release-notes', FetchReleaseNotes);
 
+const UploadImage = require('./Routes/Misc/UploadImage');
+
+App.use('/upload-image', UploadImage);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })

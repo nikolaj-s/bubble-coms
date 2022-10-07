@@ -21,6 +21,9 @@ const ChannelSchema = new mongoose.Schema({
     persist_social: {
         type: Boolean,
         default: false
+    },
+    channel_background: {
+        type: String
     }
 })
 

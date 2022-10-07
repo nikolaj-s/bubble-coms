@@ -126,6 +126,17 @@ const AddWidgetToChannel = async (socket, data, cb) => {
                 queue: []
             }
 
+        } else if (widget.type === 'spinner') {
+
+            const options = widget.text.split(',');
+
+            if (options.length < 6) return cb({error: true, errorMessage: "The wheel spin widget requires 6 options"});
+
+            widget = {
+                type: 'wheel-spin',
+                text: options
+            }
+
         }
 
         const dataToSave = {
