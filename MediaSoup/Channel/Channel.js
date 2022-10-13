@@ -43,7 +43,9 @@ module.exports = class Channel {
     }
 
     addPeer(peer) {
+        
         this.peers.set(peer.id, peer)
+    
     }
 
     getProducerListForPeer() {

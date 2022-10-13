@@ -1,11 +1,11 @@
 
 
-const UserLeavesServer = async (socket, data, channelList) => {
+const UserLeavesServer = async (socket, data, channelList, cb) => {
     try {
 
         if (socket.channel_id) {
             
-            await channelList.get(socket.channel_id).removePeer(socket.id);
+            await channelList.get(socket.channel_id)?.removePeer(socket.id);
 
             const channel_id = socket.channel_id.split('/')[1]
             
@@ -21,17 +21,27 @@ const UserLeavesServer = async (socket, data, channelList) => {
             }
         }
 
-        socket.leave(data.server_id);
-
-        socket.emit({success: true, message: "Successfully left server"});
+        socket.leave(socket.current_server);
 
         socket.disconnect();
 
-        console.log('user has disconnected')
+        console.log('user has disconnected');
 
     } catch(error) {
+
         console.log(error);
-        return {error: true, errorMessage: "server error"}
+
+        console.log("cleaning up diso")
+
+        if (socket.channel_id) {
+
+            socket.leave(socket.channel_id);
+
+        }
+
+        socket.leave(socket.current_server)
+
+        socket.disconnect();
     }
 }
 

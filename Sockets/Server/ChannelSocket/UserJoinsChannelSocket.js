@@ -16,6 +16,8 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
 
         }
 
+        if (channelList.get(channel_id)?.peers?.has(socket.id)) return cb({error: true, errorMessage: "you are already in this channel"});
+
         channelList.get(channel_id).addPeer(new Peer(socket.id, socket.AUTH.username, data.user));
 
         socket.channel_id = channel_id;

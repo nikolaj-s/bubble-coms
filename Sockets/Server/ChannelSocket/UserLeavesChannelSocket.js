@@ -1,10 +1,11 @@
-const UserJoinsChannelSocket = require("./UserJoinsChannelSocket");
-
 
 const UserLeavesChannel = async (socket, data, channelList, cb) => {
     try {
+        console.log(channelList)
 
-        await channelList.get(socket.channel_id).removePeer(socket.id);
+        console.log(socket.channel_id)
+
+        await channelList.get(socket.channel_id)?.removePeer(socket.id);
 
         const channel_id = socket.channel_id.split('/')[1]
         

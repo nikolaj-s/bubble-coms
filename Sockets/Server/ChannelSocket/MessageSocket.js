@@ -79,11 +79,13 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         // if channel has persist data enabled --> save message to the social array in the DB
         if (server.channels[channel].persist_social) {
+
             await server.save_message(channel, message)
             .catch(error => {
                 console.log('saving message to database error', error);
                 return cb({error: true, errorMessage: 'error sending message'})
             })
+        
         }
 
         channelList.get(socket.channel_id).pushMessage(message);

@@ -1,6 +1,4 @@
-
-
-const Disconnect = async (socket, data, channelList, cb) => {
+const ConnectionDropped = async (socket, data, channelList) => {
     try {  
 
         if (socket.channel_id) {
@@ -9,9 +7,9 @@ const Disconnect = async (socket, data, channelList, cb) => {
 
             if (channelList.get(socket.channel_id)?.getPeers().size === 0) await channelList.delete(socket.channel_id)
 
-            socket.to(socket.current_server).emit("user leaves channel", {id: socket.channel_id.split('/')[1], username: socket.AUTH.username});
+            socket.to(socket.current_server).emit("user dropped connection", {id: socket.channel_id.split('/')[1], username: socket.AUTH.username});
+        
         }
-
 
         socket.leave(socket.channel_id);
 
@@ -26,5 +24,4 @@ const Disconnect = async (socket, data, channelList, cb) => {
     }
 }
 
-module.exports = Disconnect;
-
+module.exports = ConnectionDropped;

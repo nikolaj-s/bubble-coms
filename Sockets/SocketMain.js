@@ -15,10 +15,12 @@ const UpdateChannel = require('./Server/ChannelSocket/UpdateChannel');
 const UserCreatesChannel = require('./Server/ChannelSocket/UserCreatesChannel');
 const UserJoinsChannelSocket = require('./Server/ChannelSocket/UserJoinsChannelSocket');
 const UserLeavesChannel = require('./Server/ChannelSocket/UserLeavesChannelSocket');
+const ConnectionDropped = require('./Server/Connection/ConnectionDropped');
 const AddSongToQueue = require('./Server/MusicWidget/AddSongToQueue');
 const FetchCurrentMusic = require('./Server/MusicWidget/FetchCurrentMusic');
 const SkipSong = require('./Server/MusicWidget/SkipSong');
 const TogglePlayingMusic = require('./Server/MusicWidget/TogglePlayingMusic');
+const WidgetOverlaySocket = require('./Server/RoomOverlayActions/WidgetOverlaySocket');
 const UpdateServer = require('./Server/Settings/UpdateServer');
 const UpdateServerGroups = require('./Server/Settings/UpdateServerGroups');
 const KickUserSocket = require('./Server/User/KickUserSocket');
@@ -44,7 +46,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         // server sockets
         socket.on('joined server', async (data, cb) => userJoinsServer(socket, data.server_id, channelList, cb));
 
-        socket.on('left server', async (data) => UserLeavesServer(socket, data, channelList));
+        socket.on('left server', async (data, cb) => UserLeavesServer(socket, data, channelList, cb));
 
         socket.on('join channel', async (data, cb) => UserJoinsChannelSocket(socket, data, io, channelList, getMediasoupWorker, cb));
         
@@ -102,6 +104,16 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('toggle playing music', async (data, cb) => TogglePlayingMusic(socket, data, cb, channelList));
 
         socket.on('skip song', async (data, cb) => SkipSong(socket, data, cb, channelList));
+
+        // widget overlay
+        socket.on('widget overlay action', async (data, cb) => WidgetOverlaySocket(socket, data, cb));
+
+        // connection errors
+        socket.on('ping timeout', async (data, cb) => ConnectionDropped(socket, data, channelList));
+
+        socket.on('transport close', async (data, cb) => ConnectionDropped(socket, data, channelList));
+
+        socket.on('transport error', async (data, cd) => ConnectionDropped(socket, data, channelList));
 
     })
     
