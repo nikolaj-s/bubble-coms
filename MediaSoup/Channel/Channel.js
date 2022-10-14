@@ -188,13 +188,21 @@ module.exports = class Channel {
     }
 
     async removePeer(socket_id) {
-        this.peers.get(socket_id).close()
+        try {
+            this.peers.get(socket_id).close()
 
-        this.peers.delete(socket_id)
+            this.peers.delete(socket_id)
 
-        this.io.to(socket_id).emit('removedfromchannel', {
-            message: "You have been disconnected"
-        })
+            this.io.to(socket_id).emit('removedfromchannel', {
+                message: "You have been disconnected"
+            })
+        } catch (error) {
+            console.log("User Not In Channel")
+            
+            this.io.to(socket_id).emit('removedfromchannel', {
+                message: "You have been disconnected"
+            })
+        }
     }
 
     closeProducer(socket_id, producer_id) {

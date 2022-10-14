@@ -4,6 +4,7 @@ const ImageUpload = require("../../../Util/Image/ImageUpload");
 
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
+
 const MessageSocket = async (socket, data, channelList, cb) => {
     try {
 
@@ -29,7 +30,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         if (channel === -1) return cb({error: true, errorMessage: 'unauthorized activity'});
 
         // verify message contents
-        const imageFormats = ['webp', 'jpg', 'jpeg', 'png']
+        const imageFormats = ['webp', 'jpg', 'jpeg', 'png', 'gif']
 
         const videoFormats = ['webm', 'mp4']
 
@@ -55,9 +56,9 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         }
 
-        const image = file ? file.url : imageFormats.some(format => data.content.text.includes(format)) ? data.content.text : false;
+        const image = file ? file.url : imageFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        const video = videoFormats.some(format => data.content.text.includes(format)) ? data.content.text : false;
+        const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
         const link = websiteFormats.some(format => data.content.text.includes(format)) ? data.content.text : false;
 
