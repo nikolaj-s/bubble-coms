@@ -1,5 +1,6 @@
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
+const ImageUpload = require("../../../Util/Image/ImageUpload");
 
 
 const UpdateChannel = async (socket, data, cb) => {
@@ -19,6 +20,25 @@ const UpdateChannel = async (socket, data, cb) => {
 
         let new_channel_data = data;
 
+        let image;
+
+        if (new_channel_data.file) {
+
+            if (new_channel_data.file.byteLength > 1000000) return cb({error: true, errorMessage: 'channel background image cannot be greater than 1mb'});
+
+            image = await ImageUpload({data: data.file})
+            .catch(error => {
+                console.log(error);
+                return cb({error: true, errorMessage: "fatal error uploading image"});
+            })
+
+            if (image.error) {
+
+                return cb({error: true, errorMessage: image.errorMessage});
+            
+            }
+        }
+
         new_channel_data.widgets.forEach(async widget => {
             if (widget.delete && widget.type === 'image') {
                 await ImageDelete(widget.content.text);
@@ -27,7 +47,14 @@ const UpdateChannel = async (socket, data, cb) => {
 
         new_channel_data.widgets = new_channel_data.widgets.filter(widget => widget.delete ? false : true);
 
-        const saved_data = await server.update_channel(new_channel_data._id, new_channel_data);
+        const data_to_save = {
+            channel_name: new_channel_data.channel_name,
+            persist_social: new_channel_data.persist_social,
+            widgets: new_channel_data.widgets,
+            channel_background: image?.url ? image.url : new_channel_data.channel_background
+        }
+
+        const saved_data = await server.update_channel(new_channel_data._id, data_to_save);
 
         if (saved_data.error) return cb({error: true, errorMessage: "fatal error updating channel"});
 

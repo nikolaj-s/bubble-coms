@@ -20,7 +20,7 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
         if (channel === -1) return cb({error: true, errorMessage: "Channel Does Not Exist"});
         
-        if (server.channels[channel].widgets?.length === 10) return cb({error: true, errorMessage: "you have reached this channels widget limit"})
+        if (server.channels[channel].widgets?.length > 14) return cb({error: true, errorMessage: "you have reached this channels widget limit"})
 
         const member = await server.get_member(socket.AUTH.username);
 

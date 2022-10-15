@@ -21,7 +21,13 @@ const DeleteChannel = async (socket, data, cb) => {
 
         if (channel_to_delete === -1) return cb({error: true, errorMessage: "channel does not exist"});
 
-        // clean up images stored in the db/
+        // clean up images stored in the db
+
+        if (server.channels[channel_to_delete]?.channel_background) {
+
+            await ImageDelete(server.channels[channel_to_delete].channel_background);
+
+        }
 
         server.channels[channel_to_delete].social.forEach(async message => {
             if (message.content.image) {

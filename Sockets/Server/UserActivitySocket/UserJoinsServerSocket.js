@@ -32,7 +32,8 @@ const userJoinsServer = async (socket, server_id, channelList, cb) => {
                 users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : [],
                 social: channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
                 persist_social: channel.persist_social,
-                widgets: channel.widgets
+                widgets: channel.widgets,
+                channel_background: channel.channel_background
             }
         })
 
