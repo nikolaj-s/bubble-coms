@@ -280,7 +280,7 @@ ServerSchema.methods.update_channel = function(channel_id, channel) {
 
         this.channels = this.channels.map(c => {
             if (String(c._id) === channel_id) {
-                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background}
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur}
             } else {
                 return c;
             }

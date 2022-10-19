@@ -84,7 +84,7 @@ module.exports = {
           announcedIp: getLocalIp() // replace by public IP address
         }
       ],
-      maxIncomingBitrate: 3750000,
+      maxIncomingBitrate: 2750000,
       initialAvailableOutgoingBitrate: 1000000
     }
   }

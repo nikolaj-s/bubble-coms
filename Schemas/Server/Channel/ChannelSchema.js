@@ -24,6 +24,9 @@ const ChannelSchema = new mongoose.Schema({
     },
     channel_background: {
         type: String
+    },
+    background_blur: {
+        type: Number
     }
 })
 

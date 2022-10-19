@@ -32,9 +32,9 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         if (channel === -1) return cb({error: true, errorMessage: 'unauthorized activity'});
 
         // verify message contents
-        const imageFormats = ['webp', 'jpg', 'jpeg', 'png', 'gif']
+        const imageFormats = ['webp', 'jpg', 'jpeg', 'png']
 
-        const videoFormats = ['webm', 'mp4']
+        const videoFormats = ['webm', 'mp4', 'gif']
 
         const websiteFormats = ['.com', '.ca', '.co']
 

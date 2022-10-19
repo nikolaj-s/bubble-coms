@@ -10,6 +10,7 @@ const getChannelInfo = require('./Server/ChannelSocket/GetChannelInfo');
 const GetProducers = require('./Server/ChannelSocket/GetProducers');
 const GetRouterRtpCapabilities = require('./Server/ChannelSocket/GetRouterRtpCapabilities');
 const MessageSocket = require('./Server/ChannelSocket/MessageSocket');
+const MoveUserSocket = require('./Server/ChannelSocket/MoveUserSocket');
 const Produce = require('./Server/ChannelSocket/Produce');
 const UpdateChannel = require('./Server/ChannelSocket/UpdateChannel');
 const UserCreatesChannel = require('./Server/ChannelSocket/UserCreatesChannel');
@@ -88,6 +89,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('update channel', async (data, cb) => UpdateChannel(socket, data, cb));
         
         socket.on('delete channel', async (data, cb) => DeleteChannel(socket, data, cb));
+
+        socket.on('move user', async (data, cb) => MoveUserSocket(socket, data, channelList, cb));
         
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));
