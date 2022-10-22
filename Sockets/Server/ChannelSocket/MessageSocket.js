@@ -91,7 +91,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         
         }
 
-        channelList.get(socket.channel_id).pushMessage(message);
+        channelList.get(`${socket.current_server}/${data.channel_id}`)?.pushMessage(message);
         
         socket.to(socket.current_server).emit("new message", message);
 

@@ -1,6 +1,7 @@
 
 const config = require('../../Config/config');
 const Bot = require('../Bot/Bot');
+const Peer = require('../Peer/Peer');
 
 module.exports = class Channel {
     constructor(channel_id, worker, io) {
@@ -14,6 +15,8 @@ module.exports = class Channel {
             
             this.router = router;
 
+           // this.init_plain_audio_transport();
+
         }.bind(this)
         )
         
@@ -26,10 +29,59 @@ module.exports = class Channel {
         this.songs = []
 
         this.bot = new Bot(channel_id, io);
+
+        this.audioTransport;
+
+        this.audioRtpPort;
+
+        this.audioRtcpPort;
+
+        this.plainAudioProducer;
+
+        this.plainAudioConsumers = new Map();
+    }
+
+    async init_plain_audio_transport() {
+        if (!this.audioTransport) {
+            
+
+            const plainTransport = await this.router.createPlainTransport(
+                {
+                    listenIp: config.listenIp,
+                    rtcpMux: true,
+                    comedia: true
+                }
+            )
+
+            this.peers.set("music-bot", new Peer("music-bot", "music-bot", {username: "music-bot"}));
+
+            this.peers.get("music-bot").addTransport(plainTransport);
+
+            this.audioRtpPort = plainTransport.tuple.localPort;
+
+           // this.audioRtcpPort = plainTransport.rtcpTuple.localPort;
+               
+            console.log(this.audioRtpPort);
+
+           // console.log(this.audioRtcpPort);
+
+            this.produce("music-bot", plainTransport.id, {
+                codecs: [{
+                    mimeType: 'audio/opus',
+                    clockRate: 48000,
+                    payloadType: 101,
+                    channels: 2,
+                    rtcpFeedback: [{ type: 'transport-cc' }],
+                    parameters: {"sprop-stereo": 1}
+                }],
+                encodings: [{ssrc: 11111111}]
+            }, 'audio');
+
+        }
     }
 
     cleanUp() {
-        if (this.peers.size === 0 || this.bot.song_queue.length === 0) {
+        if (this.peers.size === 1 || this.bot.song_queue.length === 0) {
             clearInterval(this.bot.interval);
         }
     }
@@ -86,6 +138,7 @@ module.exports = class Channel {
             enableUdp: true,
             enableTcp: true,
             preferUdp: true,
+            rtcpMux: false,
             initialAvailableOutgoingBitRate
         })
 
@@ -157,7 +210,7 @@ module.exports = class Channel {
 
     async consume(socket_id, consumer_transport_id, producer_id, rtpCapabilities) {
         // handle null values
-        console.log(producer_id, rtpCapabilities)
+        
         if (!this.router.canConsume({producerId: producer_id, rtpCapabilities})) {
             console.error('can not consume')
 
@@ -182,7 +235,6 @@ module.exports = class Channel {
 
             }.bind(this)    
         )
-
 
         return params;
     }

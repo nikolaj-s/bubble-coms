@@ -23,6 +23,7 @@ module.exports = class Peer {
     }
 
     async createProducer(producerTransportId, rtpParameters, kind) {
+        console.log(rtpParameters)
         let producer = await this.transports.get(producerTransportId).produce({
             kind,
             rtpParameters

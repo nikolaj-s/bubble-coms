@@ -13,7 +13,6 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
             let worker = await getMediasoupWorker();
 
             channelList.set(channel_id, new Channel(channel_id, worker, io));
-
         }
 
         if (channelList.get(channel_id)?.peers?.has(socket.id)) return cb({error: true, errorMessage: "you are already in this channel"});
