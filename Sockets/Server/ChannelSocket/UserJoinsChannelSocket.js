@@ -29,7 +29,8 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
             username: socket.AUTH.username,
             user_image: data.user.user_image,
             user_banner: data.user.user_banner,
-            display_name: data.user.display_name
+            display_name: data.user.display_name,
+            mirror_web_cam: data.user.mirror_web_cam
         }
 
         socket.to(data.server_id).emit('user joins channel', data_to_send);
