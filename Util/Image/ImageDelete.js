@@ -8,6 +8,8 @@ Cloudinary.config({
 
 const ImageDelete = async (image) => {
     try {
+        if (!image.includes('cloudinary')) return;
+
         return new Promise((resolve, reject) => {
             if (!image || image.length === 0) return {error: true, errorMessage: "no previous image"};
 

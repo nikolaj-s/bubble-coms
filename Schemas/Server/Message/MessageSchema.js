@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
     _id: {
-        type: mongoose.Types.ObjectId,
-        default: mongoose.Types.ObjectId
+        default: mongoose.ObjectId
+    },
+    channel_id: {
+        type: String
     },
     content: {
         type: {Object},

@@ -6,12 +6,14 @@ const ConnectTransport = require('./Server/ChannelSocket/ConnectTransport');
 const Consume = require('./Server/ChannelSocket/Consume');
 const CreateWebRtcTransport = require('./Server/ChannelSocket/CreateWebRtcTransport');
 const DeleteChannel = require('./Server/ChannelSocket/DeleteChannel');
+const DeleteMessage = require('./Server/ChannelSocket/DeleteMessage');
 const getChannelInfo = require('./Server/ChannelSocket/GetChannelInfo');
 const GetProducers = require('./Server/ChannelSocket/GetProducers');
 const GetRouterRtpCapabilities = require('./Server/ChannelSocket/GetRouterRtpCapabilities');
 const MessageSocket = require('./Server/ChannelSocket/MessageSocket');
 const MoveUserSocket = require('./Server/ChannelSocket/MoveUserSocket');
 const Produce = require('./Server/ChannelSocket/Produce');
+const ReOrganizeChannels = require('./Server/ChannelSocket/ReOrganizeChannels');
 const UpdateChannel = require('./Server/ChannelSocket/UpdateChannel');
 const UserCreatesChannel = require('./Server/ChannelSocket/UserCreatesChannel');
 const UserJoinsChannelSocket = require('./Server/ChannelSocket/UserJoinsChannelSocket');
@@ -92,6 +94,10 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('move user', async (data, cb) => MoveUserSocket(socket, data, channelList, cb));
         
+        socket.on('reorganize channels', async (data, cb) => ReOrganizeChannels(socket, data, cb));
+
+        socket.on('delete message', async (data, cb) => DeleteMessage(socket, data, cb));
+
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));
         

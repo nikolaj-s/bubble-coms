@@ -4,6 +4,7 @@ const ImageUpload = require("../../../Util/Image/ImageUpload");
 
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
+const { v4: uuidv4} = require('uuid')
 
 const MessageSocket = async (socket, data, channelList, cb) => {
     try {
@@ -11,7 +12,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         // prevent large text
         if (data.content.text.length === 0 && !data.file) return cb({error: true, errorMessage: "Cannot send empty message"})
 
-        if (data.content.text.length > 255) return cb({error: true, errorMessage: "Text exceeds character limit of 255"})
+        if (data.content.text.length > 511) return cb({error: true, errorMessage: "Text exceeds character limit of 512"})
 
         // verify user perms
         const server = await ServerSchema.findOne({_id: socket.current_server})
@@ -75,6 +76,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         }
 
         const message = {
+            _id: uuidv4(),
             channel_id: data.channel_id,
             content: content,
             username: socket.AUTH.username
@@ -115,6 +117,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
     } catch (error) {
         console.log(error);
+        cb({error: true, errorMessage: "Fatal Error Sending Message"});
     }
 }
 

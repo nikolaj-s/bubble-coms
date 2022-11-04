@@ -55,6 +55,25 @@ const UpdateChannel = async (socket, data, cb) => {
             background_blur: new_channel_data.background_blur
         }
 
+        if (new_channel_data.clear_social) {
+
+            const channel_index = server.channels.findIndex(c => String(c._id) === String(new_channel_data._id));
+
+            if (channel_index === -1) return;
+
+            for (const m of server.channels[channel_index].social) {
+                if (m.content.image) {
+
+                    await ImageDelete(m.content.image);
+
+                }
+            }
+
+            await server.clear_social(new_channel_data._id);
+
+            data_to_save.social = [];
+        }
+
         const saved_data = await server.update_channel(new_channel_data._id, data_to_save);
 
         if (saved_data.error) return cb({error: true, errorMessage: "fatal error updating channel"});

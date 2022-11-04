@@ -193,6 +193,21 @@ ServerSchema.methods.verify_user_group = function(member_index, action) {
 }
 
 // channel methods
+ServerSchema.methods.re_organize_channels = function(new_order) {
+    try {
+
+        this.channels.sort((a, b) => {
+            return new_order.indexOf(String(a._id)) - new_order.indexOf(String(b._id));
+        })
+
+        return this.save();
+
+    } catch (error) {
+        console.log(error)
+        return error;
+    }
+}
+
 ServerSchema.methods.create_channel = function(channel_object) {
     try {
         this.channels.push(channel_object)
@@ -242,6 +257,38 @@ ServerSchema.methods.save_message = function(channel_index, message) {
         return error;
     }
 
+}
+
+ServerSchema.methods.delete_message = function(channel_id, message_id) {
+    try {
+
+        const channel = this.channels.findIndex(c => String(c._id) === String(channel_id));
+
+        if (channel === -1) return;
+
+        this.channels[channel].social = this.channels[channel].social.filter(m => String(m._id) !== String(message_id));
+
+        return this.save();
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+ServerSchema.methods.clear_social = function(channel_id) {
+    try {
+
+        const channel = this.channels.findIndex(c => String(c._id) === String(channel_id));
+
+        if (channel === -1) return;
+
+        this.channels[channel].social = [];
+
+        return this.save();
+
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 ServerSchema.methods.trim_social = function(channel_index) {
