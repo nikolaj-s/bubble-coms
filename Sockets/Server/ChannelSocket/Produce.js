@@ -2,7 +2,7 @@
 const Produce = async (socket, data, channelList, cb) => {
     try {
         
-        const producer_id = await channelList.get(socket.channel_id).produce(socket.id, data.producerTransportId, data.rtpParameters, data.kind);
+        const producer_id = await channelList.get(socket.channel_id).produce(socket.id, data.producerTransportId, data.rtpParameters, data.kind, data.appData);
 
         cb(producer_id);
 

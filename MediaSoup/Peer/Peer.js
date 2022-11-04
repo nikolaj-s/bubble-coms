@@ -22,12 +22,15 @@ module.exports = class Peer {
         })
     }
 
-    async createProducer(producerTransportId, rtpParameters, kind) {
+    async createProducer(producerTransportId, rtpParameters, kind, appData) {
         console.log(rtpParameters)
         let producer = await this.transports.get(producerTransportId).produce({
             kind,
-            rtpParameters
+            rtpParameters,
+            appData
         })
+
+        console.log(producer.appData)
 
         producer["user"] = this.user.username;
 
@@ -46,8 +49,8 @@ module.exports = class Peer {
     }
 
     async createConsumer(consumer_transport_id, producer_id, rtpCapabilities) {
-        let consumerTransport = this.transports.get(consumer_transport_id)
-
+        let consumerTransport = this.transports.get(consumer_transport_id);
+    
         let consumer = null;
 
         try {
@@ -78,7 +81,7 @@ module.exports = class Peer {
                 this.consumers.delete(consumer.id)
             }.bind(this)
         )
-
+            console.log(consumer.appData)
         return  {
             consumer,
             params: {

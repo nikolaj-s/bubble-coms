@@ -188,17 +188,18 @@ module.exports = class Channel {
         await this.peers.get(socket_id).connectTransport(transport_id, dtlsParameters);
     }
 
-    async produce(socket_id, producerTransportId, rtpParameters, kind) {
+    async produce(socket_id, producerTransportId, rtpParameters, kind, appData) {
         // handle undefined errors
         return new Promise(
             async function(resolve, reject) {
-                let producer = await this.peers.get(socket_id).createProducer(producerTransportId, rtpParameters, kind)
+                let producer = await this.peers.get(socket_id).createProducer(producerTransportId, rtpParameters, kind, appData)
                 
                 resolve(producer.id)
 
                 this.broadCast(socket_id, 'newProducers', [
                     {
                         producer_id: producer.id,
+                        appData: producer.appData,
                         producer_socket_id: socket_id,
                         user: this.peers.get(socket_id).returnUser()
                     }
