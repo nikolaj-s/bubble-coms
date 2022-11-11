@@ -100,7 +100,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         cb({success: true, message});
 
         // clean up social when messages exceed 20
-        if (server.channels[channel].social.length > 19) {
+        if (server.channels[channel].social.length > 50) {
 
             const last_message = await server.trim_social(channel);
 
