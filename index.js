@@ -127,6 +127,10 @@ const UploadImage = require('./Routes/Misc/UploadImage');
 
 App.use('/upload-image', UploadImage);
 
+const ImageSearch = require('./Routes/ImageSearch/ImageSearch');
+
+App.use('/search-for-images', ImageSearch);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })
