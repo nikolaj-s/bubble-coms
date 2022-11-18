@@ -37,6 +37,8 @@ const SocketValidation = require('./Validation/SocketValidation');
 
 const channelList = new Map();
 
+const serverList = new Map();
+
 const onConnection = async (server, workers, workerIndex, getMediasoupWorker) => {
 
     const io = require('socket.io')(server, {cors: {origin: "*"}})
@@ -47,9 +49,9 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
     .on('connection', async (socket) => {
         
         // server sockets
-        socket.on('joined server', async (data, cb) => userJoinsServer(socket, data.server_id, channelList, cb));
+        socket.on('joined server', async (data, cb) => userJoinsServer(socket, data.server_id, channelList, serverList, cb));
 
-        socket.on('left server', async (data, cb) => UserLeavesServer(socket, data, channelList, cb));
+        socket.on('left server', async (data, cb) => UserLeavesServer(socket, data, channelList, serverList, cb));
 
         socket.on('join channel', async (data, cb) => UserJoinsChannelSocket(socket, data, io, channelList, getMediasoupWorker, cb));
         
@@ -118,11 +120,11 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('widget overlay action', async (data, cb) => WidgetOverlaySocket(socket, data, cb));
 
         // connection errors
-        socket.on('ping timeout', async (data, cb) => ConnectionDropped(socket, data, channelList));
+        socket.on('ping timeout', async (data, cb) => ConnectionDropped(socket, data, channelList, serverList));
 
-        socket.on('transport close', async (data, cb) => ConnectionDropped(socket, data, channelList));
+        socket.on('transport close', async (data, cb) => ConnectionDropped(socket, data, channelList, serverList));
 
-        socket.on('transport error', async (data, cd) => ConnectionDropped(socket, data, channelList));
+        socket.on('transport error', async (data, cd) => ConnectionDropped(socket, data, channelList, serverList));
 
     })
     
