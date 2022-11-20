@@ -46,7 +46,7 @@ const userJoinsServer = async (socket, server_id, channelList, serverList, cb) =
         
         }
 
-        serverList.get(server_id).user_joins_server(user_object);
+        serverList.get(server_id).user_joins_server(socket.id, user_object);
 
         const member_data_to_send = [];
 

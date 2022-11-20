@@ -1,6 +1,3 @@
-const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
-const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
-
 
 const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
     try {
@@ -22,22 +19,28 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
                 await channelList.delete(socket.channel_id);
             }
         }
+        
+        if (socket.current_server) {
+            
+            try {
+                
+                const memberFile = serverList.get(socket.current_server)?.get_user_by_socket_id(socket.id);
 
-        const user = await AccountSchema.findOne({_id: socket.AUTH._id});
+                socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id)});
 
-        const server = await ServerSchema.findOne({_id: socket.current_server});
+                serverList.get(socket.current_server).user_leaves_server(socket.id);
 
-        const memberFile = await server.get_member(user.username);
+                if (serverList.get(socket.current_server).users.size === 0) {
 
-        serverList.get(socket.current_server).user_leaves_server(String(memberFile._id));
+                    serverList.delete(socket.current_server);
+                
+                }
 
-        if (serverList.get(socket.current_server).users.size === 0) {
-
-            serverList.delete(socket.current_server);
+            } catch (error) {
+                return;
+            }
         
         }
-
-        socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id)})
 
         socket.leave(socket.current_server);
 
@@ -48,8 +51,6 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
     } catch(error) {
 
         console.log(error);
-
-        console.log("cleaning up diso")
 
         if (socket.channel_id) {
 

@@ -13,21 +13,42 @@ module.exports = class ServerUserStatus {
         this.users.delete(member_id);
     }
 
-    user_joins_server(member) {
-        this.users.set(member._id, member);
+    user_joins_server(id, member) {
+
+        // check if user exists to avoid dupes
+        for (let [key, value] of this.users) {
+            if (value._id === member._id) {
+                this.users.delete(key);
+                break;
+            }
+        }
+
+        this.users.set(id, member);
     }
 
-    update_user_status(member_id, new_status) {
+    update_user_status(id, new_status) {
 
-        const user = this.users.get(member_id);
+        const user = this.users.get(id);
 
         this.users.set(member_id, {...user, status: new_status});
 
     }
 
+    get_user_by_socket_id(id) {
+        return this.users.get(id);
+    }
+
     get_user_by_member_id(member_id) {
         
-        return this.users.get(member_id);
-    
+        let user;
+
+        for (let [key, value] of this.users) {
+            if (value._id === member_id) {
+                user = value;
+                break;
+            }
+        }
+        
+        return user;
     }
 }

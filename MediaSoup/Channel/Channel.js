@@ -108,7 +108,8 @@ module.exports = class Channel {
             peer.producers.forEach((producer) => {
                 producerList.push({
                     producer_id: producer.id,
-                    user: peer.returnUser()
+                    user: peer.returnUser(),
+                    appData: producer.appData
                 })
             })
         })

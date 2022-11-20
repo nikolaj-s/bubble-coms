@@ -57,7 +57,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         
         socket.on('create channel', async (data, cb) => UserCreatesChannel(socket, data, cb));
 
-        socket.on('disconnect', async (data, cb) => Disconnect(socket, data, channelList, cb));
+        socket.on('disconnect', async (data, cb) => UserLeavesServer(socket, data, channelList, serverList, cb));
 
         socket.on('update server', async (data, cb) => UpdateServer(socket, data, cb));
 
@@ -66,8 +66,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('assign server group', async (data, cb) => assignServerGroup(socket, data, cb));
 
         // channel sockets
-        socket.on('getActiveUsers', async (data, cb) => {});
-
+    
         socket.on('getProducers', async (data, cb) => GetProducers(socket, data, channelList, cb));
 
         socket.on('getRouterRtpCapabilities', async (data, cb) => GetRouterRtpCapabilities(socket, data, channelList, cb));

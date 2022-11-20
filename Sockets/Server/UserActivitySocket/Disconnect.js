@@ -11,13 +11,8 @@ const Disconnect = async (socket, data, channelList, cb) => {
 
             socket.to(socket.current_server).emit("user leaves channel", {id: socket.channel_id.split('/')[1], username: socket.AUTH.username});
         }
-
-
+        console.log('disconnection')
         socket.leave(socket.channel_id);
-
-        socket.leave(socket.current_server);
-
-        socket.channel_id = null;
 
         socket.channel_id = null;
         
