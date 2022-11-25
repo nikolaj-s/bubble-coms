@@ -79,7 +79,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             _id: uuidv4(),
             channel_id: data.channel_id,
             content: content,
-            username: socket.AUTH.username
+            username: socket.AUTH.username,
+            pinned: false
         }
 
         // if channel has persist data enabled --> save message to the social array in the DB
@@ -100,7 +101,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         cb({success: true, message});
 
         // clean up social when messages exceed 20
-        if (server.channels[channel].social.length > 50) {
+        if (server.channels[channel].social.length > 100) {
 
             const last_message = await server.trim_social(channel);
 

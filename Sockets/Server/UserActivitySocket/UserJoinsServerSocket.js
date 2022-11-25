@@ -2,13 +2,13 @@ const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
 
-const userJoinsServer = async (socket, server_id, channelList, serverList, cb) => {
+const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
     try {
         const user = await AccountSchema.findOne({_id: socket.AUTH._id});
 
         if (!user) return cb({error: true, errorMessage: "validation error"});
 
-        const server = await ServerSchema.findOne({_id: server_id});
+        const server = await ServerSchema.findOne({_id: data.server_id});
 
         if (!server) return cb({error: true, errorMessage: "server does not exist"});
 
@@ -23,7 +23,7 @@ const userJoinsServer = async (socket, server_id, channelList, serverList, cb) =
             user_image: user.user_image,
             username: user.username,
             server_group: memberFile.server_group,
-            status: 'online'
+            status: data.status
         }
 
         const channels = server.channels.map(channel => {
@@ -40,20 +40,20 @@ const userJoinsServer = async (socket, server_id, channelList, serverList, cb) =
             }
         })
 
-        if (!serverList.has(server_id)) {
+        if (!serverList.has(data.server_id)) {
 
-            serverList.set(server_id, new ServerUserStatus(server_id));
+            serverList.set(data.server_id, new ServerUserStatus(data.server_id));
         
         }
 
-        serverList.get(server_id).user_joins_server(socket.id, user_object);
+        serverList.get(data.server_id).user_joins_server(socket.id, user_object);
 
         const member_data_to_send = [];
 
         for (const m of server.members) {
             
-            if (serverList.get(server_id).get_user_by_member_id(String(m._id))) {
-                member_data_to_send.push(serverList.get(server_id).get_user_by_member_id(String(m._id)));
+            if (serverList.get(data.server_id).get_user_by_member_id(String(m._id))) {
+                member_data_to_send.push(serverList.get(data.server_id).get_user_by_member_id(String(m._id)));
             } else {
                 member_data_to_send.push(m);
             }
@@ -66,16 +66,17 @@ const userJoinsServer = async (socket, server_id, channelList, serverList, cb) =
             channels: channels,
             ban_list: server.ban_list,
             server_groups: server.server_groups,
-            owner: server.server_owner === user.username ? true : false
+            owner: server.server_owner === user.username ? true : false,
+            pinned: server.pinned_messages
         }
         
-        socket.current_server = server_id;
+        socket.current_server = data.server_id;
 
-        socket.join(server_id);
+        socket.join(data.server_id);
 
-        console.log(`user has joined server ${server_id}`)
+        console.log(`user has joined server ${data.server_id}`)
 
-        socket.to(server_id).emit("user joins server", user_object);
+        socket.to(data.server_id).emit("user joins server", user_object);
 
         cb({success: true, server: server_data});
 

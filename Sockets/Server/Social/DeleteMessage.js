@@ -44,6 +44,8 @@ const DeleteMessage = async (socket, data, cb) => {
 
         }
 
+        await server.delete_pinned_message(message_id);
+
         await server.delete_message(channel_id, message_id);
 
         cb({success: true, message_id: message_id, channel_id: channel_id});

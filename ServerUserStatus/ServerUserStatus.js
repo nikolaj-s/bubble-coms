@@ -30,7 +30,7 @@ module.exports = class ServerUserStatus {
 
         const user = this.users.get(id);
 
-        this.users.set(member_id, {...user, status: new_status});
+        this.users.set(id, {...user, status: new_status});
 
     }
 

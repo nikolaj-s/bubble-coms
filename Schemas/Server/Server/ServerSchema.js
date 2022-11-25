@@ -53,7 +53,8 @@ const ServerSchema = new mongoose.Schema({
     server_owner: {
         type: String,
         required: true
-    }
+    },
+    pinned_messages: []
 })
 
 // verify if user is in server
@@ -295,6 +296,10 @@ ServerSchema.methods.trim_social = function(channel_index) {
     try {
 
         const last_social = this.channels[channel_index].social.pop();
+
+        if (last_social.pinned) {
+            this.pinned_messages.filter(m => m._id !== last_social._id);
+        }
         
         this.save();
 
@@ -414,6 +419,71 @@ ServerSchema.methods.assign_server_group = function(server_group, username) {
     }
 }
 
+// pinned messages
+ServerSchema.methods.add_pinned_message = function (message) {
+    try {
 
+        const c_index = this.channels.findIndex(c => String(c._id) === message.channel_id);
+
+        if (this.channels[c_index].persist_social === false) return;
+
+        this.channels = this.channels.map(c => {
+            if (String(c._id) === message.channel_id) {
+                return {...c, social: c.social.map(m => {
+                    if (m._id === message._id) {
+                        return {...m, pinned: true}
+                    } else {
+                        return m;
+                    }
+                })}
+            } else {
+                return c;
+            }
+        })
+
+        this.pinned_messages.unshift(message);
+
+        return this.save()
+
+    } catch (error) {
+        return error;
+    }
+}
+
+ServerSchema.methods.remove_pinned_message = function(message) {
+    try {
+
+        this.channels = this.channels.map(c => {
+            if (String(c._id) === message.channel_id) {
+                return {...c, social: c.social.map(m => {
+                    if (m._id === message._id) {
+                        return {...m, pinned: true}
+                    } else {
+                        return m;
+                    }
+                })}
+            } else {
+                return c;
+            }
+        })
+        
+        this.pinned_messages = this.pinned_messages.filter(m => String(m._id) !== message._id);
+
+        return this.save();
+
+    } catch (error) {
+        return error;
+    }
+}
+
+ServerSchema.methods.delete_pinned_message = function(id) {
+    try {
+        this.pinned_messages = this.pinned_messages.filter(m => String(m._id) !== id);
+
+        return this.save();
+    } catch (error) {
+        return error;
+    }
+}
 
 module.exports.ServerSchema = mongoose.model('ServerSchema', ServerSchema);
