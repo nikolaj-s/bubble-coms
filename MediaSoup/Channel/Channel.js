@@ -41,6 +41,14 @@ module.exports = class Channel {
         this.plainAudioConsumers = new Map();
     }
 
+    return_peer_by_socket_id(id) {
+        if (this.peers.has(id)) {
+            return this.peers.get(id).user;
+        }
+
+        return {error: true, errorMessage: "You are not currently in a channel"}
+    }
+
     async init_plain_audio_transport() {
         if (!this.audioTransport) {
             
@@ -80,10 +88,19 @@ module.exports = class Channel {
         }
     }
 
+    async pauseConsumer(socket_id, consumerId) {
+        this.peers.get(socket_id).pauseConsumer(consumerId);
+    }
+
+    async resumeConsumer(socket_id, consumerId) {
+        this.peers.get(socket_id).resumeConsumer(consumerId);
+    }
+
     cleanUp() {
-        if (this.peers.size === 1 || this.bot.song_queue.length === 0) {
-            clearInterval(this.bot.interval);
-        }
+
+        console.log('cleaning up intervals')
+
+        clearInterval(this.bot.interval);
     }
 
     getPeersSocketByUsername(username) {

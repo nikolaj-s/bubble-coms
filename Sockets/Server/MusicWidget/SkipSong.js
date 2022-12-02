@@ -3,7 +3,11 @@
 const SkipSong = async (socket, data, cb, channelList) => {
     try {
 
-        await channelList.get(socket.channel_id).bot.skipSong();
+        const user = await channelList.get(socket.channel_id).return_peer_by_socket_id(socket.id);
+
+        if (user.error) return cb({user});
+
+        await channelList.get(socket.channel_id).bot.skipSong(user);
 
         cb({success: true})
 

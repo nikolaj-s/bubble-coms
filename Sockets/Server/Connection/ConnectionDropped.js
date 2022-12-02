@@ -8,6 +8,8 @@ const ConnectionDropped = async (socket, data, channelList, serverList) => {
             
             await channelList.get(socket.channel_id)?.removePeer(socket.id);
 
+            if (channelList.get(socket.channel_id)?.getPeers().size === 0) channelList.get(socket.channel_id)?.cleanUp();
+
             if (channelList.get(socket.channel_id)?.getPeers().size === 0) await channelList.delete(socket.channel_id)
 
             socket.to(socket.current_server).emit("user dropped connection", {id: socket.channel_id.split('/')[1], username: socket.AUTH.username});

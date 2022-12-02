@@ -17,13 +17,13 @@ module.exports = class Bot {
 
     }
 
-    togglePlaying(bool) {
+    togglePlaying(bool, user) {
         if (this.song_queue.length === 0) return;
 
         this.playing = bool;
 
-        this.socket.to(this.channel_id).emit('music-widget/toggle-playing', {playing: this.playing})
-
+        this.socket.to(this.channel_id).emit('music-widget/toggle-playing', {playing: this.playing, user: user})
+        
         if (bool === false && this.interval) {
             clearInterval(this.interval);
             this.interval = null;
@@ -33,7 +33,7 @@ module.exports = class Bot {
 
     }
 
-    pushNewSong(data) {
+    pushNewSong(data, user) {
 
         if (this.song_queue.length === 0 && this.playing === false) {
             this.playing = true;
@@ -41,18 +41,18 @@ module.exports = class Bot {
 
         this.song_queue.push(data);
 
-        this.socket.to(this.channel_id).emit('music-widget/new-song', {song: data})
+        this.socket.to(this.channel_id).emit('music-widget/new-song', {song: data, user: user})
 
         if (!this.interval) {
             this.initTimer();
         }
     }
 
-    skipSong() {
+    skipSong(user) {
 
         this.song_queue.shift();
 
-        this.socket.to(this.channel_id).emit('music-widget/skipped-song', {skipped: true})
+        this.socket.to(this.channel_id).emit('music-widget/skipped-song', {skipped: true, user: user})
 
         this.timer = 0
 
@@ -69,9 +69,14 @@ module.exports = class Bot {
 
     trackTime() {
         try {
-            this.timer = this.timer += 1;
+            this.timer = this.timer += 5;
 
-            if (this.timer === (this.song_queue[0]?.duration + 3)) {
+            console.log(this.timer)
+
+            if (this.timer >= (this.song_queue[0]?.duration + 10)) {
+
+                console.log(this.timer, 'skipping song')
+
                 this.skipSong();
 
                 this.timer = 0;
@@ -95,7 +100,13 @@ module.exports = class Bot {
     }
 
     initTimer() {
-        this.interval = setInterval(this.trackTime.bind(this), 1000);
+        if (this.interval) {
+            clearInterval(this.interval);
+
+            this.interval = null;
+        }
+
+        this.interval = setInterval(this.trackTime.bind(this), 5100);
     }
 
     returnCurrentMusicInfo() {

@@ -54,7 +54,8 @@ const ServerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pinned_messages: []
+    pinned_messages: [],
+    recent_image_searches: []
 })
 
 // verify if user is in server
@@ -481,6 +482,24 @@ ServerSchema.methods.delete_pinned_message = function(id) {
         this.pinned_messages = this.pinned_messages.filter(m => String(m._id) !== id);
 
         return this.save();
+    } catch (error) {
+        return error;
+    }
+}
+
+ServerSchema.methods.update_recent_image_searches = function(arr) {
+    try {
+
+        const current_images = this.recent_image_searches;
+
+        if (current_images.length >= 30) {
+            current_images.splice(0, 5)
+        }
+
+        this.recent_image_searches = [...current_images, ...arr];
+
+        return this.save();
+
     } catch (error) {
         return error;
     }

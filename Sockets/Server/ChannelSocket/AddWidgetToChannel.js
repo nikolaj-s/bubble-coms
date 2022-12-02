@@ -66,16 +66,11 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
         } else if (widget.type === 'video') {
 
-            const videoFormats = ['webm', 'gif', 'mp4']
-
-            if (videoFormats.some(format => widget.text.includes(format)) === false) {
-                return cb({error: true, errorMessage: 'invalid video url'})
-            }
-
             widget = {
                 type: 'video',
                 text: widget.text,
-                looping: widget.bool
+                looping: widget.bool,
+                audio: widget.videoAudio
             }
 
         } else if (widget.type === 'dynamicGallery') {

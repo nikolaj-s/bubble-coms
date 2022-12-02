@@ -37,6 +37,8 @@ const userJoinsServer = require('./Server/UserActivitySocket/UserJoinsServerSock
 const UserLeavesServer = require('./Server/UserActivitySocket/UserLeavesServer');
 const SocketValidation = require('./Validation/SocketValidation');
 const TogglePinMessage = require('./Server/Social/TogglePinMessage');
+const PauseConsumer = require('./Server/ChannelSocket/PauseConsumer');
+const ResumeConsumer = require('./Server/ChannelSocket/ResumeConsumer');
 
 const channelList = new Map();
 
@@ -88,6 +90,9 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('producerClosed', async (data, cb) => CloseProducer(socket, data, channelList, cb));
 
+        socket.on('pauseConsumer', async (data, cb) => PauseConsumer(socket, data, cb, channelList));
+
+        socket.on('resumeConsumer', async (data, cb) => ResumeConsumer(socket, data, cb, channelList));
 
         socket.on('add widget to channel', async (data, cb) => AddWidgetToChannel(socket, data, cb));
 

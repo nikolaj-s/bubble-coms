@@ -3,7 +3,11 @@
 const TogglePlayingMusic = async (socket, data, cb, channelList) => {
     try {
 
-        await channelList.get(socket.channel_id).bot.togglePlaying(data.playing);
+        const user = await channelList.get(socket.channel_id).return_peer_by_socket_id(socket.id);
+
+        if (user.error) return cb({user});
+
+        await channelList.get(socket.channel_id).bot.togglePlaying(data.playing, user);
 
         cb({success: true})
 

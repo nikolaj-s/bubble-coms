@@ -67,7 +67,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             ban_list: server.ban_list,
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false,
-            pinned: server.pinned_messages
+            pinned: server.pinned_messages,
+            recent_searches: server.recent_image_searches
         }
         
         socket.current_server = data.server_id;

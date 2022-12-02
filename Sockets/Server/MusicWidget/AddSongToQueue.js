@@ -8,6 +8,10 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
         if (!channel) return cb({error: true, errorMessage: "You are not currently in a channel"});
 
+        const user = await channelList.get(socket.channel_id).return_peer_by_socket_id(socket.id);
+
+        if (user.error) return cb({user});
+
         const query = data.query;
 
         if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
@@ -23,7 +27,7 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
         if (song.error || !song) return cb({error: true, errorMessage: song.errorMessage});
 
-        channel.bot.pushNewSong(song)
+        channel.bot.pushNewSong(song, user)
 
         cb({success: true});
 

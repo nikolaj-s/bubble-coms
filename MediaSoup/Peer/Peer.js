@@ -96,6 +96,20 @@ module.exports = class Peer {
         }
     }
 
+    async pauseConsumer(consumer_id) {
+
+        if (!this.consumers.has(consumer_id)) return;
+
+        return await this.consumers.get(consumer_id).pause();
+    }
+
+    async resumeConsumer(consumer_id) {
+
+        if (!this.consumers.has(consumer_id)) return;
+
+        return await this.consumers.get(consumer_id).resume();
+    }
+
     closeProducer(producer_id) {
         try {
             this.producers.get(producer_id).close()

@@ -22,7 +22,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         const member = await server.get_member(socket.AUTH.username);
         
         if (member === -1) return cb({error: true, errorMessage: "unauthorized activity"});
-
+        
         const server_group = await server.get_server_group(member.server_group);
         
         if (server_group === -1 || !server_group.user_can_post_channel_social) return cb({error: true, errorMessage: "unauthorized activity"});

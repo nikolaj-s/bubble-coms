@@ -27,6 +27,10 @@ const ChannelSchema = new mongoose.Schema({
     },
     background_blur: {
         type: Number
+    },
+    log: {
+        type: [],
+        default: []
     }
 })
 
