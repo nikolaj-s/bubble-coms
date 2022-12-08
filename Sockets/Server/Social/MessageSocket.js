@@ -72,7 +72,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             link: link,
             local_id: data.content.local_id,
             date: new Date(),
-            display_name: data.content.display_name
+            display_name: data.content.display_name,
         }
 
         const message = {
@@ -82,6 +82,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             username: socket.AUTH.username,
             pinned: false
         }
+
+        message.content.user_image = member.user_image;
 
         // if channel has persist data enabled --> save message to the social array in the DB
         if (server.channels[channel].persist_social) {

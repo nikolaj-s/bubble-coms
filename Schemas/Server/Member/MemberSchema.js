@@ -22,6 +22,10 @@ const MemberSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    status: {
+        type: String,
+        default: "offline"
+    },
     join_date: {
         type: Date,
         default: Date.now

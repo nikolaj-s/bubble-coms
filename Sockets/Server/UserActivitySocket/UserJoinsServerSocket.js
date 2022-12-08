@@ -16,15 +16,22 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
 
         if (memberFile === -1 || memberFile.error) return cb({error: true, errorMessage: "You are not a member of this server"});
 
-        const user_object = {
+        let user_object = {
             _id: String(memberFile._id),
             display_name: user.display_name,
             user_banner: user.user_banner,
             user_image: user.user_image,
             username: user.username,
             server_group: memberFile.server_group,
-            status: data.status
         }
+
+        if (memberFile.display_name !== user.display_name || memberFile.user_banner !== user.user_banner || memberFile.user_image !== user.user_image) {
+
+            await server.update_member(user_object);
+
+        }
+
+        user_object.status = data.status;
 
         const channels = server.channels.map(channel => {
             
@@ -59,6 +66,17 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             }
         }
 
+        const pinned = [];
+
+        for (const p of server.pinned_messages) {
+            for (const u of server.members) {
+                if (p.username === u.username) {
+                    pinned.push({...p, content: {...p.content, display_name: u.display_name, user_image: u.user_image}});
+                    break
+                }
+            }
+        }
+
         const server_data = {
             server_name: server.server_name,
             server_banner: server.server_banner,
@@ -67,7 +85,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             ban_list: server.ban_list,
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false,
-            pinned: server.pinned_messages,
+            pinned: pinned,
             recent_searches: server.recent_image_searches
         }
         

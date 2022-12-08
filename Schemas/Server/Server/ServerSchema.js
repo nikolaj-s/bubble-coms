@@ -73,6 +73,24 @@ ServerSchema.methods.get_member = function(username) {
     }
 }
 
+ServerSchema.methods.update_member = function(user) {
+    try {
+
+        this.members = this.members.map(member => {
+            if (String(member._id) === String(user._id)) {
+                return {...member, ...user}
+            } else {
+                return member;
+            }
+        })
+
+        return this.save();
+
+    } catch (error) {
+        return error;
+    }
+}
+
 ServerSchema.methods.update_member_user_image = function(member_index, image) {
     try {
 
@@ -500,6 +518,18 @@ ServerSchema.methods.update_recent_image_searches = function(arr) {
 
         return this.save();
 
+    } catch (error) {
+        return error;
+    }
+}
+
+ServerSchema.methods.clear_image_search_data = function() {
+    try {
+
+        this.recent_image_searches = [];
+
+        return this.save();
+        
     } catch (error) {
         return error;
     }

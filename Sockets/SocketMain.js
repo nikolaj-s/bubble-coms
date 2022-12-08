@@ -39,6 +39,7 @@ const SocketValidation = require('./Validation/SocketValidation');
 const TogglePinMessage = require('./Server/Social/TogglePinMessage');
 const PauseConsumer = require('./Server/ChannelSocket/PauseConsumer');
 const ResumeConsumer = require('./Server/ChannelSocket/ResumeConsumer');
+const DeleteImageSearchData = require('./Server/Social/DeleteImageSearchData');
 
 const channelList = new Map();
 
@@ -69,6 +70,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('update server groups', async (data, cb) => UpdateServerGroups(socket, data, cb));
 
         socket.on('assign server group', async (data, cb) => assignServerGroup(socket, data, cb));
+
+        socket.on('clear image search data', async (data, cb) => DeleteImageSearchData(socket, data, cb));
 
         // channel sockets
     
@@ -114,7 +117,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));
         
-        socket.on('poke', async (data, cb) => PokeUserSocket(socket, data, cb, channelList));
+        socket.on('poke', async (data, cb) => PokeUserSocket(socket, data, cb, serverList));
 
         socket.on('kick', async (data, cb) => KickUserSocket(socket, data, cb, channelList));
 

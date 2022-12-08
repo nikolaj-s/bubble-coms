@@ -51,4 +51,19 @@ module.exports = class ServerUserStatus {
         
         return user;
     }
+
+    get_socket_id_by_member_id(id) {
+
+        let socket_id;
+
+        for (let [key, value] of this.users) {
+            if (value._id === id) {
+                socket_id = key;
+                break;
+            }
+        }
+
+        return socket_id;
+
+    }
 }

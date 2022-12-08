@@ -31,7 +31,7 @@ const UpdateServer = async (socket, data, cb) => {
 
         // validate if password change
         if (data.server_password !== null && data.server_password.length > 1) {
-            if (permissions.user_can_server_password === false) return cb({error: true, errorMessage: "You do not have to required permissions to perform this action"});
+            if (permissions.user_can_edit_server_password === false) return cb({error: true, errorMessage: "You do not have to required permissions to perform this action"});
 
             const verify_password = await bcrypt.compare(data.server_password, server.server_password);
 
