@@ -445,7 +445,7 @@ ServerSchema.methods.add_pinned_message = function (message) {
         const c_index = this.channels.findIndex(c => String(c._id) === message.channel_id);
 
         if (this.channels[c_index].persist_social === false) return;
-
+        
         this.channels = this.channels.map(c => {
             if (String(c._id) === message.channel_id) {
                 return {...c, social: c.social.map(m => {
@@ -476,7 +476,7 @@ ServerSchema.methods.remove_pinned_message = function(message) {
             if (String(c._id) === message.channel_id) {
                 return {...c, social: c.social.map(m => {
                     if (m._id === message._id) {
-                        return {...m, pinned: true}
+                        return {...m, pinned: false}
                     } else {
                         return m;
                     }
