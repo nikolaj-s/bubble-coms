@@ -42,8 +42,8 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         res.send({success: true, images: images});
 
-        const data_to_save = images.splice(4, 10);
-        console.log(data_to_save)
+        const data_to_save = images.splice(7, 10);
+        
         await server.update_recent_image_searches(data_to_save);
 
     } catch (error) {

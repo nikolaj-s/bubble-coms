@@ -1,6 +1,8 @@
 
 const fetch = require('node-fetch');
 
+const { v4: uuidv4} = require('uuid')
+
 const AddSongToQueue = async (socket, data, cb, channelList) => {
     try {
 
@@ -8,27 +10,36 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
         if (!channel) return cb({error: true, errorMessage: "You are not currently in a channel"});
 
+        if (channel.bot.song_queue.length >= 11) return cb({error: true, errorMessage: "Queue limit has been reached"});
+
         const user = await channelList.get(socket.channel_id).return_peer_by_socket_id(socket.id);
 
         if (user.error) return cb({user});
+        
+        if (data.song) {
 
-        const query = data.query;
+            channel.bot.pushNewSong({...data.song}, user)
+        
+        } else {
 
-        if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
+            const query = data.query;
 
-        const song = await fetch(`https://bubble-music.herokuapp.com/fetch-song-info?query=${query}?channel-id=${socket.channel_id}`)
-        .then(response => {
-            return response.json();
-        })
-        .catch(error => {
-            console.log(error);
-            return {error: true, errorMessage: 'fatal error'}
-        })
+            if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
 
-        if (song.error || !song) return cb({error: true, errorMessage: song.errorMessage});
+            const song = await fetch(`https://bubble-music.herokuapp.com/fetch-song-info?query=${query}?channel-id=${socket.channel_id}`)
+            .then(response => {
+                return response.json();
+            })
+            .catch(error => {
+                console.log(error);
+                return {error: true, errorMessage: 'fatal error'}
+            })
 
-        channel.bot.pushNewSong(song, user)
+            if (song.error || !song) return cb({error: true, errorMessage: song.errorMessage});
 
+            channel.bot.pushNewSong({...song, _id: uuidv4(), liked: false}, user)
+
+        }
         cb({success: true});
 
     } catch (error) {

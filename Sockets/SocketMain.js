@@ -40,6 +40,10 @@ const TogglePinMessage = require('./Server/Social/TogglePinMessage');
 const PauseConsumer = require('./Server/ChannelSocket/PauseConsumer');
 const ResumeConsumer = require('./Server/ChannelSocket/ResumeConsumer');
 const DeleteImageSearchData = require('./Server/Social/DeleteImageSearchData');
+const BanUserSocket = require('./Server/User/BanUserSocket');
+const UnBanUserSocket = require('./Server/User/UnBanUserSocket');
+const LikeSong = require('./Server/MusicWidget/LikeSong');
+const UnLikeSong = require('./Server/MusicWidget/UnLikeSong');
 
 const channelList = new Map();
 
@@ -123,6 +127,10 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('update status', async (data, cb) => UserActiveStatus(socket, data, cb, serverList));
 
+        socket.on('ban', async (data, cb) => BanUserSocket(socket, data, cb, serverList));
+
+        socket.on('un ban', async (data, cb) => UnBanUserSocket(socket, data, cb));
+
         // music bot
         socket.on('add song to queue', async (data, cb) => AddSongToQueue(socket, data, cb, channelList));
 
@@ -131,6 +139,10 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('toggle playing music', async (data, cb) => TogglePlayingMusic(socket, data, cb, channelList));
 
         socket.on('skip song', async (data, cb) => SkipSong(socket, data, cb, channelList));
+
+        socket.on('like song', async (data, cb) => LikeSong(socket, data, cb));
+
+        socket.on('un like song', async (data, cb) => UnLikeSong(socket, data, cb));
 
         // widget overlay
         socket.on('widget overlay action', async (data, cb) => WidgetOverlaySocket(socket, data, cb));

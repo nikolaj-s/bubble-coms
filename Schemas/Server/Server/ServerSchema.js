@@ -148,20 +148,28 @@ ServerSchema.methods.kick_user = function(member_index) {
     }
 }
 
-ServerSchema.methods.ban_user = function(member_index) {
+ServerSchema.methods.un_ban_user = function(id) {
     try {
 
-        const member = this.members[member_index];
-
-        const ban_object = {
-            username: member.username
-        }
-
-        this.ban_list.push(ban_object);
-
-        this.members.splice(member_index, 1);
+        this.ban_list = this.ban_list.filter(ban => String(ban._id) !== String(id));
 
         return this.save();
+
+    } catch (error) {
+        return error;
+    }
+}
+
+ServerSchema.methods.ban_user = function(member_id, username) {
+    try {
+
+        this.members = this.members.filter(m => String(m._id) !== String(member_id));
+
+        this.ban_list.push({username: username});
+
+        this.save();
+
+        return this.ban_list[this.ban_list.length - 1];
 
     } catch (error) {
         return error;
@@ -510,8 +518,8 @@ ServerSchema.methods.update_recent_image_searches = function(arr) {
 
         const current_images = this.recent_image_searches;
 
-        if (current_images.length >= 30) {
-            current_images.splice(0, 5)
+        if (current_images.length >= 15) {
+            current_images.splice(0, 3)
         }
 
         this.recent_image_searches = [...current_images, ...arr];
@@ -533,6 +541,50 @@ ServerSchema.methods.clear_image_search_data = function() {
     } catch (error) {
         return error;
     }
+}
+
+// music widgets
+
+ServerSchema.methods.like_song = function(channel_id, song) {
+
+    this.channels = this.channels.map(channel => {
+        if (String(channel._id) === String(channel_id)) {
+            return {...channel, widgets: channel.widgets.map(widget => {
+                if (widget.type === 'music') {
+                    console.log(widget, song)
+                    return {...widget, content: {...widget.content, liked_songs: [...widget.content.liked_songs, song]}}
+                } else{
+                    return widget;
+                }
+            })}
+        } else {
+            return channel;
+        }
+    })
+
+    return this.save();
+
+}
+
+ServerSchema.methods.un_like_song = function(channel_id, song) {
+
+    this.channels = this.channels.map(channel => {
+        if (String(channel._id) === String(channel_id)) {
+            return {...channel, widgets: channel.widgets.map(widget => {
+                if (widget.type === 'music') {
+
+                    return {...widget, content: {...widget.content, liked_songs: widget.content.liked_songs.filter(s => s._id !== song._id)}}
+
+                } else {
+                    return widget;
+                }
+            })}
+        } else {
+            return channel;
+        }
+    })
+
+    return this.save();
 }
 
 module.exports.ServerSchema = mongoose.model('ServerSchema', ServerSchema);

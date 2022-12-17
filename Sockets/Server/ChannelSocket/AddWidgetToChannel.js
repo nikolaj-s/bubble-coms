@@ -118,7 +118,8 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
             widget = {
                 type: 'music',
-                queue: []
+                queue: [],
+                liked_songs: []
             }
 
         } else if (widget.type === 'spinner') {

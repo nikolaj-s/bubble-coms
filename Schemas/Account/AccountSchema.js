@@ -126,17 +126,7 @@ AccountSchema.methods.join_server = function(server_id) {
 AccountSchema.methods.user_has_been_banned = function(server_id) {
     try {
 
-        const servers =  this.joined_servers;
-
-        const index = servers.findIndex((el) => {el === server_id})
-
-        if (index === -1) {
-            return {error: "Error Server Id Does Not Exist"}
-        }
-
-        servers.splice(index, 1);
-
-        this.joined_servers = servers;
+        this.joined_servers = this.joined_servers.filter(server => server !== server_id);
 
         return this.save();
 
