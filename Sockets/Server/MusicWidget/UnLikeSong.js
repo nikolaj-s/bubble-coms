@@ -13,7 +13,7 @@ const UnLikeSong = async (socket, data, cb) => {
 
         cb({success: true, song: song, channel_id: data.channel_id});
 
-        socket.to(socket.current_server).emit('liked song', {song: song, channel_id: data.channel_id});
+        socket.to(socket.current_server).emit('un liked song', {song: song, channel_id: data.channel_id});
 
     } catch (error) {
         console.log(error);
