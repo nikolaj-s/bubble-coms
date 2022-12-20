@@ -44,6 +44,7 @@ const BanUserSocket = require('./Server/User/BanUserSocket');
 const UnBanUserSocket = require('./Server/User/UnBanUserSocket');
 const LikeSong = require('./Server/MusicWidget/LikeSong');
 const UnLikeSong = require('./Server/MusicWidget/UnLikeSong');
+const RemoveSongFromQueue = require('./Server/MusicWidget/RemoveSongFromQueue');
 
 const channelList = new Map();
 
@@ -132,6 +133,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('un ban', async (data, cb) => UnBanUserSocket(socket, data, cb));
 
         // music bot
+        socket.on('remove song from queue', async (data, cb) => RemoveSongFromQueue(socket, data, cb, channelList));
+
         socket.on('add song to queue', async (data, cb) => AddSongToQueue(socket, data, cb, channelList));
 
         socket.on('fetch current music info', async (data, cb) => FetchCurrentMusic(socket, data, cb, channelList));

@@ -52,7 +52,8 @@ const UpdateChannel = async (socket, data, cb) => {
             persist_social: new_channel_data.persist_social,
             widgets: new_channel_data.widgets,
             channel_background: image?.url ? image.url : new_channel_data.channel_background,
-            background_blur: new_channel_data.background_blur
+            background_blur: new_channel_data.background_blur,
+            disable_streams: new_channel_data.disable_streams
         }
 
         if (new_channel_data.clear_social) {

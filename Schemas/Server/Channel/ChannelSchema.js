@@ -31,6 +31,10 @@ const ChannelSchema = new mongoose.Schema({
     log: {
         type: [],
         default: []
+    },
+    disable_streams: {
+        type: Boolean,
+        default: false
     }
 })
 

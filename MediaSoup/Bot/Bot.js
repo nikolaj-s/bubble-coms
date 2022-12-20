@@ -17,6 +17,16 @@ module.exports = class Bot {
 
     }
 
+    removeSongFromQueue(song, user) {
+        const index = this.song_queue.findIndex(s => s._id === song._id);
+
+        if (index === -1) return;
+
+        this.song_queue.splice(index, 1);
+
+        this.socket.to(this.channel_id).emit('music-widget/song-removed', {song: song, user: user});
+    }
+
     togglePlaying(bool, user) {
         if (this.song_queue.length === 0) return;
 

@@ -20,6 +20,9 @@ const ServerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    inactive_channel: {
+        type: String,
+    },
     members: [MemberSchema],
     channels: [ChannelSchema],
     ban_list: [BanSchema],
@@ -57,6 +60,12 @@ const ServerSchema = new mongoose.Schema({
     pinned_messages: [],
     recent_image_searches: []
 })
+
+ServerSchema.methods.update_inactive_channel = function(channel_id) {
+    this.inactive_channel = channel_id;
+
+    return this.save();
+}
 
 // verify if user is in server
 ServerSchema.methods.get_member = function(username) {
@@ -359,7 +368,7 @@ ServerSchema.methods.update_channel = function(channel_id, channel) {
 
         this.channels = this.channels.map(c => {
             if (String(c._id) === channel_id) {
-                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur}
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams}
             } else {
                 return c;
             }

@@ -86,13 +86,21 @@ const UpdateServer = async (socket, data, cb) => {
 
         }
 
+        if (data.inactive_channel) {
+            if (permissions.user_can_edit_server_banner === false && permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
+
+            await server.update_inactive_channel(data.inactive_channel.id);
+
+        }
+
         await server.save();
         
         const data_to_send = {
             success: true, 
             data: {
                 server_banner: server.server_banner,
-                server_name: server.server_name
+                server_name: server.server_name,
+                inactive_channel: server.inactive_channel
             }
         }
         

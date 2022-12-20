@@ -43,7 +43,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
                 persist_social: channel.persist_social,
                 widgets: channel.widgets,
                 channel_background: channel.channel_background,
-                background_blur: channel.background_blur
+                background_blur: channel.background_blur,
+                disable_streams: channel.disable_streams
             }
         })
 
@@ -86,7 +87,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false,
             pinned: pinned,
-            recent_searches: server.recent_image_searches
+            recent_searches: server.recent_image_searches,
+            inactive_channel: server.inactive_channel
         }
         
         socket.current_server = data.server_id;
