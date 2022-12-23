@@ -13,6 +13,8 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         const images = req.files;
 
+        await user.update_new_account_state(false);
+
         if (new_data.password) {
 
             if (new_data.newPassword === new_data.password) return res.send({error: true, errorMessage: "New password cannot be the same as the old password"});
