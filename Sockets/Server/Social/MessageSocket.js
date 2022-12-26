@@ -59,7 +59,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         }
 
-        const image = file ? file.url : imageFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
+        const image = file ? file.url : imageFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false && data.content.text.includes('mp4') === false)) ? data.content.text : false;
 
         const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
@@ -80,7 +80,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             channel_id: data.channel_id,
             content: content,
             username: socket.AUTH.username,
-            pinned: false
+            pinned: false,
         }
 
         message.content.user_image = member.user_image;
