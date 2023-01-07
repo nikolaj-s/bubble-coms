@@ -23,6 +23,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             user_image: user.user_image,
             username: user.username,
             server_group: memberFile.server_group,
+            join_date: memberFile.join_date
         }
 
         if (memberFile.display_name !== user.display_name || memberFile.user_banner !== user.user_banner || memberFile.user_image !== user.user_image) {

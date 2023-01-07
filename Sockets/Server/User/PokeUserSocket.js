@@ -11,6 +11,7 @@ const PokeUserSocket = async (socket, data, cb, serverList) => {
 
         socket.to(user_to_poke).emit('poke', {message: `${user.display_name} has poked you!`});
 
+        cb({success: true});
     } catch (error) {
         console.log(error);
         cb({error: true, errorMessage: "fatal error poking user"});
