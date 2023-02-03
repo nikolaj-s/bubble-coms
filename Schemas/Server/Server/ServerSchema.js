@@ -527,7 +527,7 @@ ServerSchema.methods.update_recent_image_searches = function(arr) {
 
         const current_images = this.recent_image_searches;
 
-        if (current_images.length >= 15) {
+        if (current_images.length >= 60) {
             current_images.splice(0, 3)
         }
 

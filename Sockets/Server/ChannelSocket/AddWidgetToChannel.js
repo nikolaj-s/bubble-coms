@@ -1,9 +1,9 @@
 
-const fetch = require('node-fetch')
-
 const { v4: uuidv4} = require('uuid')
 
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
+
+const ImageSearch = require('../../../Util/Image/ImageSearch');
 
 const ImageUpload = require("../../../Util/Image/ImageUpload");
 
@@ -75,24 +75,9 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
         } else if (widget.type === 'dynamicGallery') {
 
-            const query = widget.text
-
-            const contentFilter = widget.bool ? 'high' : 'off';
+            const query = widget.text;
             
-            const images = await fetch(`https://customsearch.googleapis.com/customsearch/v1/siterestrict?cx=93ba4b953c47e49a6&filter=1&gl=ca&imgSize=HUGE&imgType=photo&num=10&q=${query}&safe=${contentFilter}&searchType=image&key=AIzaSyA6OlfIWuv8ADw_XSrZ3WDyY9bwOI3qWmA`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items) {
-                    return data.items.map(item => {
-                        return item.link
-                    })
-                } else {
-                    return {error: true}
-                }
-            })
-            .catch(error => {
-                return {error: true}
-            })
+            const images = await ImageSearch(query);
 
             if (images.error) return cb({error: true, errorMessage: 'no image results'});
 
@@ -106,8 +91,9 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
             widget = {
                 type: 'dynamicGallery',
-                text: images,
-                date: datetime
+                text: images.splice(0, 15),
+                date: datetime,
+                query: query
             }
 
         } else if (widget.type === 'music') {
