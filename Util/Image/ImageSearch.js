@@ -20,7 +20,7 @@ const ImageSearch = async (query) => {
             let uri = `https://${img.split('%3A%2F%2F')[1].split('%2F').join('/').split('&amp')[0].split('%3F').join('?').split('%3D').join('&')}`;
 
             if (uri.endsWith('.gif') || uri.endsWith('.jpg') || uri.endsWith('.png') || uri.endsWith('.webp')) {
-                images.push(uri);
+                images.push({preview: uri, type: 'image'});
             }
             
         }
@@ -32,7 +32,7 @@ const ImageSearch = async (query) => {
             .then(data => {
                 if (data.items) {
                     return data.items.map(item => {
-                        return item.link
+                        return {preview: item.link, type: 'image'}
                     })
                 } else {
                     return {error: true}

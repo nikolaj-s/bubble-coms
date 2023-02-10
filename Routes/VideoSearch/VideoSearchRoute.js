@@ -1,8 +1,9 @@
+
 const ValidationMiddleWare = require('../Validation/ValidationMiddleWare');
 
 const { ServerSchema } = require('../../Schemas/Server/Server/ServerSchema');
 
-const ImageSearch = require('../../Util/Image/ImageSearch');
+const VideoSearch = require('../../Util/Video/VideoSearch');
 
 const route = require('express').Router();
 
@@ -25,14 +26,14 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         
         if (server_group === -1 || !server_group.user_can_post_channel_social) return res.send({error: true, errorMessage: "unauthorized activity"});
 
-        const images = await ImageSearch(query);
+        const videos = await VideoSearch(query);
 
-        if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
+        if (videos.error || videos.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 
-        res.send({success: true, media: images});
+        res.send({success: true, media: videos});
 
-        const data_to_save = images.splice(7, 10);
-        
+        const data_to_save = videos.splice(6, 10);
+
         await server.update_recent_image_searches(data_to_save);
 
     } catch (error) {

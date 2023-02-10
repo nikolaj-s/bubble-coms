@@ -58,7 +58,7 @@ const ServerSchema = new mongoose.Schema({
         required: true
     },
     pinned_messages: [],
-    recent_image_searches: []
+    recent_image_searches: [],
 })
 
 ServerSchema.methods.update_inactive_channel = function(channel_id) {
@@ -539,6 +539,7 @@ ServerSchema.methods.update_recent_image_searches = function(arr) {
         return error;
     }
 }
+
 
 ServerSchema.methods.clear_image_search_data = function() {
     try {

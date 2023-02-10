@@ -35,9 +35,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         // verify message contents
         const imageFormats = ['webp', 'jpg', 'jpeg', 'png', 'gif', 'images'];
 
-        const videoFormats = ['webm', 'mp4']
-
-        const websiteFormats = ['.com', '.ca', '.co']
+        const videoFormats = ['webm', 'mp4'];
 
         let file;
         
@@ -63,16 +61,63 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        const link = websiteFormats.some(format => data.content.text.includes(format)) ? data.content.text : false;
+        let link;
+
+        let iFrame;
+
+        let t;
+
+        if (data.content.text.includes('https')) {
+            for (const text of data.content.text.split(' ')) {
+                if (text.includes('redgif')) {
+                
+                    iFrame = "https://redgifs.com/ifr/" + (text.split('redgifs.com/')[1]?.includes('watch') ? text.split('redgifs.com/')[1]?.split('watch/')[1].toLowerCase() : text.split('redgifs.com/')[1]?.split('-')[0].toLowerCase());
+                
+                } else if (text.includes('youtu')) {
+    
+                    iFrame = "https://www.youtube.com/embed/" + (text.split('/')[3].includes('watch?') ? text.split('/')[3].split('watch?v=')[1].split('&')[0] : text.split('/')[3]);
+    
+                } else if (text.includes('pornhub')) {
+    
+                    iFrame = "https://www.pornhub.com/embed/" + (text.split('viewkey=')[1])
+    
+                } else  if (text.includes('xvideos')) {
+    
+                    iFrame = "https://www.xvideos.com/embedframe/" + (text.split('video')[1].split('/')[0]);
+    
+                } else if (text.includes('reddit')) {
+    
+                    iFrame = "https://www.redditmedia.com/r/" + (text.split('r/')[1].split('?utm_')[0] + "?ref_source=embed&amp;ref=share&amp;embed=true&amp;theme=dark")
+    
+                } else if (text.includes('steampowered')) {
+    
+                    iFrame = "https://store.steampowered.com/widget/" + (text.split('app/')[1].split('/')[0]);
+    
+                } else if (text.includes('twitter')) {
+                    
+                    twitter = text.split('status/')[1].split('?')[0];
+                    
+                } else if (text.includes('https')) {
+    
+                    link = text;
+                
+                } else {
+                    t = text + " ";
+                }
+
+            }
+        } else {
+            t = data.content.text;
+        }
 
         const content = {
             image: image,
-            text: data.content.text,
+            text: t,
             video: video,
             link: link,
+            iFrame: iFrame,
             local_id: data.content.local_id,
             date: new Date(),
-            display_name: data.content.display_name,
         }
 
         const message = {
@@ -80,10 +125,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             channel_id: data.channel_id,
             content: content,
             username: socket.AUTH.username,
-            pinned: false,
+            pinned: false
         }
-
-        message.content.user_image = member.user_image;
 
         // if channel has persist data enabled --> save message to the social array in the DB
         if (server.channels[channel].persist_social) {

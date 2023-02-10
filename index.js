@@ -131,8 +131,16 @@ const ImageSearchRoute = require('./Routes/ImageSearch/ImageSearchRoute');
 
 App.use('/search-for-images', ImageSearchRoute);
 
+const VideoSearchRoute = require('./Routes/VideoSearch/VideoSearchRoute');
+
+App.use('/search-for-videos', VideoSearchRoute);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })
+
+
+
+
 
 
