@@ -21,6 +21,8 @@ const DeleteImageSearchData = async (socket, data, cb) => {
 
         cb({success: true});
 
+        socket.to(socket.current_server).emit('image data cleared');
+
     } catch (error) {
         console.log(error);
         cb({error: true, errorMessage: error.message})

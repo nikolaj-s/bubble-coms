@@ -14,6 +14,8 @@ const UserCreatesChannel = async (socket, data, cb) => {
         
         if (data.channel_name.length < 3) return cb({error: true, errorMessage: "Channel Name Cannot Be less than 3 characters long"});
 
+        if (data.channel_name.length > 128) return cb({error: true, errorMessage: "Channel name cannot be longer than 128 characters"});
+
         if (data.channel_name.includes('/')) return cb({error: true, errorMessage: "Channel Name Cannot Include A Forward Slash"});
 
         // validate users permissions
@@ -27,9 +29,18 @@ const UserCreatesChannel = async (socket, data, cb) => {
 
         if (server_group.user_can_manage_channels === false) return socket.emit('error', {error: true, errorMessage: "you do not have permissions to perform this action"})
 
+        let auth_users;
+
+        const server_owner = server.members.find(u => u.username === server.server_owner);
+            
+        auth_users = [...data.auth_users, String(server_owner._id), String(user._id === server_owner._id ? "" : user._id)];
+        
         const channel_data = {
             channel_name: data.channel_name,
-            persist_social: data.persist_social
+            persist_social: data.persist_social,
+            auth_users: auth_users,
+            locked_channel: data.locked_channel,
+            text_only: data.text_only
         }
 
         await server.create_channel(channel_data);

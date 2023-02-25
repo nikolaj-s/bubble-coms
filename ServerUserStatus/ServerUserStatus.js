@@ -26,6 +26,12 @@ module.exports = class ServerUserStatus {
         this.users.set(id, member);
     }
 
+    update_member_data(id, member) {
+        const user = this.users.get(id);
+
+        this.users.set(id, {status: user.status, ...member});
+    }
+
     update_user_status(id, new_status) {
 
         const user = this.users.get(id);

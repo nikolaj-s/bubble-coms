@@ -35,6 +35,18 @@ const ChannelSchema = new mongoose.Schema({
     disable_streams: {
         type: Boolean,
         default: false
+    },
+    auth_users: {
+        type: [],
+        default: []
+    },
+    locked_channel: {
+        type: Boolean,
+        default: false
+    },
+    text_only: {
+        type: Boolean,
+        default: false
     }
 })
 

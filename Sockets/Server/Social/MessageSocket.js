@@ -35,7 +35,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         // verify message contents
         const imageFormats = ['webp', 'jpg', 'jpeg', 'png', 'gif', 'images'];
 
-        const videoFormats = ['webm', 'mp4'];
+        const videoFormats = ['webm', 'mp4', 'm4v', 'avi'];
 
         let file;
         
@@ -115,7 +115,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
                 } else if (text.includes('vimeo')) {
                     
-                    iFrame = "https://player.vimeo.com/video/" + text.split('com/')[1];
+                    iFrame = "https://player.vimeo.com/video/" + text.split('com/')[1].split('/').join('?h=');
                     
                     link = text;
 

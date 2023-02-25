@@ -45,6 +45,7 @@ const UnBanUserSocket = require('./Server/User/UnBanUserSocket');
 const LikeSong = require('./Server/MusicWidget/LikeSong');
 const UnLikeSong = require('./Server/MusicWidget/UnLikeSong');
 const RemoveSongFromQueue = require('./Server/MusicWidget/RemoveSongFromQueue');
+const UserUpdatesAccount = require('./Server/User/UserUpdatesAccount');
 
 const channelList = new Map();
 
@@ -77,6 +78,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('assign server group', async (data, cb) => assignServerGroup(socket, data, cb));
 
         socket.on('clear image search data', async (data, cb) => DeleteImageSearchData(socket, data, cb));
+
+        socket.on('update member file', async (data, cb) => UserUpdatesAccount(socket, data, cb, channelList, serverList));
 
         // channel sockets
     

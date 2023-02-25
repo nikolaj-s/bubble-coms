@@ -36,16 +36,22 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
 
         const channels = server.channels.map(channel => {
             
+            const auth = channel.locked_channel ? channel.auth_users.findIndex(m => m === user_object._id) !== -1 : true
+            
             return {
                 _id: channel._id,
                 channel_name: channel.channel_name,
                 users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : [],
-                social: channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
+                social: !auth ? [] : channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
                 persist_social: channel.persist_social,
-                widgets: channel.widgets,
+                widgets: !auth ? [] : channel.widgets,
                 channel_background: channel.channel_background,
                 background_blur: channel.background_blur,
-                disable_streams: channel.disable_streams
+                disable_streams: channel.disable_streams,
+                auth_users: channel.auth_users,
+                locked_channel: channel.locked_channel,
+                text_only: channel.text_only,
+                auth: auth
             }
         })
 
@@ -87,9 +93,11 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             ban_list: server.ban_list,
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false,
+            server_owner: server.server_owner,
             pinned: pinned,
             recent_searches: server.recent_image_searches,
-            inactive_channel: server.inactive_channel
+            inactive_channel: server.inactive_channel,
+            user: user_object
         }
         
         socket.current_server = data.server_id;

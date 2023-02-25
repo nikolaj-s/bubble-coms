@@ -1,5 +1,5 @@
 
-const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
+const UserLeavesServer = async (socket, data, channelList, serverList, cb = () => {}) => {
     try {
 
         if (socket.channel_id) {
@@ -42,6 +42,8 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
         
         }
 
+        cb({success: true})
+
         socket.leave(socket.current_server);
 
         socket.disconnect();
@@ -51,6 +53,8 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb) => {
     } catch(error) {
 
         console.log(error);
+
+        cb({success: true})
 
         if (socket.channel_id) {
 
