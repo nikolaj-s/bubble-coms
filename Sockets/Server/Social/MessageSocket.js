@@ -1,14 +1,16 @@
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 
+// UTIL
 const ImageUpload = require("../../../Util/Image/ImageUpload");
 
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
-const { v4: uuidv4} = require('uuid')
+const UnpackURL = require("../../../Util/UnpackURL/UnpackURL");
+
+const { v4: uuidv4} = require('uuid');
 
 const MessageSocket = async (socket, data, channelList, cb) => {
     try {
-
         // prevent large text
         if (data.content.text.length === 0 && !data.file) return cb({error: true, errorMessage: "Cannot send empty message"})
 
@@ -49,8 +51,6 @@ const MessageSocket = async (socket, data, channelList, cb) => {
                 console.log(error)
             })
 
-            console.log(file)
-
             if (file.error) {
                 return cb({error: true, errorMessage: file.errorMessage});
             }
@@ -61,80 +61,11 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        let link;
-
-        let iFrame;
-
-        let t;
-
-        let twitter;
-
-        if (data.content.text.includes('https')) {
-            for (const text of data.content.text.split(' ')) {
-                if (text.includes('redgif')) {
-                
-                    iFrame = "https://redgifs.com/ifr/" + (text.split('redgifs.com/')[1]?.includes('watch') ? text.split('redgifs.com/')[1]?.split('watch/')[1].toLowerCase() : text.split('redgifs.com/')[1]?.split('-')[0].toLowerCase());
-                    
-                    link = text;
-
-                } else if (text.includes('youtu')) {
-    
-                    iFrame = "https://www.youtube.com/embed/" + (text.split('/')[3].includes('watch?') ? text.split('/')[3].split('watch?v=')[1].split('&')[0] : text.split('/')[3]);
-                    
-                    link = text;
-                    
-                } else if (text.includes('pornhub')) {
-    
-                    iFrame = "https://www.pornhub.com/embed/" + (text.split('viewkey=')[1])
-                    
-                    link = text;
-
-                } else  if (text.includes('xvideos')) {
-    
-                    iFrame = "https://www.xvideos.com/embedframe/" + (text.split('video')[1].split('/')[0]);
-                    
-                    link = text;
-
-                } else if (text.includes('reddit')) {
-    
-                    iFrame = "https://www.redditmedia.com/r/" + (text.split('r/')[1].split('?utm_')[0] + "?ref_source=embed&amp;ref=share&amp;embed=true&amp;theme=dark")
-                    
-                    link = text;
-
-                } else if (text.includes('steampowered')) {
-    
-                    iFrame = "https://store.steampowered.com/widget/" + (text.split('app/')[1].split('/')[0]);
-                    
-                    link = text;
-
-                } else if (text.includes('twitter')) {
-                    
-                    twitter = text.split('status/')[1].split('?')[0];
-                    
-                    link = text;
-
-                } else if (text.includes('vimeo')) {
-                    
-                    iFrame = "https://player.vimeo.com/video/" + text.split('com/')[1].split('/').join('?h=');
-                    
-                    link = text;
-
-                } else if (text.includes('https')) {
-
-                    link = text;
-                
-                } else {
-                    t = text + " ";
-                }
-
-            }
-        } else {
-            t = data.content.text;
-        }
+        const {text, iFrame, link, twitter} = UnpackURL(data.content.text);
 
         const content = {
             image: image,
-            text: t,
+            text: text,
             video: video,
             link: link,
             iFrame: iFrame,

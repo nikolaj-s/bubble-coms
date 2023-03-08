@@ -46,6 +46,7 @@ const LikeSong = require('./Server/MusicWidget/LikeSong');
 const UnLikeSong = require('./Server/MusicWidget/UnLikeSong');
 const RemoveSongFromQueue = require('./Server/MusicWidget/RemoveSongFromQueue');
 const UserUpdatesAccount = require('./Server/User/UserUpdatesAccount');
+const SearchSongs = require('./Server/MusicWidget/SearchSongs');
 
 const channelList = new Map();
 
@@ -149,6 +150,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('like song', async (data, cb) => LikeSong(socket, data, cb));
 
         socket.on('un like song', async (data, cb) => UnLikeSong(socket, data, cb));
+
+        socket.on('search songs', async (data, cb) => SearchSongs(socket, data, cb));
 
         // widget overlay
         socket.on('widget overlay action', async (data, cb) => WidgetOverlaySocket(socket, data, cb));

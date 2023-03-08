@@ -1,7 +1,7 @@
 
 const fetch = require('node-fetch');
 
-const { v4: uuidv4} = require('uuid')
+const { v4: uuidv4} = require('uuid');
 
 const AddSongToQueue = async (socket, data, cb, channelList) => {
     try {
