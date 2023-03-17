@@ -23,7 +23,8 @@ route.get('/', async (req, res, next) => {
                 user_banner: Account.user_banner,
                 verified: Account.verified,
                 servers: Account.joined_servers,
-                new_account_state: Account.new_account_state
+                new_account_state: Account.new_account_state,
+                profile_picture_shape: Account.profile_picture_shape
             }
 
             return res.send({success: true, account: {...acccount_details}})

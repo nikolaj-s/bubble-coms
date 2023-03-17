@@ -55,6 +55,10 @@ const AccountSchema = new mongoose.Schema({
     created_servers: {
         type: [String],
         default: []
+    },
+    profile_picture_shape: {
+        type: String,
+        default: 'circle'
     }
 })
 
@@ -68,6 +72,14 @@ AccountSchema.methods.generate_secret = function() {
     this.secret = number;
 
     return this.save();
+}
+
+AccountSchema.methods.update_profile_shape = function(shape) {
+
+    this.profile_picture_shape = shape;
+
+    return this.save();
+
 }
 
 AccountSchema.methods.update_verification_state = function(bool) {

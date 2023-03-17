@@ -19,6 +19,12 @@ const KickUserSocket = async (socket, data, cb, channelList) => {
         const user_to_kick = await channelList.get(`${socket.current_server}/${data.channel_id}`).getPeersSocketByUsername(data.username);
 
         if (!user_to_kick) return cb({error: true, errorMessage: "error kicking user"});
+        
+        const user_to_kick_file = await server.get_member(data.username);        
+
+        console.log(user_to_kick_file.server_score)
+
+        await server.update_member({...user_to_kick_file, _id: String(user_to_kick_file._id), server_score: (user_to_kick_file.server_score - 5)})
 
         socket.to(user_to_kick).emit('kick');
 

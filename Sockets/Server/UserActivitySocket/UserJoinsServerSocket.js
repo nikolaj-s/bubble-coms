@@ -21,16 +21,14 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             display_name: user.display_name,
             user_banner: user.user_banner,
             user_image: user.user_image,
+            profile_picture_shape: user.profile_picture_shape,
             username: user.username,
             server_group: memberFile.server_group,
-            join_date: memberFile.join_date
+            join_date: memberFile.join_date,
+            server_score: (memberFile.server_score + 1)
         }
 
-        if (memberFile.display_name !== user.display_name || memberFile.user_banner !== user.user_banner || memberFile.user_image !== user.user_image) {
-
-            await server.update_member(user_object);
-
-        }
+        await server.update_member(user_object);
 
         user_object.status = data.status;
 

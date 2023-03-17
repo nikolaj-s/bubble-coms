@@ -37,6 +37,12 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         }
 
+        if (new_data.profileImageShape !== user.profile_picture_shape) {
+
+            await user.update_profile_shape(new_data.profileImageShape);
+
+        }
+
         if (images) {
             if (images.userImage) {
                 if (user.user_image) await ImageDelete(user.user_image);
@@ -70,7 +76,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image}});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape}});
 
     } catch (error) {
         console.log(error);

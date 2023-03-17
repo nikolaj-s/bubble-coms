@@ -29,6 +29,17 @@ const MemberSchema = new mongoose.Schema({
     join_date: {
         type: Date,
         default: Date.now
+    },
+    profile_picture_shape: {
+        type: String,
+        default: 'circle'
+    },
+    server_score: {
+        default: 0,
+        type: Number
+    },
+    last_online: {
+        type: Date
     }
 })
 
