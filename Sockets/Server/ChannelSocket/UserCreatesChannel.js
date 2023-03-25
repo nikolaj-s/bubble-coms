@@ -34,7 +34,7 @@ const UserCreatesChannel = async (socket, data, cb) => {
         const server_owner = server.members.find(u => u.username === server.server_owner);
             
         auth_users = [...data.auth_users, String(server_owner._id), String(user._id === server_owner._id ? "" : user._id)];
-        
+
         const channel_data = {
             channel_name: data.channel_name,
             persist_social: data.persist_social,
@@ -47,7 +47,7 @@ const UserCreatesChannel = async (socket, data, cb) => {
 
         await server.save();
 
-        cb(server.channels[server.channels.length - 1])
+        cb(server.channels[server.channels.length - 1]);
 
         socket.to(data.server_id).emit('new channel', server.channels[server.channels.length - 1]);
 
