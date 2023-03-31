@@ -73,6 +73,14 @@ const UnpackURL = (data) => {
 
                         link = text;
                         
+                    } else if (text.includes('tunein.com')) {
+
+                        let c = text.split('-'); 
+
+                        iFrame = "https://tunein.com/embed/player/" + c[c.length - 1];
+
+                        link = text;
+
                     } else if (text.includes('https')) {
 
                         link = text;

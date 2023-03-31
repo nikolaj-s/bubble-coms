@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
@@ -7,6 +8,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
         const user = await AccountSchema.findOne({_id: socket.AUTH._id});
 
         if (!user) return cb({error: true, errorMessage: "validation error"});
+
+        console.log(data.server_id)
 
         const server = await ServerSchema.findOne({_id: data.server_id});
 

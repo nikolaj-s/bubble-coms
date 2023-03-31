@@ -4,6 +4,8 @@ const { ServerSchema } = require('../../Schemas/Server/Server/ServerSchema');
 
 const ImageSearch = require('../../Util/Image/ImageSearch');
 
+const { default: mongoose } = require('mongoose');
+
 const route = require('express').Router();
 
 route.post('/', ValidationMiddleWare, async (req, res) => {
@@ -13,7 +15,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         const server_id = req.body.server_id;
 
-        const server = await ServerSchema.findOne({_id: server_id})
+        const server = await ServerSchema.findOne({_id: mongoose.Types.ObjectId(server_id)})
         
         if (!server) return res.send({error: true, errorMessage: "unauthorized activity"});
 
@@ -27,13 +29,46 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         const images = await ImageSearch(query);
 
+        console.log(server.times_media_searched)
+
         if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 
         res.send({success: true, media: images});
 
-        const data_to_save = images.splice(7, 10);
         
-        await server.update_recent_image_searches(data_to_save);
+        // build recomendations
+
+        await server.update_search_times();
+
+        if (server.times_media_searched > 2 || server.recent_image_searches.length < 50) {
+            
+            try {
+
+                let related_query;
+
+                for (const i of images) {
+                    if (i.tags) {
+                        related_query = i.tags.filter(t => !t.includes(query) && t !== '')[0];
+                        break;
+                    }
+                }
+                console.log(related_query)
+                if (!related_query || related_query === '' || related_query === ' ') return;
+    
+                const reccomendations = await ImageSearch(related_query);
+                
+                if (reccomendations.length === 0) return;
+
+                const data_to_save = [...reccomendations, ...server.recent_image_searches.slice(0, 60)];
+            
+                await server.update_recent_image_searches(data_to_save);
+            } catch (err) {
+                return err;
+            }
+        
+        }
+
+        
 
     } catch (error) {
         console.log(error);

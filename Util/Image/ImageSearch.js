@@ -1,3 +1,5 @@
+const cheerio = require('cheerio');
+
 const axios = require('axios');
 
 const fetch = require('node-fetch')
@@ -10,35 +12,23 @@ const ImageSearch = async (query) => {
         }});
         
         const html = response.data;
-       
-        const i_urls = html.match(/<a [^>]*href="[^"]*"[^>]*>/gm).map(x => x.replace(/.*href="([^"]*)".*/, '$1')).filter(i => i.includes('img_url'));
         
+        const ch = cheerio.load(html);
+        
+        const parsed = ch('.serp-item_type_search[data-bem]');
+
         let images = [];
 
-        for (const img of i_urls) {
-
-            let uri = `https://${img.split('%3A%2F%2F')[1].split('%2F').join('/').split('&amp')[0].split('%3F').join('?').split('%3D').join('&')}`;
-
-            if (uri.endsWith('.gif') || uri.endsWith('.jpg') || uri.endsWith('.png') || uri.endsWith('.webp')) {
-                images.push({preview: uri, type: 'image'});
-            }
+        parsed.each((idx, el) => {
             
-        }
-
-        // if limit has been hit with originating source fall back to old query option
-        if (images.length === 0) {
-            images = await fetch(`https://customsearch.googleapis.com/customsearch/v1/siterestrict?cx=93ba4b953c47e49a6&filter=1&gl=ca&imgSize=HUGE&imgType=photo&num=10&q=${query}&safe=off&searchType=image&key=AIzaSyA6OlfIWuv8ADw_XSrZ3WDyY9bwOI3qWmA`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items) {
-                    return data.items.map(item => {
-                        return {preview: item.link, type: 'image'}
-                    })
-                } else {
-                    return {error: true}
-                }
+            let obj = JSON.parse(el.attribs['data-bem'])
+            
+            images.push({
+                preview: obj['serp-item'].img_href,
+                type: 'image',
+                tags: obj['serp-item'].snippet.text.replace(/[^a-zA-Z ]/g, "").split(' ').filter(i => i !== " ").filter(i => i !== "")
             })
-        }
+        })
 
         return images;
     } catch (error) {

@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 
 const { AccountSchema } = require("../../Schemas/Account/AccountSchema");
+const { default: mongoose } = require('mongoose');
 
 const ValidationMiddleWare = async (req, res, next) => {
     try {
@@ -11,7 +12,7 @@ const ValidationMiddleWare = async (req, res, next) => {
 
         if (!verify) return res.send({error: true, errorMessage: "Validation ERROR"});
 
-        const user = await AccountSchema.findOne({_id: verify._id});
+        const user = await AccountSchema.findOne({_id: mongoose.Types.ObjectId(verify._id)});
 
         if(!user) return res.send({error: true, errorMessage: "Validation ERROR"});
 

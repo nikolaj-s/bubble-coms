@@ -59,6 +59,10 @@ const ServerSchema = new mongoose.Schema({
     },
     pinned_messages: [],
     recent_image_searches: [],
+    times_media_searched: {
+        type: Number,
+        default: 0
+    }
 })
 
 ServerSchema.methods.update_inactive_channel = function(channel_id) {
@@ -522,18 +526,18 @@ ServerSchema.methods.delete_pinned_message = function(id) {
     }
 }
 
+ServerSchema.methods.update_search_times = function() {
+    this.times_media_searched++;
+
+    return this.save();
+}
+
 ServerSchema.methods.update_recent_image_searches = function(arr) {
     try {
 
-        const current_images = this.recent_image_searches;
+        this.recent_image_searches = arr;
 
-        if (current_images.length >= 60) {
-            current_images.splice(0, 10)
-        }
-
-        console.log(current_images)
-
-        this.recent_image_searches = [...current_images, ...arr];
+        this.times_media_searched = 0;
 
         return this.save();
 
