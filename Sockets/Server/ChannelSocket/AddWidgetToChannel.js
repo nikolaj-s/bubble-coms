@@ -91,7 +91,7 @@ const AddWidgetToChannel = async (socket, data, cb) => {
 
             widget = {
                 type: 'dynamicGallery',
-                text: images.splice(0, 15),
+                text: images.splice(0, 15).map(i => {return {preview: i.image}}),
                 date: datetime,
                 query: query
             }

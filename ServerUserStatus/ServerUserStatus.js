@@ -72,4 +72,19 @@ module.exports = class ServerUserStatus {
         return socket_id;
 
     }
+
+    get_socket_id_by_username(username) {
+        let socket_id;
+
+        for (let [key, value] of this.users) {
+            if (value.username === username) {
+                socket_id = key;
+                break;
+            }
+        }
+
+        return socket_id;
+
+
+    }
 }

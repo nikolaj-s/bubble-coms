@@ -47,6 +47,7 @@ const UnLikeSong = require('./Server/MusicWidget/UnLikeSong');
 const RemoveSongFromQueue = require('./Server/MusicWidget/RemoveSongFromQueue');
 const UserUpdatesAccount = require('./Server/User/UserUpdatesAccount');
 const SearchSongs = require('./Server/MusicWidget/SearchSongs');
+const DirectMessage = require('./Server/User/DirectMessage');
 
 const channelList = new Map();
 
@@ -165,6 +166,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('check connection', async (data, cb) => checkConnection(socket, data, cb));
         
+        // direct messaging
+        socket.on('send direct message', async (data, cb) => DirectMessage(socket, data, serverList, cb));
     })
     
 }
