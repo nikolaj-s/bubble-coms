@@ -10,31 +10,20 @@ route.get('/', async (req, res, next) => {
         const token = req.header('TOKEN');
 
         if (!token) return res.send({error: true, errorMessage: "Access Denied"});
-
-        const verified = jwt.verify(token, process.env.SECRET);
-
-        const Account = await AccountSchema.findOne({_id: verified._id});
+        console.log(req.header("username"))
+        const Account = await AccountSchema.findOne({username: req.header("username")});
         
         if (Account) {
             const acccount_details = {
-                username: Account.username,
-                display_name: Account.display_name,
-                user_image: Account.user_image,
-                user_banner: Account.user_banner,
-                verified: Account.verified,
-                servers: Account.joined_servers,
-                new_account_state: Account.new_account_state,
-                profile_picture_shape: Account.profile_picture_shape,
                 bio: Account.bio
             }
 
-            return res.send({success: true, account: {...acccount_details}})
+            return res.send({success: true, ...acccount_details})
 
         } else {
             return res.send({error: true, errorMessage: "Access Denied"})
         }
         
-
     } catch (error) {
         console.log(error);
         res.send({error: true, errorMessage: "Fatal Error Retrieving Account Details"})

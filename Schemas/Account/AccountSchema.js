@@ -12,6 +12,9 @@ const AccountSchema = new mongoose.Schema({
         required: true,
         maxlength: 30
     },
+    bio: {
+        type: String
+    },
     email: {
         type: String,
         required: true
@@ -145,6 +148,12 @@ AccountSchema.methods.user_has_been_banned = function(server_id) {
     } catch (error) {
         return {error: "Error finding and removing server_id"}
     }
+}
+
+AccountSchema.methods.update_bio = function(value) {
+    this.bio = value;
+
+    return this.save();
 }
 
 // creating server

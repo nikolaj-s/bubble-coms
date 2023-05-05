@@ -32,7 +32,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         res.send({success: true, media: videos});
 
-        const data_to_save = [...videos.splice(6, 10), server.recent_image_searches];
+        const data_to_save = [...videos.splice(6, 10), ...server.recent_image_searches];
 
         await server.update_recent_image_searches(data_to_save);
 

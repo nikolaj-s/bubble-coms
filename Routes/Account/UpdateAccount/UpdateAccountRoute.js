@@ -43,6 +43,13 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         }
 
+        if (new_data.bio !== user.bio) {
+
+            if (new_data.bio.length > 1024) return res.send({error: true, errorMessage: "Bio cannot be more than 1024 characters"});
+
+            await user.update_bio(new_data.bio);
+        }
+
         if (images) {
             if (images.userImage) {
                 if (user.user_image) await ImageDelete(user.user_image);
@@ -76,7 +83,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape}});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio}});
 
     } catch (error) {
         console.log(error);

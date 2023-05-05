@@ -135,6 +135,10 @@ const VideoSearchRoute = require('./Routes/VideoSearch/VideoSearchRoute');
 
 App.use('/search-for-videos', VideoSearchRoute);
 
+const FetchMemberDetails = require('./Routes/Account/FetchMemberDetails/FetchMemberDetails');
+
+App.use('/fetch-member-details', FetchMemberDetails);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })
