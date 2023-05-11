@@ -22,6 +22,8 @@ const UpdateChannel = async (socket, data, cb) => {
 
         let image;
 
+        let icon;
+
         if (new_channel_data.file) {
 
             if (new_channel_data.file.byteLength > 1000000) return cb({error: true, errorMessage: 'channel background image cannot be greater than 1mb'});
@@ -35,6 +37,22 @@ const UpdateChannel = async (socket, data, cb) => {
             if (image.error) {
 
                 return cb({error: true, errorMessage: image.errorMessage});
+            
+            }
+        }
+
+        if (new_channel_data.icon_file) {
+            if (new_channel_data.icon_file.byteLength > 500000) return cb({error: true, errorMessage: 'channel icon to large'});
+
+            icon = await ImageUpload({data: data.icon_file})
+            .catch(error => {
+                console.log(error);
+                return cb({error: true, errorMessage: "fatal error uploading image"});
+            })
+
+            if (icon.error) {
+
+                return cb({error: true, errorMessage: icon.errorMessage});
             
             }
         }
@@ -56,6 +74,7 @@ const UpdateChannel = async (socket, data, cb) => {
             persist_social: new_channel_data.persist_social,
             widgets: new_channel_data.widgets,
             channel_background: image?.url ? image.url : new_channel_data.channel_background,
+            icon: icon?.url ? icon?.url : new_channel_data.icon,
             background_blur: new_channel_data.background_blur,
             disable_streams: new_channel_data.disable_streams,
             locked_channel: new_channel_data.locked_channel,

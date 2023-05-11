@@ -22,12 +22,11 @@ const ImageSearch = async (query) => {
         parsed.each((idx, el) => {
             
             let obj = JSON.parse(el.attribs['data-bem'])
-           
             images.push({
                 preview: `https:${obj['serp-item'].thumb.url}`,
                 type: 'image',
                 image: obj['serp-item'].img_href,
-                tags: obj['serp-item'].snippet.text.replace(/[^a-zA-Z ]/g, "").split(' ').filter(i => i !== " ").filter(i => i !== "")
+                tags: obj['serp-item'].snippet.text.split('<b>').join('').split('</b>').join('').replace(/[^a-zA-Z ]/g, "")
             })
         })
 

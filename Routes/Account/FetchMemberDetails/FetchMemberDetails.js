@@ -10,12 +10,13 @@ route.get('/', async (req, res, next) => {
         const token = req.header('TOKEN');
 
         if (!token) return res.send({error: true, errorMessage: "Access Denied"});
-        console.log(req.header("username"))
+   
         const Account = await AccountSchema.findOne({username: req.header("username")});
         
         if (Account) {
             const acccount_details = {
-                bio: Account.bio
+                bio: Account.bio,
+                color: Account.color
             }
 
             return res.send({success: true, ...acccount_details})

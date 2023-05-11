@@ -56,7 +56,10 @@ let workerIndex = 0;
 ;(async () => {
     workers = await createWorkers(workers, workerIndex)
     console.log("Initializing Worker's")
-})()
+})().then(() => {
+    // initialize websocket
+    onConnection(server, workers, workerIndex, getMediasoupWorker);
+})
 
 function getMediasoupWorker() {
     const worker = workers[workerIndex];
@@ -66,8 +69,7 @@ function getMediasoupWorker() {
     return worker;
 }
 
-// initialize websocket
-onConnection(server, workers, workerIndex, getMediasoupWorker);
+
 
 App.use(morgan('dev'));
 

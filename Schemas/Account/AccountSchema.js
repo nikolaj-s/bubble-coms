@@ -62,6 +62,9 @@ const AccountSchema = new mongoose.Schema({
     profile_picture_shape: {
         type: String,
         default: 'circle'
+    },
+    color: {
+        type: String
     }
 })
 
@@ -99,9 +102,11 @@ AccountSchema.methods.update_user_image = function(image) {
     return this.save();
 }
 
-AccountSchema.methods.update_user_banner = function(image) {
+AccountSchema.methods.update_user_banner = function(image, color = "") {
 
     this.user_banner = image;
+
+    this.color = color;
     
     return this.save();
 }

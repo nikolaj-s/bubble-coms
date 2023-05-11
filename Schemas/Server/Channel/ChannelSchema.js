@@ -14,6 +14,9 @@ const ChannelSchema = new mongoose.Schema({
         type: [],
         default: []
     },
+    icon: {
+        type: String
+    },
     social: {
         type: [],
         default: []

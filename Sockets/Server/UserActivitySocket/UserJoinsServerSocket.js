@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+
 const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
@@ -28,7 +28,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             username: user.username,
             server_group: memberFile.server_group,
             join_date: memberFile.join_date,
-            server_score: (memberFile.server_score + 1)
+            server_score: (memberFile.server_score + 1),
+            color: user.color
         }
 
         await server.update_member(user_object);
@@ -42,6 +43,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             return {
                 _id: channel._id,
                 channel_name: channel.channel_name,
+                icon: channel.icon,
                 users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : [],
                 social: !auth ? [] : channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
                 persist_social: channel.persist_social,
@@ -74,18 +76,6 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
                 member_data_to_send.push(m);
             }
         }
-
-        const pinned = [];
-
-        for (const p of server.pinned_messages) {
-            for (const u of server.members) {
-                if (p.username === u.username) {
-                    pinned.push({...p, content: {...p.content, display_name: u.display_name, user_image: u.user_image}});
-                    break
-                }
-            }
-        }
-
         const server_data = {
             server_name: server.server_name,
             server_banner: server.server_banner,
@@ -95,7 +85,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
             server_groups: server.server_groups,
             owner: server.server_owner === user.username ? true : false,
             server_owner: server.server_owner,
-            pinned: pinned,
+            pinned: server.pinned_messages,
             recent_searches: server.recent_image_searches,
             inactive_channel: server.inactive_channel,
             user: user_object

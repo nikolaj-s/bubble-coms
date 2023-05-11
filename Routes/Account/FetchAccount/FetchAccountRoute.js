@@ -25,7 +25,8 @@ route.get('/', async (req, res, next) => {
                 servers: Account.joined_servers,
                 new_account_state: Account.new_account_state,
                 profile_picture_shape: Account.profile_picture_shape,
-                bio: Account.bio
+                bio: Account.bio,
+                color: Account.color
             }
 
             return res.send({success: true, account: {...acccount_details}})

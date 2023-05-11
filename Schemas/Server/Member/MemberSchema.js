@@ -40,6 +40,9 @@ const MemberSchema = new mongoose.Schema({
     },
     last_online: {
         type: Date
+    },
+    color: {
+        type: String
     }
 })
 

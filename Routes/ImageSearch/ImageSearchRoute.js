@@ -29,8 +29,6 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         const images = await ImageSearch(query);
 
-        console.log(server.times_media_searched)
-
         if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 
         res.send({success: true, media: images});
@@ -47,19 +45,22 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
                 let related_query;
 
                 for (const i of images) {
-                    if (i.tags) {
-                        related_query = i.tags.filter(t => !t.includes(query) && t !== '')[0];
+                    if (i.tags.length > 8) {
+                        related_query = i.tags;
                         break;
                     }
                 }
-                console.log(related_query)
+
+                console.log('recommended', related_query)
+
+
                 if (!related_query || related_query === '' || related_query === ' ') return;
     
                 const reccomendations = await ImageSearch(related_query);
                 
                 if (reccomendations.length === 0) return;
 
-                const data_to_save = [...reccomendations, ...server.recent_image_searches.slice(0, 120)];
+                const data_to_save = [...reccomendations.slice(0, 10), ...server.recent_image_searches.slice(0, 120)];
             
                 await server.update_recent_image_searches(data_to_save);
             } catch (err) {
