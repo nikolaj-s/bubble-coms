@@ -9,7 +9,7 @@ const UserActiveStatus = (socket, data, cb, serverList) => {
 
         cb({status: data.value, user_id: memeber._id});
 
-        socket.to(socket.current_server).emit('user status update', {status: data.value, user_id: memeber._id});
+        socket.to(socket.current_server).emit('user status update', {status: data.value, user_id: memeber._id, username: memeber.username});
 
     } catch (error) {
         console.log(error);
