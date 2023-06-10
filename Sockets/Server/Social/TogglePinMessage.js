@@ -1,3 +1,4 @@
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 
 const TogglePinMessage = async (socket, data, cb) => {
@@ -16,24 +17,13 @@ const TogglePinMessage = async (socket, data, cb) => {
         
         if (server_group === -1 || !server_group.user_can_post_channel_social) return cb({error: true, errorMessage: "unauthorized activity"});
     
-        if (data.pinned) {
+        const msg = await MessageSchema.findOneAndUpdate({_id: data._id}, {pinned: !data.pinned})
 
-            data.pinned = false;
+        msg.pinned = !data.pinned;
 
-            await server.remove_pinned_message(data);
-        
-        } else {
+        cb({success: true, message: msg});
 
-            data.pinned = true;
-
-            await server.add_pinned_message(data);
-
-        }
-
-        cb({success: true, message: data});
-
-
-        socket.to(socket.current_server).emit('toggle pinned message', {message: data});
+        socket.to(socket.current_server).emit('toggle pinned message', {message: msg});
 
     } catch (error) {
         cb({error: true, errorMessage: error.message})

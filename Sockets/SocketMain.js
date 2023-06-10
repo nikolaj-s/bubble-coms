@@ -48,6 +48,8 @@ const RemoveSongFromQueue = require('./Server/MusicWidget/RemoveSongFromQueue');
 const UserUpdatesAccount = require('./Server/User/UserUpdatesAccount');
 const SearchSongs = require('./Server/MusicWidget/SearchSongs');
 const DirectMessage = require('./Server/User/DirectMessage');
+const FetchMessages = require('./Server/Social/FetchMessages');
+const FetchPinnedMessages = require('./Server/Social/FetchPinnedMessages');
 
 const channelList = new Map();
 
@@ -123,6 +125,10 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('delete message', async (data, cb) => DeleteMessage(socket, data, cb));
 
         socket.on('toggle pinned message', async (data, cb) => TogglePinMessage(socket, data, cb));
+
+        socket.on('fetch messages', async (data, cb) => FetchMessages(socket, data, cb));
+
+        socket.on('fetch pins', async (data, cb) => FetchPinnedMessages(socket, data, cb));
 
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));

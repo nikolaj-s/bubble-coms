@@ -1,3 +1,4 @@
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
@@ -26,27 +27,15 @@ const DeleteMessage = async (socket, data, cb) => {
         if (!channel_id || channel_id === 'undefined') return cb({error: true, errorMessage: "Invalid Channel Id"});
 
         // remove image from cdn
-        const channel_index = server.channels.findIndex(c => String(c._id) === channel_id);
+        const msg = await MessageSchema.findOne({_id: message_id});
 
-        if (channel_index !== -1) {
-
-            const message_index = server.channels[channel_index].social.findIndex(m => String(m._id) === String(message_id));
-
-            if (message_index !== -1) {
-
-                if (server.channels[channel_index].social[message_index].content.image) {
-
-                    await ImageDelete(server.channels[channel_index].social[message_index].content.image);
-                
-                }
-
+        if (msg.content.image) {
+            if (msg.content.image.includes('cloudinary')) {
+                await ImageDelete(msg.content.image);
             }
-
         }
 
-        await server.delete_pinned_message(message_id);
-
-        await server.delete_message(channel_id, message_id);
+        await MessageSchema.deleteOne({_id: message_id});
 
         cb({success: true, message_id: message_id, channel_id: channel_id});
 

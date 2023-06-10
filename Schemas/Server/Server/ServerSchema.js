@@ -290,7 +290,7 @@ ServerSchema.methods.delete_channel = function(channel_id) {
 ServerSchema.methods.save_message = function(channel_index, message) {
     try {
 
-        this.channels[channel_index].social.unshift(message);
+        this.channels[channel_index].last_message_id = message._id;
 
         return this.save();
 
@@ -307,8 +307,6 @@ ServerSchema.methods.delete_message = function(channel_id, message_id) {
 
         if (channel === -1) return;
 
-        this.channels[channel].social = this.channels[channel].social.filter(m => String(m._id) !== String(message_id));
-
         return this.save();
 
     } catch (error) {
@@ -324,6 +322,8 @@ ServerSchema.methods.clear_social = function(channel_id) {
         if (channel === -1) return;
 
         this.channels[channel].social = [];
+
+        this.channels[channel].last_message_id = "";
 
         return this.save();
 

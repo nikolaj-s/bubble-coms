@@ -37,7 +37,7 @@ const UserCreatesChannel = async (socket, data, cb) => {
 
         const channel_data = {
             channel_name: data.channel_name,
-            persist_social: data.persist_social,
+            persist_social: true,
             auth_users: auth_users,
             locked_channel: data.locked_channel,
             text_only: data.text_only

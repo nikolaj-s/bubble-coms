@@ -1,3 +1,4 @@
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 const ImageUpload = require("../../../Util/Image/ImageUpload");
@@ -82,20 +83,22 @@ const UpdateChannel = async (socket, data, cb) => {
         }
 
         if (new_channel_data.clear_social) {
-
-            const channel_index = server.channels.findIndex(c => String(c._id) === String(new_channel_data._id));
-
-            if (channel_index === -1) return;
-
-            for (const m of server.channels[channel_index].social) {
+         
+            const m_data = await MessageSchema.find({channel_id: data._id});
+            console.log(m_data)
+            for (const m of m_data) {
                 if (m.content.image) {
+                    if (m.content.image.includes('cloudinary')) {
 
-                    await ImageDelete(m.content.image);
-
+                        await ImageDelete(m.content.image);
+                    
+                    }
                 }
             }
 
             await server.clear_social(new_channel_data._id);
+
+            await MessageSchema.deleteMany({channel_id: data._id});
 
             data_to_save.social = [];
         }
@@ -104,9 +107,9 @@ const UpdateChannel = async (socket, data, cb) => {
 
         if (saved_data.error) return cb({error: true, errorMessage: "fatal error updating channel"});
 
-        cb({success: true, channel: saved_data});
+        cb({success: true, channel: saved_data, cleared_social: new_channel_data.clear_social});
 
-        socket.to(socket.current_server).emit('channel update', {channel: saved_data});
+        socket.to(socket.current_server).emit('channel update', {channel: saved_data, cleared_social: new_channel_data.clear_social});
 
     } catch (error) {
         console.log(error);

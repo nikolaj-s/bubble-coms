@@ -1,3 +1,4 @@
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
@@ -29,14 +30,17 @@ const DeleteChannel = async (socket, data, cb) => {
 
         }
 
-        server.channels[channel_to_delete].social.forEach(async message => {
-            if (message.content.image) {
-                if (message.content.image.includes('cloudinary')) {
-                    await ImageDelete(message.content.image);
-                }   
-                
+        const messages = await MessageSchema.find({channel_id: data.channel_id});
+
+        for (const m of messages) {
+            if (m.content.image) {
+                if (m.content.image.includes('cloudinary')) {
+                    await ImageDelete(m.content.image)
+                }
             }
-        })
+        }
+
+        await MessageSchema.deleteMany({channel_id: data.channel_id});
 
         server.channels[channel_to_delete].widgets.forEach(async widget => {
             if (widget.type === 'image') {

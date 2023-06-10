@@ -8,10 +8,13 @@ const ImageDelete = require("../../../Util/Image/ImageDelete");
 const UnpackURL = require("../../../Util/UnpackURL/UnpackURL");
 
 const { v4: uuidv4} = require('uuid');
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 
 const MessageSocket = async (socket, data, channelList, cb) => {
     try {
         // prevent large text
+        if (!data.valid) return cb({error: true, errorMessage: "You need to update the app to send messages"});
+
         if (data.content.text.length === 0 && !data.file) return cb({error: true, errorMessage: "Cannot send empty message"})
 
         if (data.content.text.length > 511) return cb({error: true, errorMessage: "Text exceeds character limit of 512"})
@@ -41,7 +44,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         let file;
         
-        if (server.channels[channel].persist_social && data.file) {
+        if (data.file) {
             
             if (data.file.byteLength > 3000000) {
                 return cb({error: true, errorMessage: "Image File Size Cannot Be larger than 3MB"})
@@ -72,48 +75,22 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             twitter: twitter,
             local_id: data.content.local_id,
             date: new Date(),
-        }
-
-        const message = {
-            _id: uuidv4(),
+        } 
+        const mes = new MessageSchema({
             channel_id: data.channel_id,
             content: content,
             username: socket.AUTH.username,
-            pinned: false
-        }
+            pinned: false,
+            server_id: String(server._id)
+        })
 
-        // if channel has persist data enabled --> save message to the social array in the DB
-        if (server.channels[channel].persist_social) {
+        const message = await mes.save();
 
-            await server.save_message(channel, message)
-            .catch(error => {
-                console.log('saving message to database error', error);
-                return cb({error: true, errorMessage: 'error sending message'})
-            })
-        
-        }
-
-        channelList.get(`${socket.current_server}/${data.channel_id}`)?.pushMessage(message);
+        await server.save_message(channel, message);
         
         socket.to(socket.current_server).emit("new message", message);
 
         cb({success: true, message});
-
-        // clean up social when messages exceed 20
-        if (server.channels[channel].social.length > 100) {
-
-            const last_message = await server.trim_social(channel);
-
-            if (last_message.content.image) {
-
-                if (last_message.content.image.includes('cloudinary')) {
-
-                    await ImageDelete(last_message.content.image);
-                
-                }
-            
-            }
-        }
 
     } catch (error) {
         console.log(error);

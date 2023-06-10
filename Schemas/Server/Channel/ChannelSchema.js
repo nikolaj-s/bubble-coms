@@ -50,6 +50,13 @@ const ChannelSchema = new mongoose.Schema({
     text_only: {
         type: Boolean,
         default: false
+    },
+    last_message_id: {
+        type: String,
+    },
+    message_count: {
+        type: Number,
+        default: 0
     }
 })
 

@@ -15,7 +15,7 @@ const DeleteImageSearchData = async (socket, data, cb) => {
 
         const permissions = await server.get_server_group(member.server_group);
 
-        if (permissions === -1 || permissions.user_can_edit_server_password === false || permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: 'unauthorized activity'});
+        if (permissions === -1 || permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: 'unauthorized activity'});
 
         await server.clear_image_search_data();
 

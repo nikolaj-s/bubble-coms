@@ -45,8 +45,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
                 channel_name: channel.channel_name,
                 icon: channel.icon,
                 users: channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() ? channelList.get(`${server._id}/${channel._id}`)?.getUserDetails() : [],
-                social: !auth ? [] : channel.social.length > 0 ? channel.social : channelList.get(`${server._id}/${channel._id}`)?.social || [],
-                persist_social: channel.persist_social,
+                persist_social: true,
                 widgets: !auth ? [] : channel.widgets,
                 channel_background: channel.channel_background,
                 background_blur: channel.background_blur,
@@ -54,7 +53,10 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
                 auth_users: channel.auth_users,
                 locked_channel: channel.locked_channel,
                 text_only: channel.text_only,
-                auth: auth
+                auth: auth,
+                last_message_id: channel.last_message_id,
+                message_count: channel.message_count,
+                social: []
             }
         })
 
