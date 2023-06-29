@@ -1,3 +1,4 @@
+const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 
 const UserLeavesServer = async (socket, data, channelList, serverList, cb = () => {}) => {
     try {
@@ -22,11 +23,11 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb = () =
         
         if (socket.current_server) {
             
-            try {
+            try { 
                 
                 const memberFile = serverList.get(socket.current_server)?.get_user_by_socket_id(socket.id);
 
-                socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id)});
+                socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id), last_online: Date.now()});
 
                 serverList.get(socket.current_server).user_leaves_server(socket.id);
 
@@ -37,6 +38,7 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb = () =
                 }
 
             } catch (error) {
+                console.log(error)
                 return;
             }
         
@@ -46,9 +48,13 @@ const UserLeavesServer = async (socket, data, channelList, serverList, cb = () =
 
         socket.leave(socket.current_server);
 
-        socket.disconnect();
-
         console.log('user has disconnected');
+
+        const server = await ServerSchema.findOne({_id: socket.current_server});
+
+        await server.update_last_online_state(socket.AUTH.username);
+
+        socket.disconnect();
 
     } catch(error) {
 

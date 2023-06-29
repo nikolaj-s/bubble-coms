@@ -37,9 +37,13 @@ const DeleteMessage = async (socket, data, cb) => {
 
         await MessageSchema.deleteOne({_id: message_id});
 
-        cb({success: true, message_id: message_id, channel_id: channel_id});
+        const latest_message = await MessageSchema.find({channel_id: channel_id}).sort({"date": -1}).limit(1);
 
-        socket.to(socket.current_server).emit('delete message', {message_id: message_id, channel_id: channel_id});
+        await server.delete_message(channel_id, latest_message._id);
+
+        cb({success: true, message_id: message_id, channel_id: channel_id, _id: latest_message._id});
+
+        socket.to(socket.current_server).emit('delete message', {message_id: message_id, channel_id: channel_id, _id: latest_message._id});
 
     } catch (error) {
         console.log(error);

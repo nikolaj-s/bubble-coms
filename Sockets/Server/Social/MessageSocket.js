@@ -74,7 +74,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             iFrame: iFrame,
             twitter: twitter,
             local_id: data.content.local_id,
-            date: new Date(),
+            date: new Date,
+            time: Date.now()
         } 
         const mes = new MessageSchema({
             channel_id: data.channel_id,

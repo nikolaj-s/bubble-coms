@@ -19,7 +19,7 @@ const UnpackURL = (data) => {
                         
                         link = text;
 
-                    } else if (text.includes('youtu')) {
+                    } else if (text.includes('youtu.be') || text.includes('youtube.com')) {
         
                         iFrame = "https://www.youtube.com/embed/" + (text.split('/')[3].includes('watch?') ? text.split('/')[3].split('watch?v=')[1].split('&')[0] : text.split('/')[3]);
                         

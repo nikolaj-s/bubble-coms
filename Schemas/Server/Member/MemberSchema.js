@@ -39,7 +39,7 @@ const MemberSchema = new mongoose.Schema({
         type: Number
     },
     last_online: {
-        type: Date
+        type: Number
     },
     color: {
         type: String

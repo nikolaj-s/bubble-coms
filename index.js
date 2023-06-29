@@ -141,6 +141,10 @@ const FetchMemberDetails = require('./Routes/Account/FetchMemberDetails/FetchMem
 
 App.use('/fetch-member-details', FetchMemberDetails);
 
+const PinMessageToAccount = require('./Routes/Account/PinMessageToAccount/PinMessageToAccount');
+
+App.use('/pin-message', PinMessageToAccount);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })

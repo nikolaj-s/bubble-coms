@@ -4,6 +4,7 @@ const route = require('express').Router();
 const jwt = require('jsonwebtoken');
 
 const { AccountSchema } = require('../../../Schemas/Account/AccountSchema');
+const { MessageSchema } = require('../../../Schemas/Message/MessageSchema');
 
 route.get('/', async (req, res, next) => {
     try {
@@ -13,10 +14,23 @@ route.get('/', async (req, res, next) => {
    
         const Account = await AccountSchema.findOne({username: req.header("username")});
         
+        let pinned_msg = {};
+
+        if (Account.pinned_message) {
+            const d = await MessageSchema.findOne({_id: Account.pinned_message});
+
+            if (d) {
+                pinned_msg = d;
+            } else {
+                await Account.handle_pin_message("");
+            }
+        }
+
         if (Account) {
             const acccount_details = {
                 bio: Account.bio,
-                color: Account.color
+                color: Account.color,
+                pinned_message: pinned_msg
             }
 
             return res.send({success: true, ...acccount_details})

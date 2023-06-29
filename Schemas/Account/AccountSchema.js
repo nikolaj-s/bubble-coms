@@ -65,6 +65,10 @@ const AccountSchema = new mongoose.Schema({
     },
     color: {
         type: String
+    },
+    pinned_message: {
+        type: String,
+        default: ""
     }
 })
 
@@ -173,6 +177,12 @@ AccountSchema.methods.push_created_server_id = function(server_id) {
     } catch (error) {
         return {error: true, errorMessage: "Fatal Error Creating Server"}
     }
+}
+
+AccountSchema.methods.handle_pin_message = function(id) {
+    this.pinned_message = id;
+
+    return this.save();
 }
 
 module.exports.AccountSchema = mongoose.model("AccountSchema", AccountSchema);

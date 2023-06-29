@@ -3,7 +3,7 @@ const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const FetchPinnedMessages = async (socket, data, cb) => {
     try {
 
-        const d = await MessageSchema.find({server_id: socket.current_server, pinned: true}).limit(data.count);
+        const d = await MessageSchema.find({server_id: socket.current_server, pinned: true}).sort({"date": -1}).limit(data.count);
 
         let pins = d.length < data.count ? [...d, {no_more_pins: true}] : d;
 

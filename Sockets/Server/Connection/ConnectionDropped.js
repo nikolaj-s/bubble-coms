@@ -1,3 +1,4 @@
+const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 
 const ConnectionDropped = async (socket, data, channelList, serverList) => {
     try {  
@@ -26,7 +27,11 @@ const ConnectionDropped = async (socket, data, channelList, serverList) => {
         
         }
 
-        socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id)})
+        const server = await ServerSchema.findOne({_id: socket.current_server});
+
+        await server.update_last_online_state(socket.AUTH.username);
+
+        socket.to(socket.current_server).emit('left server', {member_id: String(memberFile._id), last_online: Date.now()})
 
         socket.leave(socket.channel_id);
 

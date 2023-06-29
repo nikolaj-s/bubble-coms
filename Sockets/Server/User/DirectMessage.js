@@ -35,6 +35,7 @@ const DirectMessage = async (socket, data, serverList, cb) => {
             twitter: twitter,
             local_id: data.content.local_id,
             date: new Date(),
+            time: Date.now()
         }
 
         const message = {

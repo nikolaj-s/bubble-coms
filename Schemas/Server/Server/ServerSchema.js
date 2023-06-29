@@ -86,6 +86,16 @@ ServerSchema.methods.get_member = function(username) {
     }
 }
 
+ServerSchema.methods.update_last_online_state = function(username) {
+    const index = this.members.findIndex(m => m.username === username);
+
+    if (index === -1) return;
+
+    this.members[index].last_online = Date.now();
+
+    return this.save();
+}
+
 ServerSchema.methods.update_member = function(user) {
     try {
 
@@ -289,7 +299,7 @@ ServerSchema.methods.delete_channel = function(channel_id) {
 
 ServerSchema.methods.save_message = function(channel_index, message) {
     try {
-
+        
         this.channels[channel_index].last_message_id = message._id;
 
         return this.save();
@@ -306,6 +316,8 @@ ServerSchema.methods.delete_message = function(channel_id, message_id) {
         const channel = this.channels.findIndex(c => String(c._id) === String(channel_id));
 
         if (channel === -1) return;
+
+        this.channels[channel].last_message_id = message_id;
 
         return this.save();
 
