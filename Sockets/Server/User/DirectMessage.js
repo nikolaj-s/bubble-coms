@@ -43,10 +43,9 @@ const DirectMessage = async (socket, data, serverList, cb) => {
             channel_id: null,
             content: content,
             username: socket.AUTH.username,
-            pinned: false
+            pinned: false,
+            user_image: data.user_image
         }
-
-    
         socket.to(recipitent).emit('direct message', message);
 
         cb({sucess: true, message});
