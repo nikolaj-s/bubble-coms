@@ -65,7 +65,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
     .on('connection', async (socket) => {
         
         // server sockets
-        socket.on('joined server', async (data, cb) => userJoinsServer(socket, data, channelList, serverList, cb));
+        socket.on('joined server', async (data, cb) => userJoinsServer(socket, data, channelList, serverList, cb, io));
 
         socket.on('left server', async (data, cb) => UserLeavesServer(socket, data, channelList, serverList, cb));
 

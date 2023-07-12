@@ -13,14 +13,24 @@ module.exports = class ServerUserStatus {
         this.users.delete(member_id);
     }
 
-    user_joins_server(id, member) {
+    user_joins_server(id, member, io) {
 
         // check if user exists to avoid dupes
-        for (let [key, value] of this.users) {
-            if (value._id === member._id) {
-                this.users.delete(key);
-                break;
+        try {
+            for (let [key, value] of this.users) {
+                if (value._id === member._id) {
+                    this.users.delete(key);
+
+                    let socket = io.sockets.sockets.get(key);
+
+                    if (socket) {
+                        socket.off();
+                    }
+
+                    break;
+                }
             }
+        } catch (e) {
         }
 
         this.users.set(id, member);

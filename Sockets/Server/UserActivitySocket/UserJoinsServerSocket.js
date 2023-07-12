@@ -3,7 +3,7 @@ const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
 
-const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
+const userJoinsServer = async (socket, data, channelList, serverList, cb, io) => {
     try {
         const user = await AccountSchema.findOne({_id: socket.AUTH._id});
 
@@ -67,7 +67,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb) => {
         
         }
 
-        serverList.get(data.server_id).user_joins_server(socket.id, user_object);
+        serverList.get(data.server_id).user_joins_server(socket.id, user_object, io);
 
         const member_data_to_send = [];
 
