@@ -69,10 +69,30 @@ const AccountSchema = new mongoose.Schema({
     pinned_message: {
         type: String,
         default: ""
+    },
+    last_server: {
+        type: String,
+        default: ""
+    },
+    show_case_screen_shots: {
+        type: Boolean,
+        default: false
     }
 })
 
 // handle sign in
+AccountSchema.methods.toggle_show_case_screen_shot = function(bool) {
+    this.show_case_screen_shots = bool;
+
+    return this.save();
+}
+
+AccountSchema.methods.set_last_server = function(id) {
+    this.last_server = id;
+
+    return this.save();
+}
+
 AccountSchema.methods.generate_secret = function() {
     const min = 10000;
     const max = 90000;

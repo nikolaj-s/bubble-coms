@@ -384,7 +384,7 @@ ServerSchema.methods.update_channel = function(channel_id, channel) {
 
         this.channels = this.channels.map(c => {
             if (String(c._id) === channel_id) {
-                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon}
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon, channel_owner: channel.channel_owner, locked_media: channel.locked_media, media_auth: channel.media_auth}
             } else {
                 return c;
             }

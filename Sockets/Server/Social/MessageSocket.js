@@ -17,7 +17,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         if (data.content.text.length === 0 && !data.file) return cb({error: true, errorMessage: "Cannot send empty message"})
 
-        if (data.content.text.length > 511) return cb({error: true, errorMessage: "Text exceeds character limit of 512"})
+        if (data.content.text.length > 1024) return cb({error: true, errorMessage: "Text exceeds character limit of 1024"})
 
         // verify user perms
         const server = await ServerSchema.findOne({_id: socket.current_server})
@@ -60,9 +60,17 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         }
 
-        const image = file ? file.url : imageFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false && data.content.text.includes('mp4') === false)) ? data.content.text : false;
+        let images = [];
 
-        const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
+        for (const chunk of data.content.text.split(/[\n\r\s]+/)) {
+            let chunk_valid = imageFormats.some(format => (chunk.includes(format) && chunk.includes('redgifs') === false && chunk.includes('mp4') === false))
+
+            if (chunk_valid) images.push(chunk);
+        }
+
+        const image = file ? file.url : images[0];
+
+        const video = file ? false : videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
         const {text, iFrame, link, twitter} = UnpackURL(data.content.text);
 
@@ -75,14 +83,17 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             twitter: twitter,
             local_id: data.content.local_id,
             date: new Date,
-            time: Date.now()
+            time: Date.now(),
+            gallery: images.length > 1 ? images : false
         } 
+
         const mes = new MessageSchema({
             channel_id: data.channel_id,
             content: content,
             username: socket.AUTH.username,
             pinned: false,
-            server_id: String(server._id)
+            server_id: String(server._id),
+            screen_shot: data.screen_shot
         })
 
         const message = await mes.save();

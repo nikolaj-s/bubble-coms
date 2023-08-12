@@ -26,6 +26,10 @@ const MessageSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    screen_shot: {
+        type: Boolean,
+        default: false
     }
 })
 

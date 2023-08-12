@@ -28,6 +28,8 @@ route.get('/', async (req, res, next) => {
             }
         }
         
+        let screen_shots = await MessageSchema.find({username: Account.username, screen_shot: true}).sort({"date": -1}).limit(5);
+        
         if (Account) {
             const acccount_details = {
                 username: Account.username,
@@ -40,7 +42,10 @@ route.get('/', async (req, res, next) => {
                 profile_picture_shape: Account.profile_picture_shape,
                 bio: Account.bio,
                 color: Account.color,
-                pinned_message: pinned_message
+                pinned_message: pinned_message,
+                last_server: Account.last_server,
+                screen_shots: screen_shots,
+                showCaseScreenShots: Account.show_case_screen_shots
             }
 
             return res.send({success: true, account: {...acccount_details}})

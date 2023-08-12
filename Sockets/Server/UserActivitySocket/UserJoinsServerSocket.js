@@ -1,6 +1,7 @@
 
 const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
+const { StatusIcon } = require("../../../Schemas/StatusIcon/StatusIcon");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
 
 const userJoinsServer = async (socket, data, channelList, serverList, cb, io) => {
@@ -18,7 +19,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
         const memberFile = await server.get_member(user.username);
 
         if (memberFile === -1 || memberFile.error) return cb({error: true, errorMessage: "You are not a member of this server"});
-
+        
         let user_object = {
             _id: String(memberFile._id),
             display_name: user.display_name,
@@ -57,7 +58,10 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 auth: auth,
                 last_message_id: channel.last_message_id,
                 message_count: channel.message_count,
-                social: []
+                social: [],
+                channel_owner: channel.channel_owner,
+                locked_media: channel.locked_media,
+                media_auth: channel.media_auth
             }
         })
 
@@ -99,6 +103,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
         socket.join(data.server_id);
 
         console.log(`user has joined server ${data.server_id}`)
+
+        await user.set_last_server(data.server_id);
 
         socket.to(data.server_id).emit("user joins server", user_object);
 

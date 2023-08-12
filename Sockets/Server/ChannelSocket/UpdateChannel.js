@@ -79,7 +79,10 @@ const UpdateChannel = async (socket, data, cb) => {
             background_blur: new_channel_data.background_blur,
             disable_streams: new_channel_data.disable_streams,
             locked_channel: new_channel_data.locked_channel,
-            auth_users: auth_users
+            auth_users: auth_users,
+            channel_owner: new_channel_data.channel_owner,
+            locked_media: new_channel_data.lock_media_player,
+            media_auth: new_channel_data.authMediaUsers
         }
 
         if (new_channel_data.clear_social) {

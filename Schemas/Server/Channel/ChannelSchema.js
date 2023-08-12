@@ -57,6 +57,17 @@ const ChannelSchema = new mongoose.Schema({
     message_count: {
         type: Number,
         default: 0
+    },
+    channel_owner: {
+        type: String
+    },
+    locked_media: {
+        type: Boolean,
+        default: false
+    },
+    media_auth: {
+        type: [],
+        default: []
     }
 })
 

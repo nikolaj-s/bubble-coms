@@ -15,6 +15,10 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.update_new_account_state(false);
 
+        if (new_data.showCaseScreenShots !== user.show_case_screen_shots) {
+            await user.toggle_show_case_screen_shot(new_data.showCaseScreenShots);
+        }
+
         if (new_data.password) {
 
             if (new_data.newPassword === new_data.password) return res.send({error: true, errorMessage: "New password cannot be the same as the old password"});
@@ -83,7 +87,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color}});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, }});
 
     } catch (error) {
         console.log(error);

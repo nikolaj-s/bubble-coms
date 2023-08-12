@@ -50,6 +50,7 @@ const SearchSongs = require('./Server/MusicWidget/SearchSongs');
 const DirectMessage = require('./Server/User/DirectMessage');
 const FetchMessages = require('./Server/Social/FetchMessages');
 const FetchPinnedMessages = require('./Server/Social/FetchPinnedMessages');
+const FetchScreenShots = require('./Server/Social/FetchScreenShots');
 
 const channelList = new Map();
 
@@ -129,6 +130,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('fetch messages', async (data, cb) => FetchMessages(socket, data, cb));
 
         socket.on('fetch pins', async (data, cb) => FetchPinnedMessages(socket, data, cb));
+
+        socket.on('fetch screen shots', async (data, cb) => FetchScreenShots(socket, data, cb));
 
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));

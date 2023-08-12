@@ -10,6 +10,11 @@ module.exports = class ServerUserStatus {
     }
 
     user_leaves_server(member_id) {
+
+        let u = this.users.get(member_id);
+        // prevent memory issues
+        URL.revokeObjectURL(u?.status_icon);
+
         this.users.delete(member_id);
     }
 
@@ -42,11 +47,11 @@ module.exports = class ServerUserStatus {
         this.users.set(id, {status: user.status, ...member});
     }
 
-    update_user_status(id, new_status) {
+    update_user_status(id, new_status, icon) {
 
         const user = this.users.get(id);
 
-        this.users.set(id, {...user, status: new_status});
+        this.users.set(id, {...user, status: new_status, status_icon: icon});
 
     }
 

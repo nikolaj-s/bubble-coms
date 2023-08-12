@@ -19,6 +19,10 @@ const MessageSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true
+    },
+    screen_shot: {
+        type: Boolean,
+        default: false
     }
 })
 
