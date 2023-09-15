@@ -81,6 +81,12 @@ const AccountSchema = new mongoose.Schema({
 })
 
 // handle sign in
+AccountSchema.methods.update_color = function(color) {
+    this.color = color;
+
+    return this.save();
+}
+
 AccountSchema.methods.toggle_show_case_screen_shot = function(bool) {
     this.show_case_screen_shots = bool;
 

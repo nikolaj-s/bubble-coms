@@ -7,7 +7,7 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
 
         let icon = "";
 
-        const saved_icons = data.value.toLowerCase() !== 'online' && data.value.toLowerCase() !== 'offline' && data.value.toLowerCase() !== 'away' ? await StatusIcon.findOne({status: data.value}) : null;
+        const saved_icons = data.value.toLowerCase() !== 'online' && data.value.toLowerCase() !== 'offline' && data.value.toLowerCase() !== 'away' ? await StatusIcon.findOne({status: new RegExp(data.value, 'i')}).collation({locale: `en`, strength: 2}) : null;
         
         const new_icon = !saved_icons && data.value.toLowerCase() !== 'online' && data.value.toLowerCase() !== 'offline' && data.value.toLowerCase() !== 'away' ? await GetIcon(`${data.value} icon png`) : ""
 

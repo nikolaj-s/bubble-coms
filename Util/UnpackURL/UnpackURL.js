@@ -80,6 +80,11 @@ const UnpackURL = (data) => {
                         iFrame = "https://tunein.com/embed/player/" + c[c.length - 1];
 
                         link = text;
+                    } else if (text.includes('streamable')) {
+
+                        let c = text.split('.com');
+
+                        iFrame = c[0] + '.com/e' + c[1];
 
                     } else if (text.includes('https')) {
 

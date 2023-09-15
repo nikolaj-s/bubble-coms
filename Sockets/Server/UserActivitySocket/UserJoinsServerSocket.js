@@ -20,6 +20,19 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
 
         if (memberFile === -1 || memberFile.error) return cb({error: true, errorMessage: "You are not a member of this server"});
         
+        if (!serverList.has(data.server_id)) {
+
+            serverList.set(data.server_id, new ServerUserStatus(data.server_id));
+        
+        }
+
+        if (serverList.has(data.server_id)) {
+
+            let active = serverList.get(data.server_id).check_if_existing_user(String(memberFile._id));
+            console.log(active)
+            if (active) return cb({error: true, errorMessage: "You are currently connected to this server on a different device"})
+        }
+
         let user_object = {
             _id: String(memberFile._id),
             display_name: user.display_name,
@@ -64,12 +77,6 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 media_auth: channel.media_auth
             }
         })
-
-        if (!serverList.has(data.server_id)) {
-
-            serverList.set(data.server_id, new ServerUserStatus(data.server_id));
-        
-        }
 
         serverList.get(data.server_id).user_joins_server(socket.id, user_object, io);
 

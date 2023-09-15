@@ -9,6 +9,20 @@ module.exports = class ServerUserStatus {
 
     }
 
+    check_if_existing_user(id) {
+
+        let active = false;
+
+        for (let [key, value] of this.users) {
+            if (value._id === id) {
+                active = true;
+                break;
+            }
+        }
+
+        return active;
+    }
+
     user_leaves_server(member_id) {
 
         let u = this.users.get(member_id);

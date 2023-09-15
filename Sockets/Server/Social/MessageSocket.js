@@ -15,7 +15,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         // prevent large text
         if (!data.valid) return cb({error: true, errorMessage: "You need to update the app to send messages"});
 
-        if (data.content.text.length === 0 && !data.file) return cb({error: true, errorMessage: "Cannot send empty message"})
+        if (data.content.text.length === 0 && !data.file && data.content.video_upload === false) return cb({error: true, errorMessage: "Cannot send empty message"})
 
         if (data.content.text.length > 1024) return cb({error: true, errorMessage: "Text exceeds character limit of 1024"})
 
@@ -43,7 +43,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         const videoFormats = ['webm', 'mp4', 'm4v', 'avi'];
 
         let file;
-        
+        console.log(file)
         if (data.file) {
             
             if (data.file.byteLength > 3000000) {
@@ -70,7 +70,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         const image = file ? file.url : images[0];
 
-        const video = file ? false : videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
+        const video = data.content.video ? data.content.video : videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
         const {text, iFrame, link, twitter} = UnpackURL(data.content.text);
 
@@ -84,7 +84,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             local_id: data.content.local_id,
             date: new Date,
             time: Date.now(),
-            gallery: images.length > 1 ? images : false
+            gallery: images.length > 1 ? images : false,
+            video_upload: data.content.video_upload
         } 
 
         const mes = new MessageSchema({

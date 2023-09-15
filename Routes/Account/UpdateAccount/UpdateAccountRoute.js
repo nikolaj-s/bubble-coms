@@ -85,6 +85,10 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         }
 
+        if (new_data.color !== user.color) {
+            await user.update_color(new_data.color);
+        }
+
         await user.save();
 
         res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, }});
