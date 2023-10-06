@@ -24,11 +24,17 @@ module.exports = class Channel {
 
         this.io = io;
 
+        this.server_id = channel_id.split('/')[0];
+
+        this.local_channel_id = channel_id.split('/')[1];
+
         this.social = []
 
         this.songs = []
 
-        this.bot = new Bot(channel_id, io);
+        this.status;
+
+        this.bot = new Bot(channel_id, io, this.updateChannelStatus.bind(this));
 
         this.audioTransport;
 
@@ -39,6 +45,17 @@ module.exports = class Channel {
         this.plainAudioProducer;
 
         this.plainAudioConsumers = new Map();
+    }
+
+    returnChannelStatus() {
+        return this.status;
+    }
+
+    updateChannelStatus(data) {
+        console.log(data)
+        this.status = data;
+console.log(this.local_channel_id)
+        this.io.to(this.server_id).emit('channel/status/update', {channel_id: this.local_channel_id, status: data});
     }
 
     return_peer_by_socket_id(id) {

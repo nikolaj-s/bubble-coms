@@ -13,7 +13,19 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         
         const query = req.body.query;
 
+        if (query.length < 1) return res.send({error: true, errorMessage: "Invalid Query"});
+
         const server_id = req.body.server_id;
+
+        if (!server_id) {
+
+            const l_images = await ImageSearch(query);
+
+            if (l_images.error || l_images.length === 0) return res.send({error: true, errorMessage: "No Results"});
+
+            return res.send({success: true, media: l_images});
+
+        }
 
         const server = await ServerSchema.findOne({_id: mongoose.Types.ObjectId(server_id)})
         

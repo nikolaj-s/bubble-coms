@@ -74,7 +74,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 social: [],
                 channel_owner: channel.channel_owner,
                 locked_media: channel.locked_media,
-                media_auth: channel.media_auth
+                media_auth: channel.media_auth,
+                status: channelList.get(`${server._id}/${channel._id}`)?.returnChannelStatus()
             }
         })
 

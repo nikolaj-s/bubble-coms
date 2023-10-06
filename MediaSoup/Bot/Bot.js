@@ -1,7 +1,7 @@
 
 
 module.exports = class Bot {
-    constructor(channel_id, socket) {
+    constructor(channel_id = "", socket, updateStatus) {
 
         this.song_queue = [];
 
@@ -11,9 +11,18 @@ module.exports = class Bot {
 
         this.channel_id = channel_id;
 
+        this.server_id = channel_id.split('/')[0];
+
+        this.local_channel_id = channel_id.split('/')[1];
+
         this.playing = false;
 
         this.interval = null;
+
+        this.sendUpdate = (data) => {
+            console.log(data)
+            updateStatus(data)
+        }
 
     }
 
@@ -46,7 +55,11 @@ module.exports = class Bot {
     pushNewSong(data, user) {
 
         if (this.song_queue.length === 0 && this.playing === false) {
-            this.playing = true;
+            this.playing = true;    
+        }
+
+        if (this.song_queue.length === 0) {
+            this.sendUpdate(`Playing: ${data.title}`);
         }
 
         this.song_queue.push(data);
@@ -67,8 +80,13 @@ module.exports = class Bot {
         this.timer = 0
 
         if (this.song_queue.length === 0) {
+
+            this.sendUpdate(false);
+
             clearInterval(this.interval);
             this.interval = null;
+        } else {
+            this.sendUpdate(`Playing: ${this.song_queue[0].title}`)
         }
     
     }

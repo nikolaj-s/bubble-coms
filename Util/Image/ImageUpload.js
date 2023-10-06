@@ -19,16 +19,17 @@ const ImageUpload = async (file) => {
         }
 
         return new Promise((resolve, reject) => {
-            Cloudinary.uploader.upload_stream(file.data, function(error, result) {
-                
+            Cloudinary.uploader.upload_stream((file.data || file.preview), function(error, result) {
+                console.log(error)
                 if (error) return reject({error: true, errorMessage: "Error uploading image to database"})
 
                 // successful upload return secure image url
                 return resolve({success: true, url: result.secure_url})
 
-            }).end(file.data);
+            }).end(file.data || file.preview);
         })
     } catch (error) {
+        console.log(error)
         return {error: true, errorMessage: "Fatal Error Uploading Image."}
     }
 }
