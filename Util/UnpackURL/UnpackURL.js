@@ -1,6 +1,6 @@
+const { getLinkPreview } = require("link-preview-js");
 
-
-const UnpackURL = (data) => {
+const UnpackURL = async (data, image, video) => {
     try {
         let link;
 
@@ -10,9 +10,11 @@ const UnpackURL = (data) => {
 
         let twitter;
 
+        let link_preview;
+
         if (data.includes('https')) {
             try {
-                for (const text of data.split(' ')) {
+                for (const  text of data.split(' ')) {
                     if (text.includes('redgif')) {
                     
                         iFrame = "https://redgifs.com/ifr/" + (text.split('redgifs.com/')[1]?.includes('watch') ? text.split('redgifs.com/')[1]?.split('watch/')[1].toLowerCase() : text.split('redgifs.com/')[1]?.split('-')[0].toLowerCase());
@@ -25,36 +27,6 @@ const UnpackURL = (data) => {
                         
                         link = text;
                         
-                    } else if (text.includes('pornhub')) {
-        
-                        iFrame = "https://www.pornhub.com/embed/" + (text.split('viewkey=')[1])
-                        
-                        link = text;
-
-                    } else  if (text.includes('xvideos')) {
-        
-                        iFrame = "https://www.xvideos.com/embedframe/" + (text.split('video')[1].split('/')[0]);
-                        
-                        link = text;
-
-                    } else if (text.includes('reddit')) {
-        
-                        iFrame = "https://www.redditmedia.com/r/" + (text.split('r/')[1].split('?utm_')[0] + "?ref_source=embed&amp;ref=share&amp;embed=true&amp;theme=dark")
-                        
-                        link = text;
-
-                    } else if (text.includes('steampowered')) {
-        
-                        iFrame = "https://store.steampowered.com/widget/" + (text.split('app/')[1].split('/')[0]);
-                        
-                        link = text;
-
-                    } else if (text.includes('twitter')) {
-                        
-                        twitter = text.split('status/')[1].split('?')[0];
-                        
-                        link = text;
-
                     } else if (text.includes('vimeo')) {
                         
                         iFrame = "https://player.vimeo.com/video/" + text.split('com/')[1].split('/').join('?h=');
@@ -102,10 +74,21 @@ const UnpackURL = (data) => {
             t = data;
         }
 
-        return {text: t, link: link, iFrame: iFrame, twitter: twitter}
+        if (link && !iFrame && (!image && !video) && (!link.includes('http://') || !link.includes('localhost') || !link.includes('127.0.0.1'))) {
+
+            let preview_data = await getLinkPreview(link);
+
+            if (preview_data.description || preview_data.images.length > 0 || preview_data.videos.length > 0) {
+                link_preview = preview_data;
+            }
+
+        }
+
+        return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
 
     } catch (error) {
-        return {text: text, link: false, iFrame: false, twitter: false}
+        console.log(error)
+        return {text: text, link: false, iFrame: false, twitter: false, link_preview: false}
     }
 }
 

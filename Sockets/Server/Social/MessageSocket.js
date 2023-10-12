@@ -72,7 +72,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         const video = data.content.video ? data.content.video : videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        const {text, iFrame, link, twitter} = UnpackURL(data.content.text);
+        const {text, iFrame, link, twitter, link_preview} = await UnpackURL(data.content.text, image, video);
 
         const content = {
             image: image,
@@ -85,9 +85,10 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             date: new Date,
             time: Date.now(),
             gallery: images.length > 1 ? images : false,
-            video_upload: data.content.video_upload
+            video_upload: data.content.video_upload,
+            link_preview: link_preview
         } 
-
+        console.log(content)
         const mes = new MessageSchema({
             channel_id: data.channel_id,
             content: content,
