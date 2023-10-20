@@ -76,9 +76,11 @@ const UnpackURL = async (data, image, video) => {
 
         if (link && !iFrame && (!image && !video) && (!link.includes('http://') || !link.includes('localhost') || !link.includes('127.0.0.1'))) {
 
-            let preview_data = await getLinkPreview(link);
+            let preview_data = await getLinkPreview(link).catch(err => {
+                return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
+            })
 
-            if (preview_data.description || preview_data.images.length > 0 || preview_data.videos.length > 0) {
+            if (preview_data.description || preview_data?.images?.length > 0 || preview_data?.videos?.length > 0) {
                 link_preview = preview_data;
             }
 
@@ -88,7 +90,7 @@ const UnpackURL = async (data, image, video) => {
 
     } catch (error) {
         console.log(error)
-        return {text: text, link: false, iFrame: false, twitter: false, link_preview: false}
+        return {text: t, link: false, iFrame: false, twitter: false, link_preview: false}
     }
 }
 
