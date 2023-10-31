@@ -93,14 +93,27 @@ const UpdateServer = async (socket, data, cb) => {
 
         }
 
-        await server.save();
+        if (data.welcome_message && (data.welcome_message !== server.welcome_message)) {
+
+            if (permissions.user_can_edit_server_banner === false && permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
+
+            await server.update_welcome_message(data.welcome_message);
+        }
+
+        if (data.banned_keywords) {
+            if (permissions.user_can_edit_server_banner === false && permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
+
+            await server.update_banned_keywords(data.banned_keywords);
+        }
         
         const data_to_send = {
             success: true, 
             data: {
                 server_banner: server.server_banner,
                 server_name: server.server_name,
-                inactive_channel: server.inactive_channel
+                inactive_channel: server.inactive_channel,
+                welcome_message: server.welcome_message,
+                banned_keywords: server.banned_keywords
             }
         }
         

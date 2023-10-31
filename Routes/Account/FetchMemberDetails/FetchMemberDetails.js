@@ -35,7 +35,8 @@ route.get('/', async (req, res, next) => {
                 bio: Account.bio,
                 color: Account.color,
                 pinned_message: pinned_msg,
-                screenShots: screen_shots
+                screenShots: screen_shots,
+                recent_activity: Account.recent_activity
             }
 
             return res.send({success: true, ...acccount_details})

@@ -88,7 +88,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             video_upload: data.content.video_upload,
             link_preview: link_preview
         } 
-        console.log(content)
+        
         const mes = new MessageSchema({
             channel_id: data.channel_id,
             content: content,
@@ -101,6 +101,10 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         const message = await mes.save();
 
         await server.save_message(channel, message);
+
+        if (mes.screen_shot) {
+            await server.update_activity_feed(mes);
+        }
         
         socket.to(socket.current_server).emit("new message", message);
 

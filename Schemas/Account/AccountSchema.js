@@ -12,6 +12,7 @@ const AccountSchema = new mongoose.Schema({
         required: true,
         maxlength: 30
     },
+    recent_activity: [],
     bio: {
         type: String
     },
@@ -209,6 +210,29 @@ AccountSchema.methods.handle_pin_message = function(id) {
     this.pinned_message = id;
 
     return this.save();
+}
+
+AccountSchema.methods.update_recent_activity = function(activity) {
+    
+    let current = this.recent_activity;
+
+    const exists = this.recent_activity.findIndex(s => s.status === activity.status);
+
+    if (exists !== -1) {
+
+        current.sort((x, y) => {x.status === activity.status ? -1 : y.status === activity.status ? 1 : 0});
+
+    } else {
+
+        if (current.length > 2) current.pop();
+
+        current = [activity, ...current];
+    }
+
+    this.recent_activity = current;
+
+    return this.save();
+
 }
 
 module.exports.AccountSchema = mongoose.model("AccountSchema", AccountSchema);

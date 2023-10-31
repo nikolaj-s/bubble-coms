@@ -39,7 +39,20 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         
         if (server_group === -1 || !server_group.user_can_post_channel_social) return res.send({error: true, errorMessage: "unauthorized activity"});
 
-        const images = await ImageSearch(query);
+        let blocked = false;
+
+        const banned_words = server.banned_keywords;
+
+        for (const w of banned_words) {
+            if (query.toLowerCase().includes(w)) {
+                blocked = true;
+                break;
+            }
+        }
+
+        if (blocked) return res.send({error: true, errorMessage: "Your Search Has Been Blocked As It Contains A Banned Keyword"});
+
+        const images = await ImageSearch(query, query);
 
         if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 
@@ -68,7 +81,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
                 if (!related_query || related_query === '' || related_query === ' ') return;
     
-                const reccomendations = await ImageSearch(related_query);
+                const reccomendations = await ImageSearch(related_query, query);
                 
                 if (reccomendations.length === 0) return;
 

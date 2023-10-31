@@ -20,9 +20,15 @@ const ServerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    banned_keywords: [],
     inactive_channel: {
         type: String,
     },
+    welcome_message: {
+        type: String,
+    },
+    activity_feed: [],
+    image_of_the_day: {},
     members: [MemberSchema],
     channels: [ChannelSchema],
     ban_list: [BanSchema],
@@ -375,7 +381,7 @@ ServerSchema.methods.add_widget_to_channel = function(channel_index, widget) {
     }
 }
 
-ServerSchema.methods.update_channel = function(channel_id, channel) {
+ServerSchema.methods.update_channel = function(channel_id, channel, status) {
     try {
 
         const c_index = this.channels.findIndex(c => String(c._id) === channel_id);
@@ -389,6 +395,12 @@ ServerSchema.methods.update_channel = function(channel_id, channel) {
                 return c;
             }
         })
+
+        const act_feed = this.activity_feed;
+
+        if (act_feed.length >= 30) act_feed.pop();
+
+        this.activity_feed = [status, ...act_feed];
 
         this.save();
 
@@ -611,6 +623,62 @@ ServerSchema.methods.un_like_song = function(channel_id, song) {
             return channel;
         }
     })
+
+    return this.save();
+}
+
+ServerSchema.methods.update_image_of_the_day = function() {
+
+    if (this.recent_image_searches.length === 0 && !this.image_of_the_day?.date) return {};
+
+    if (!this.image_of_the_day?.date) {
+
+        const random = Math.floor(Math.random() * this.recent_image_searches.length);
+        
+        this.image_of_the_day = {date: Date.now(), ...this.recent_image_searches[random]};
+
+        this.save();
+    } else if (this.image_of_the_day?.date) {
+
+        let data = Math.floor(((Date.now() - this.image_of_the_day?.date) / 1000) / 60);
+        
+        if (data >= 1440) {
+
+            let recent_images = this.recent_image_searches.filter(i => i.image !== this.image_of_the_day?.image);
+            
+            const random = Math.floor(Math.random() * recent_images.length);
+
+            this.image_of_the_day = {date: Date.now(), ...recent_images[random]};
+
+            this.save();
+        
+        }
+
+    }
+
+    return this.image_of_the_day;
+}
+
+ServerSchema.methods.update_activity_feed = function(data) {
+    
+    let updated_status_arr = this.activity_feed;
+    console.log(updated_status_arr)
+    if (updated_status_arr.length >= 30) updated_status_arr.pop();
+
+    this.activity_feed = [data, ...updated_status_arr];
+
+    return this.save();
+
+}
+
+ServerSchema.methods.update_welcome_message = function(data) {
+    this.welcome_message = data;
+
+    return this.save();
+}
+
+ServerSchema.methods.update_banned_keywords = function(data) {
+    this.banned_keywords = data;
 
     return this.save();
 }

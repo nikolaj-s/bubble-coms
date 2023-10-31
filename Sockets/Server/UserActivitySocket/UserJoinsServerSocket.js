@@ -90,7 +90,11 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             } else {
                 member_data_to_send.push(m);
             }
+        
         }
+
+        const imageOfTheDay = await server.update_image_of_the_day();
+    
         const server_data = {
             server_name: server.server_name,
             server_banner: server.server_banner,
@@ -103,7 +107,11 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             pinned: server.pinned_messages,
             recent_searches: server.recent_image_searches,
             inactive_channel: server.inactive_channel,
-            user: user_object
+            user: user_object,
+            image_of_the_day: imageOfTheDay,
+            activity_feed: server.activity_feed,
+            welcome_message: server.welcome_message,
+            banned_keywords: server.banned_keywords
         }
         
         socket.current_server = data.server_id;
@@ -114,7 +122,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
 
         await user.set_last_server(data.server_id);
 
-        socket.to(data.server_id).emit("user joins server", user_object);
+        socket.to(data.server_id).emit("user joins server", {...user_object});
 
         cb({success: true, server: server_data});
 

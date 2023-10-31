@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const fetch = require('node-fetch')
 
-const ImageSearch = async (query) => {
+const ImageSearch = async (query, altQuery = "") => {
     try {
         
         const response = await axios.get(`https://yandex.com/images/search?text=${query}`, {headers: {Cookie: 
@@ -12,13 +12,13 @@ const ImageSearch = async (query) => {
         }});
         
         const html = response.data;
-        
+       
         const ch = cheerio.load(html);
         
         const parsed = ch('.serp-item_type_search[data-bem]');
-
+      
         let images = [];
-
+     
         parsed.each((idx, el) => {
             
             let obj = JSON.parse(el.attribs['data-bem'])
@@ -26,7 +26,8 @@ const ImageSearch = async (query) => {
                 preview: `https:${obj['serp-item'].thumb.url}`,
                 type: 'image',
                 image: obj['serp-item'].img_href,
-                tags: obj['serp-item'].snippet.text.split('<b>').join('').split('</b>').join('').replace(/[^a-zA-Z ]/g, "")
+                tags: obj['serp-item'].snippet.text.split('<b>').join('').split('</b>').join('').replace(/[^a-zA-Z ]/g, ""),
+                query: altQuery
             })
         })
 

@@ -1,19 +1,44 @@
 const { StatusIcon } = require("../../../Schemas/StatusIcon/StatusIcon");
 const GetIcon = require("../../../Util/Image/GetIcon");
 
+const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
+
+const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 
 const UserActiveStatus = async (socket, data, cb, serverList) => {
     try {
 
         let icon = "";
 
-        const saved_icons = data.value.toLowerCase() !== 'online' && data.value.toLowerCase() !== 'offline' && data.value.toLowerCase() !== 'away' ? await StatusIcon.findOne({status: new RegExp(data.value, 'i')}).collation({locale: `en`, strength: 2}) : null;
+        let status;
+
+        const user = await AccountSchema.findOne({username: socket.AUTH.username});
+
+        if (!user) return cb({error: true, errorMessage: "Validation Error"});
+
+        let lower_cased_data = data.value.toLowerCase();
+
+        if (lower_cased_data.includes('devtools')) {
+            status = "DevTools";
+        } else if (lower_cased_data.includes('war thunder')) {
+            status = 'War Thunder';
+        } else if (lower_cased_data.includes('escapefromtarkov')) {
+            status = "Escape From Tarkov";
+        } else if (lower_cased_data.includes('league of ledgends')) {
+            status = 'League of Ledgends';
+        } else {
+            status = data.value;
+        }
+
+        const server = await ServerSchema.findOne({_id: socket.current_server});
+
+        const saved_icons = status.toLowerCase() !== 'online' && status.toLowerCase() !== 'offline' && status.toLowerCase() !== 'away' ? await StatusIcon.findOne({status: new RegExp(status, 'i')}).collation({locale: `en`, strength: 2}) : null;
         
-        const new_icon = !saved_icons && data.value.toLowerCase() !== 'online' && data.value.toLowerCase() !== 'offline' && data.value.toLowerCase() !== 'away' ? await GetIcon(`${data.value} icon png`) : ""
+        const new_icon = !saved_icons && status.toLowerCase() !== 'online' && status.toLowerCase() !== 'offline' && status.toLowerCase() !== 'away' ? await GetIcon(`${status} icon png`) : ""
 
         if (new_icon !== "") {
             const save_new_icon = await new StatusIcon({
-                status: data.value,
+                status: status,
                 icon: new_icon
             })
 
@@ -22,13 +47,34 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
 
         icon = (saved_icons?.icon || new_icon);
         
-        serverList.get(socket.current_server).update_user_status(socket.id, data.value, icon);
+        serverList.get(socket.current_server).update_user_status(socket.id, status, icon);
 
         const memeber = serverList.get(socket.current_server).get_user_by_socket_id(socket.id);
 
-        cb({status: data.value, user_id: memeber._id, icon: icon});
+        const status_msg = {
+            channel_id: String(server._id),
+            content: {
+                text: `Started Playing ${status}`,
+                date: new Date,
+                time: Date.now(),
+                image: icon
+            },
+            pinned: false,
+            username: socket.AUTH.username,
+            server_id: String(server._id),
+        }
 
-        socket.to(socket.current_server).emit('user status update', {status: data.value, user_id: memeber._id, username: memeber.username, icon: icon});
+        if (status.toLowerCase() !== 'online' && status.toLowerCase() !== 'offline' && status.toLowerCase() !== 'away') {
+
+            await user.update_recent_activity({state: status, icon: icon});
+
+        }
+
+        await server.update_activity_feed(status_msg);
+
+        cb({status: status, user_id: memeber._id, icon: icon, status_msg: status_msg});
+
+        socket.to(socket.current_server).emit('user status update', {status: status, user_id: memeber._id, username: memeber.username, icon: icon, status_msg: status_msg});
 
     } catch (error) {
         console.log(error);

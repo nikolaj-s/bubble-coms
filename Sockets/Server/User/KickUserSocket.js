@@ -26,7 +26,25 @@ const KickUserSocket = async (socket, data, cb, channelList) => {
 
         await server.update_member({...user_to_kick_file, _id: String(user_to_kick_file._id), server_score: (user_to_kick_file.server_score - 5)})
 
-        socket.to(user_to_kick).emit('kick');
+        const status_msg = {
+            channel_id: String(server._id),
+            content: {
+                text: `Kicked ${user_to_kick_file?.display_name} from the server`,
+                date: new Date,
+                time: Date.now()
+            },
+            pinned: false,
+            username: socket.AUTH.username,
+            server_id: String(server._id),
+        }
+
+        await server.update_activity_feed(status_msg);
+
+        socket.to(user_to_kick).emit('kick', {kicked_by: member.display_name});
+
+        socket.to(socket.current_server).emit('server status', status_msg);
+
+        cb(status_msg);
 
     } catch (error) {
         console.log(error);

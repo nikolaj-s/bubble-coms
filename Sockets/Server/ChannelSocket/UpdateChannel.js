@@ -106,13 +106,26 @@ const UpdateChannel = async (socket, data, cb) => {
             data_to_save.social = [];
         }
 
-        const saved_data = await server.update_channel(new_channel_data._id, data_to_save);
+        const status_msg = {
+            channel_id: String(server._id),
+            content: {
+                text: `Has edited channel ${data_to_save.channel_name}`,
+                date: new Date,
+                time: Date.now(),
+                image: data_to_save.icon
+            },
+            pinned: false,
+            username: socket.AUTH.username,
+            server_id: String(server._id),
+        }
+
+        const saved_data = await server.update_channel(new_channel_data._id, data_to_save, status_msg);
 
         if (saved_data.error) return cb({error: true, errorMessage: "fatal error updating channel"});
 
-        cb({success: true, channel: saved_data, cleared_social: new_channel_data.clear_social});
+        cb({success: true, channel: saved_data, cleared_social: new_channel_data.clear_social, status_msg: status_msg});
 
-        socket.to(socket.current_server).emit('channel update', {channel: saved_data, cleared_social: new_channel_data.clear_social});
+        socket.to(socket.current_server).emit('channel update', {channel: saved_data, cleared_social: new_channel_data.clear_social, status_msg: status_msg});
 
     } catch (error) {
         console.log(error);
