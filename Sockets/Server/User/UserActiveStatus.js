@@ -57,7 +57,6 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
                 text: `Started Playing ${status}`,
                 date: new Date,
                 time: Date.now(),
-                image: icon
             },
             pinned: false,
             username: socket.AUTH.username,
@@ -69,8 +68,6 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
             await user.update_recent_activity({state: status, icon: icon});
 
         }
-
-        await server.update_activity_feed(status_msg);
 
         cb({status: status, user_id: memeber._id, icon: icon, status_msg: status_msg});
 
