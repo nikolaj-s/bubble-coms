@@ -24,11 +24,15 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
             status = 'War Thunder';
         } else if (lower_cased_data.includes('escapefromtarkov')) {
             status = "Escape From Tarkov";
-        } else if (lower_cased_data.includes('league of ledgends')) {
-            status = 'League of Ledgends';
+        } else if (lower_cased_data.includes('league of legends')) {
+            status = 'League of Legends';
         } else {
             status = data.value;
         }
+
+        const current_status = serverList.get(socket.current_server).get_current_user_status(socket.id);
+
+        if (current_status.status === status) return cb({status: current_status.status, icon: current_status.status_icon});
 
         const server = await ServerSchema.findOne({_id: socket.current_server});
 

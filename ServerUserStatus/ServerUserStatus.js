@@ -69,6 +69,10 @@ module.exports = class ServerUserStatus {
 
     }
 
+    get_current_user_status(id) {
+        return this.users.get(id);
+    }
+
     get_user_by_socket_id(id) {
         return this.users.get(id);
     }
