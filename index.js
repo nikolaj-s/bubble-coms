@@ -69,18 +69,13 @@ function getMediasoupWorker() {
     return worker;
 }
 
-App.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
 
 App.use(morgan('dev'));
 
 App.use(fileUpload({}));
 
 // handle cors
-App.use(cors({orgin: ["*"], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
+App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
 App.set('trust proxy', true);
 
