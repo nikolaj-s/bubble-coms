@@ -37,14 +37,14 @@ const options = {
 }
 
 App.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.send({ok: true}), 200
+    console.log(req);
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    next();
 });
 
 // App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
-const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000'];
+const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000', 'http://10.0.0.38:3000'];
 
 const corsOptions = function (req, callback) {
     let options;
@@ -54,6 +54,8 @@ const corsOptions = function (req, callback) {
     } else {
         options = { origin: false, optionsSuccessStatus: 200,} // disable CORS for this request
     }
+
+    console.log(options)
 
     callback(null, options);
 }
