@@ -48,7 +48,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
         }
 
         await server.update_member(user_object);
-
+        console.log(data.status)
         user_object.status = data.status;
 
         const channels = server.channels.map(channel => {
@@ -75,7 +75,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 channel_owner: channel.channel_owner,
                 locked_media: channel.locked_media,
                 media_auth: channel.media_auth,
-                status: channelList.get(`${server._id}/${channel._id}`)?.returnChannelStatus()
+                status: channelList.get(`${server._id}/${channel._id}`)?.returnChannelStatus(),
+                contain_background: channel.contain_background
             }
         })
 

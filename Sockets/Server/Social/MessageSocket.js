@@ -15,7 +15,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         // prevent large text
         if (!data.valid) return cb({error: true, errorMessage: "You need to update the app to send messages"});
 
-        if (data.content.text.length === 0 && !data.file && data.content.video_upload === false) return cb({error: true, errorMessage: "Cannot send empty message"})
+        if (data.content.text.length === 0 && !data.file && data.content.video_upload === false && !data.content.emoji) return cb({error: true, errorMessage: "Cannot send empty message"})
 
         if (data.content.text.length > 1024) return cb({error: true, errorMessage: "Text exceeds character limit of 1024"})
 
@@ -63,7 +63,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         let images = [];
 
         for (const chunk of data.content.text.split(/[\n\r\s]+/)) {
-            let chunk_valid = imageFormats.some(format => (chunk.includes(format) && chunk.includes('redgifs') === false && chunk.includes('mp4') === false))
+            let chunk_valid = imageFormats.some(format => (chunk.includes(format) && chunk.includes('redgifs') === false && chunk.includes('mp4') === false && chunk.includes('https')))
 
             if (chunk_valid) images.push(chunk);
         }
@@ -86,7 +86,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             time: Date.now(),
             gallery: images.length > 1 ? images : false,
             video_upload: data.content.video_upload,
-            link_preview: link_preview
+            link_preview: link_preview,
+            emoji: data.content.emoji
         } 
         
         const mes = new MessageSchema({
@@ -95,7 +96,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             username: socket.AUTH.username,
             pinned: false,
             server_id: String(server._id),
-            screen_shot: data.screen_shot
+            screen_shot: data.screen_shot,
+            nsfw: data.nsfw
         })
 
         const message = await mes.save();
@@ -103,7 +105,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         await server.save_message(channel, message);
 
         if (mes.screen_shot) {
-            await server.update_activity_feed(mes);
+            await server.update_activity_feed({content: content, channel_id: 'activity-feed', username: socket.AUTH.username, pinned: false, server_id: String(server._id), screen_shot: data.screen_shot});
         }
         
         socket.to(socket.current_server).emit("new message", message);

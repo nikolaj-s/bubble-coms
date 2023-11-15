@@ -69,7 +69,11 @@ function getMediasoupWorker() {
     return worker;
 }
 
-
+App.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 App.use(morgan('dev'));
 
@@ -144,6 +148,14 @@ App.use('/fetch-member-details', FetchMemberDetails);
 const PinMessageToAccount = require('./Routes/Account/PinMessageToAccount/PinMessageToAccount');
 
 App.use('/pin-message', PinMessageToAccount);
+
+const ReorderServers = require('./Routes/Server/ReOrderServers/ReOrderServers');
+
+App.use('/re-order-servers', ReorderServers);
+
+const VerifyAccount = require('./Routes/Account/VerifyAccount/VerifyAccount');
+
+App.use('/verify-account', VerifyAccount);
 
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)

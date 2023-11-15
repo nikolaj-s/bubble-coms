@@ -1,5 +1,6 @@
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 
+const {v4: uuidv4 } = require('uuid');
 
 const KickUserSocket = async (socket, data, cb, channelList) => {
     try {
@@ -27,6 +28,7 @@ const KickUserSocket = async (socket, data, cb, channelList) => {
         await server.update_member({...user_to_kick_file, _id: String(user_to_kick_file._id), server_score: (user_to_kick_file.server_score - 5)})
 
         const status_msg = {
+            _id: uuidv4(),
             channel_id: String(server._id),
             content: {
                 text: `Kicked ${user_to_kick_file?.display_name} from the server`,

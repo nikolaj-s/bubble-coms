@@ -3,6 +3,7 @@ const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 const ImageUpload = require("../../../Util/Image/ImageUpload");
 
+const { v4: uuidv4} = require('uuid');
 
 const UpdateChannel = async (socket, data, cb) => {
     try {
@@ -82,7 +83,8 @@ const UpdateChannel = async (socket, data, cb) => {
             auth_users: auth_users,
             channel_owner: new_channel_data.channel_owner,
             locked_media: new_channel_data.lock_media_player,
-            media_auth: new_channel_data.authMediaUsers
+            media_auth: new_channel_data.authMediaUsers,
+            contain_background: new_channel_data.contain_background
         }
 
         if (new_channel_data.clear_social) {
@@ -107,6 +109,7 @@ const UpdateChannel = async (socket, data, cb) => {
         }
 
         const status_msg = {
+            _id: uuidv4(),
             channel_id: String(server._id),
             content: {
                 text: `Has edited channel ${data_to_save.channel_name}`,

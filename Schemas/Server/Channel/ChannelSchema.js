@@ -68,8 +68,11 @@ const ChannelSchema = new mongoose.Schema({
     media_auth: {
         type: [],
         default: []
+    },
+    contain_background: {
+        type: Boolean,
+        default: false
     }
 })
-
 
 module.exports = ChannelSchema;

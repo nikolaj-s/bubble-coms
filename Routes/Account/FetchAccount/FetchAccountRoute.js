@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const { AccountSchema } = require('../../../Schemas/Account/AccountSchema');
 const { MessageSchema } = require('../../../Schemas/Message/MessageSchema');
+const SendVerificationEmail = require('../../../Util/Email/SendVerificationEmail');
 
 route.get('/', async (req, res, next) => {
     try {
@@ -30,6 +31,19 @@ route.get('/', async (req, res, next) => {
         
         let screen_shots = await MessageSchema.find({username: Account.username, screen_shot: true}).sort({"date": -1}).limit(5);
         
+        const email = Account.email.slice(0, 4) + "***********" + Account.email.split('@')[1]
+        
+        // if (!Account.verified) {
+
+        //     const verification_key = await Account.generate_verification_key();
+
+        //     const email_sent = await SendVerificationEmail(Account.email, verification_key);
+
+        //     console.log('verification email sent')
+
+        //     if (email_sent.error) return res.send({error: true, errorMessage: "Email Verification Has Failed, Invalid Email Address Detected Account Marked For Deletion"});
+        // }
+
         if (Account) {
             const acccount_details = {
                 username: Account.username,
@@ -45,7 +59,9 @@ route.get('/', async (req, res, next) => {
                 pinned_message: pinned_message,
                 last_server: Account.last_server,
                 screen_shots: screen_shots,
-                showCaseScreenShots: Account.show_case_screen_shots
+                showCaseScreenShots: Account.show_case_screen_shots,
+                verified: Account.verified,
+                email: email
             }
 
             return res.send({success: true, account: {...acccount_details}})

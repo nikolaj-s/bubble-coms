@@ -78,6 +78,14 @@ const AccountSchema = new mongoose.Schema({
     show_case_screen_shots: {
         type: Boolean,
         default: false
+    },
+    verification_key: {
+        type: String,
+        default: ""
+    },
+    verification_email_sent: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -233,6 +241,40 @@ AccountSchema.methods.update_recent_activity = function(activity) {
 
     return this.save();
 
+}
+
+AccountSchema.methods.re_order_servers = function(servers) {
+    this.joined_servers = servers;
+
+    return this.save();
+}
+
+AccountSchema.methods.generate_verification_key = function() {
+    
+    const  letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+    
+    let key = "";
+
+    letters.forEach(() => {
+        
+        key+= letters[Math.floor(Math.random() * letters.length)];
+    })
+
+    let key_to_set = key.slice(0, 6);
+    
+    this.verification_key = key_to_set;
+
+    this.verification_email_sent = true;
+
+    this.save();
+
+    return key_to_set;
+}
+
+AccountSchema.methods.update_verification_state = function() {
+    this.verified = true;
+
+    return this.save();
 }
 
 module.exports.AccountSchema = mongoose.model("AccountSchema", AccountSchema);

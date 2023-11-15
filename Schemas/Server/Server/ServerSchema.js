@@ -7,6 +7,8 @@ const BanSchema = require("../Ban/BanSchema");
 const ServerGroupSchema = require('../ServerGroup/ServerGroupSchema');
 const WidgetSchema = require('../Widget/WidgetSchema');
 
+const { v4: uuidv4} = require('uuid');
+
 const ServerSchema = new mongoose.Schema({
     server_name: {
         type: String,
@@ -390,7 +392,7 @@ ServerSchema.methods.update_channel = function(channel_id, channel, status) {
 
         this.channels = this.channels.map(c => {
             if (String(c._id) === channel_id) {
-                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon, channel_owner: channel.channel_owner, locked_media: channel.locked_media, media_auth: channel.media_auth}
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon, channel_owner: channel.channel_owner, locked_media: channel.locked_media, media_auth: channel.media_auth, contain_background: channel.contain_background}
             } else {
                 return c;
             }
@@ -400,7 +402,9 @@ ServerSchema.methods.update_channel = function(channel_id, channel, status) {
 
         if (act_feed.length >= 30) act_feed.pop();
 
-        this.activity_feed = [status, ...act_feed];
+        const stat_msg = {...status};
+
+        this.activity_feed = [stat_msg, ...act_feed];
 
         this.save();
 
@@ -662,13 +666,21 @@ ServerSchema.methods.update_image_of_the_day = function() {
 ServerSchema.methods.update_activity_feed = function(data) {
     
     let updated_status_arr = this.activity_feed;
-    console.log(updated_status_arr)
+    
     if (updated_status_arr.length >= 30) updated_status_arr.pop();
 
-    this.activity_feed = [data, ...updated_status_arr];
+    const new_activity_message = {_id: uuidv4(), ...data};
+
+    this.activity_feed = [new_activity_message, ...updated_status_arr];
 
     return this.save();
 
+}
+
+ServerSchema.methods.clear_activity_feed = function() {
+    this.activity_feed = [];
+
+    return this.save();
 }
 
 ServerSchema.methods.update_welcome_message = function(data) {

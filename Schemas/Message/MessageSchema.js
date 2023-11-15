@@ -30,6 +30,10 @@ const MessageSchema = new mongoose.Schema({
     screen_shot: {
         type: Boolean,
         default: false
+    },
+    nsfw: {
+        type: Boolean,
+        default: false
     }
 })
 
