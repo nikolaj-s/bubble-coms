@@ -36,11 +36,11 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname + "/server/", config.sslCrt), 'utf-8')
 }
 
-// App.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-// });
+App.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.send({ok: true}), 200
+});
 
 // App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
@@ -50,15 +50,15 @@ const corsOptions = function (req, callback) {
     let options;
 
     if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        options = { origin: true, optionsSuccessStatus: 200, exposedHeaders: ["auth_token", "API_KEY"] } // reflect (enable) the requested origin in the CORS response
+        options = { origin: true, optionsSuccessStatus: 200,} // reflect (enable) the requested origin in the CORS response
     } else {
-        options = { origin: false, optionsSuccessStatus: 200, exposedHeaders: ["auth_token", "API_KEY"] } // disable CORS for this request
+        options = { origin: false, optionsSuccessStatus: 200,} // disable CORS for this request
     }
 
     callback(null, options);
 }
 
-App.options("*", cors(corsOptions));
+App.options("*", cors());
 
 App.use(cors(corsOptions));
 
