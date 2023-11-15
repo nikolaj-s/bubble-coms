@@ -36,24 +36,13 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname + "/server/", config.sslCrt), 'utf-8')
 }
 
-App.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
+App.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", ["http://10.0.0.187:3000", "10.0.0.187:3000", "http://localhost:3000", "https://bubblenetwork.netlify.app", "https://thebubble.network"]);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
 const server = https.createServer(options, App);
 
