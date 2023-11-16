@@ -39,7 +39,7 @@ const options = {
 
 // App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
-const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000', 'http://10.0.0.38:3000', "https://profound-pony-5c9dc8.netlify.app/", "https://bubbleserverbackendcoms.net"];
+const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000', 'http://10.0.0.38:3000', "https://profound-pony-5c9dc8.netlify.app/", "https://bubbleserverbackendcoms.net", "http://localhost:8382"];
 
 const corsOptions = function (req, callback) {
     let options;
