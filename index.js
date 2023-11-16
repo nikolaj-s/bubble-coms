@@ -36,16 +36,10 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname + "/server/", config.sslCrt), 'utf-8')
 }
 
-App.use(function(req, res, next) {
-    console.log(req);
-    res.header("Access-Control-Allow-Origin", "https://profound-pony-5c9dc8.netlify.app/");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, TOKEN");
-    next();
-});
 
 // App.use(cors({orgin: ['http://10.0.0.187:3000', '10.0.0.187:3000', 'localhost:3000', 'http://localhost:3000', 'localhost'], exposedHeaders: ["auth_token", "API_KEY"], methods: ["GET", "POST", "PUT", "DELETE"]}));
 
-const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000', 'http://10.0.0.38:3000', "https://profound-pony-5c9dc8.netlify.app/"];
+const whitelist = ['localhost', 'http://localhost', 'http://localhost:3000', 'http://10.0.0.38:3000', "https://profound-pony-5c9dc8.netlify.app/", "https://bubbleserverbackendcoms.net"];
 
 const corsOptions = function (req, callback) {
     let options;
