@@ -24,7 +24,7 @@ const DirectMessage = async (socket, data, serverList, cb) => {
 
         const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        const {text, iFrame, link, twitter} = UnpackURL(data.content.text);
+        const {text, iFrame, link, twitter} = await UnpackURL(data.content.text, image, video);
 
         const content = {
             image: image,
@@ -35,7 +35,9 @@ const DirectMessage = async (socket, data, serverList, cb) => {
             twitter: twitter,
             local_id: data.content.local_id,
             date: new Date(),
-            time: Date.now()
+            time: Date.now(),
+            emoji:data.content.emoji,
+            textStyle: data.content.textStyle
         }
 
         const message = {
@@ -44,7 +46,8 @@ const DirectMessage = async (socket, data, serverList, cb) => {
             content: content,
             username: socket.AUTH.username,
             pinned: false,
-            user_image: data.user_image
+            user_image: data.user_image,
+            nsfw: data.nsfw
         }
         socket.to(recipitent).emit('direct message', message);
 

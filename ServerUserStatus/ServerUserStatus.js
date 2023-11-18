@@ -13,14 +13,18 @@ module.exports = class ServerUserStatus {
 
         let active = false;
 
+        let socket_id = "";
+
         for (let [key, value] of this.users) {
             if (value._id === id) {
                 active = true;
+                socket_id = key;
                 break;
             }
         }
 
-        return active;
+        return {active: active, socket_id: socket_id};
+    
     }
 
     user_leaves_server(member_id) {

@@ -55,7 +55,7 @@ const corsOptions = function (req, callback) {
     callback(null, options);
 }
 
-App.options("*", cors());
+App.options("*", cors(corsOptions));
 
 App.use(cors(corsOptions));
 

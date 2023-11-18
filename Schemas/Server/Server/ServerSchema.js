@@ -70,7 +70,8 @@ const ServerSchema = new mongoose.Schema({
     times_media_searched: {
         type: Number,
         default: 0
-    }
+    },
+    
 })
 
 ServerSchema.methods.update_inactive_channel = function(channel_id) {

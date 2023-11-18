@@ -75,7 +75,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('create channel', async (data, cb) => UserCreatesChannel(socket, data, cb));
 
         socket.on('disconnect', async (data, cb) => UserLeavesServer(socket, data, channelList, serverList, cb));
-
+        
         socket.on('update server', async (data, cb) => UpdateServer(socket, data, cb));
 
         socket.on('update server groups', async (data, cb) => UpdateServerGroups(socket, data, cb));

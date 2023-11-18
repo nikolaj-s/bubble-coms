@@ -6,7 +6,7 @@ const UnpackURL = async (data, image, video) => {
 
         let iFrame;
 
-        let t;
+        let t = '';
 
         let twitter;
 
@@ -14,7 +14,7 @@ const UnpackURL = async (data, image, video) => {
 
         if (data.includes('https')) {
             try {
-                for (const  text of data.split(' ')) {
+                for (const text of data.split(' ')) {
                     if (text.includes('redgif')) {
                     
                         iFrame = "https://redgifs.com/ifr/" + (text.split('redgifs.com/')[1]?.includes('watch') ? text.split('redgifs.com/')[1]?.split('watch/')[1].toLowerCase() : text.split('redgifs.com/')[1]?.split('-')[0].toLowerCase());
@@ -63,9 +63,9 @@ const UnpackURL = async (data, image, video) => {
                         link = text;
                     
                     } else {
-                        t = text + " ";
+                        t = `${t}${text} `
                     }
-
+                    console.log(text)
                 }
             } catch (err) {
                 t = data;
@@ -77,15 +77,18 @@ const UnpackURL = async (data, image, video) => {
         if (link && !iFrame && (!image && !video) && (!link.includes('http://') || !link.includes('localhost') || !link.includes('127.0.0.1'))) {
 
             let preview_data = await getLinkPreview(link).catch(err => {
+                console.log(err)
                 return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
-            })
+            }).then(d => d);
+
+            console.log(preview_data)
 
             if (preview_data.description || preview_data?.images?.length > 0 || preview_data?.videos?.length > 0) {
                 link_preview = preview_data;
             }
 
         }
-
+        console.log(t)
         return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
 
     } catch (error) {

@@ -20,17 +20,22 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
 
         if (memberFile === -1 || memberFile.error) return cb({error: true, errorMessage: "You are not a member of this server"});
         
+        if (serverList.has(data.server_id)) {
+
+            let active = serverList.get(data.server_id).check_if_existing_user(String(memberFile._id));
+            
+            if (active.active) {
+                const sockets = await io.in(active.socket_id).fetchSockets();
+
+                socket.to(active.socket_id).emit('disconnect due to new instance', {kicked_by: "Yourself"})
+
+            }
+        }
+
         if (!serverList.has(data.server_id)) {
 
             serverList.set(data.server_id, new ServerUserStatus(data.server_id));
         
-        }
-
-        if (serverList.has(data.server_id)) {
-
-            let active = serverList.get(data.server_id).check_if_existing_user(String(memberFile._id));
-            console.log(active)
-            if (active) return cb({error: true, errorMessage: "You are currently connected to this server on a different device"})
         }
 
         let user_object = {
