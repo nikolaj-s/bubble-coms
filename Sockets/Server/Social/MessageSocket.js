@@ -113,6 +113,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
 
         cb({success: true, message});
 
+        await server.update_member({...member, _id: String(member._id), server_score: (member.server_score + 1)});
+
     } catch (error) {
         console.log(error);
         cb({error: true, errorMessage: "Fatal Error Sending Message"});

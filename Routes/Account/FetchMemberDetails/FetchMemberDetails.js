@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const { AccountSchema } = require('../../../Schemas/Account/AccountSchema');
 const { MessageSchema } = require('../../../Schemas/Message/MessageSchema');
+const { ServerSchema } = require('../../../Schemas/Server/Server/ServerSchema');
 
 route.get('/', async (req, res, next) => {
     try {
@@ -14,6 +15,9 @@ route.get('/', async (req, res, next) => {
    
         const Account = await AccountSchema.findOne({username: req.header("username")});
         
+        const Server = await ServerSchema.findOne({_id: req.header("server_id")});
+
+        if (!Server) return res.send({error: true, errorMessage: "Validation Error"});
         
         let pinned_msg = {};
 
@@ -27,6 +31,8 @@ route.get('/', async (req, res, next) => {
             }
         }
 
+        const member = Server.members.findIndex(u => u.username === Account.username);
+
         if (Account) {
 
             let screen_shots = Account.show_case_screen_shots ? await MessageSchema.find({username: Account.username, screen_shot: true}).sort({"date": -1}).limit(5) : [];
@@ -36,7 +42,8 @@ route.get('/', async (req, res, next) => {
                 color: Account.color,
                 pinned_message: pinned_msg,
                 screenShots: screen_shots,
-                recent_activity: Account.recent_activity
+                recent_activity: Account.recent_activity,
+                server_score: Server.members[member].server_score
             }
 
             return res.send({success: true, ...acccount_details})

@@ -53,8 +53,16 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
         }
 
         await server.update_member(user_object);
-        console.log(data.status)
-        user_object.status = data.status;
+        
+        let status;
+
+        if (data.status.toLowerCase() !== 'away' && data.status.toLowerCase() !== 'offline') {
+            status = 'online'
+        } else {
+            status = data.status;
+        }
+
+        user_object.status = status;
 
         const channels = server.channels.map(channel => {
             
