@@ -51,6 +51,7 @@ const DirectMessage = require('./Server/User/DirectMessage');
 const FetchMessages = require('./Server/Social/FetchMessages');
 const FetchPinnedMessages = require('./Server/Social/FetchPinnedMessages');
 const FetchScreenShots = require('./Server/Social/FetchScreenShots');
+const FetchActivityFeed = require('./Server/ActivityFeed/FetchActivityFeed');
 
 const channelList = new Map();
 
@@ -85,6 +86,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('clear image search data', async (data, cb) => DeleteImageSearchData(socket, data, cb));
 
         socket.on('update member file', async (data, cb) => UserUpdatesAccount(socket, data, cb, channelList, serverList));
+
+        socket.on('fetch activity feed', async (data, cb) => FetchActivityFeed(socket, cb));
 
         // channel sockets
     

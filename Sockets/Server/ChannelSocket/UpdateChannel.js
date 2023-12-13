@@ -20,11 +20,17 @@ const UpdateChannel = async (socket, data, cb) => {
 
         if (permissions === -1 || permissions.user_can_manage_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
 
+        const channel_to_edit = server.channels.find(c => String(c._id) === String(data._id));
+
+        if (!channel_to_edit) return cb({error: true, errorMessage: "Attempting to edit a channel that does not exist"});
+
         let new_channel_data = data;
 
         let image;
 
         let icon;
+
+        let status_message = `Has: `
 
         if (new_channel_data.file) {
 
@@ -41,6 +47,8 @@ const UpdateChannel = async (socket, data, cb) => {
                 return cb({error: true, errorMessage: image.errorMessage});
             
             }
+
+            status_message += "updated the channel background, "
         }
 
         if (new_channel_data.icon_file) {
@@ -57,6 +65,12 @@ const UpdateChannel = async (socket, data, cb) => {
                 return cb({error: true, errorMessage: icon.errorMessage});
             
             }
+
+            status_message += "updated the channel icon, "
+        }
+
+        if (new_channel_data.channel_name !== channel_to_edit.channel_name) {
+            status_message += `changed channel name ${channel_to_edit.channel_name} to ${new_channel_data.channel_name}, `
         }
 
         new_channel_data.widgets.forEach(async widget => {
@@ -106,21 +120,22 @@ const UpdateChannel = async (socket, data, cb) => {
             await MessageSchema.deleteMany({channel_id: data._id});
 
             data_to_save.social = [];
+
+            status_message += 'cleared the social feed, '
         }
 
-        const status_msg = {
-            _id: uuidv4(),
+        const status_msg = await new MessageSchema({
             channel_id: String(server._id),
             content: {
-                text: `Has edited channel ${data_to_save.channel_name}`,
+                text: status_message += `to ${new_channel_data.channel_name}`,
                 date: new Date,
                 time: Date.now(),
-                image: data_to_save.icon
             },
             pinned: false,
             username: socket.AUTH.username,
             server_id: String(server._id),
-        }
+            status: true
+        }).save();
 
         const saved_data = await server.update_channel(new_channel_data._id, data_to_save, status_msg);
 

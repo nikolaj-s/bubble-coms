@@ -22,6 +22,8 @@ const DeleteChannel = async (socket, data, cb) => {
 
         if (channel_to_delete === -1) return cb({error: true, errorMessage: "channel does not exist"});
 
+        let status_message = `Has Deleted Channel ${server.channels[channel_to_delete].channel_name}`;
+
         // clean up images stored in the db
 
         if (server.channels[channel_to_delete]?.channel_background) {
@@ -52,9 +54,21 @@ const DeleteChannel = async (socket, data, cb) => {
 
         if (deleting.error) return cb({error: true, errorMessage: 'error deleting channel'});
 
-        cb({success: true, channel_id: data.channel_id});
+        const status_msg = await new MessageSchema({
+            channel_id: String(server._id),
+            content: {
+                text: status_message,
+                date: new Date,
+                time: Date.now(),
+            },
+            username: socket.AUTH.username,
+            server_id: String(server._id),
+            status: true
+        }).save();
 
-        socket.to(socket.current_server).emit('delete channel', {channel_id: data.channel_id});
+        cb({success: true, channel_id: data.channel_id, activity_msg: status_msg});
+
+        socket.to(socket.current_server).emit('delete channel', {channel_id: data.channel_id, activity_msg: status_msg});
 
     } catch (error) {
         console.log(error);

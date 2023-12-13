@@ -123,7 +123,7 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             inactive_channel: server.inactive_channel,
             user: user_object,
             image_of_the_day: imageOfTheDay,
-            activity_feed: server.activity_feed,
+            activity_feed: [],
             welcome_message: server.welcome_message,
             banned_keywords: server.banned_keywords
         }

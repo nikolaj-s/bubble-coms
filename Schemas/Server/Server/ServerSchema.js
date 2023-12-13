@@ -399,14 +399,6 @@ ServerSchema.methods.update_channel = function(channel_id, channel, status) {
             }
         })
 
-        const act_feed = this.activity_feed;
-
-        if (act_feed.length >= 30) act_feed.pop();
-
-        const stat_msg = {...status};
-
-        this.activity_feed = [stat_msg, ...act_feed];
-
         this.save();
 
         return this.channels[c_index];

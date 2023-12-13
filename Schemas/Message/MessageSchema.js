@@ -34,6 +34,10 @@ const MessageSchema = new mongoose.Schema({
     nsfw: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: Boolean,
+        default: false
     }
 })
 

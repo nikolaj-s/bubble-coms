@@ -98,7 +98,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             pinned: false,
             server_id: String(server._id),
             screen_shot: data.screen_shot,
-            nsfw: data.nsfw
+            nsfw: data.nsfw,
+            status: data.screen_shot
         })
 
         const message = await mes.save();

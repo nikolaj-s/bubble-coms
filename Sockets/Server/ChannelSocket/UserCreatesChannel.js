@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
+const { MessageSchema } = require('../../../Schemas/Message/MessageSchema');
 
 const UserCreatesChannel = async (socket, data, cb) => {
     try {
@@ -44,13 +45,26 @@ const UserCreatesChannel = async (socket, data, cb) => {
             channel_owner: user.username
         }
 
+        const status_message = await new MessageSchema({
+            channel_id: String(server._id),
+            content: {
+                text: `Created a new ${data.text_only ? 'text only' : 'voice'} channel called ${data.channel_name}`,
+                date: new Date,
+                time: Date.now(),
+            },
+            pinned: false,
+            username: socket.AUTH.username,
+            server_id: String(server._id),
+            status: true
+        }).save();
+
         await server.create_channel(channel_data);
 
         await server.save();
 
-        cb(server.channels[server.channels.length - 1]);
+        cb({channel: server.channels[server.channels.length - 1], status_msg: status_message});
 
-        socket.to(data.server_id).emit('new channel', server.channels[server.channels.length - 1]);
+        socket.to(data.server_id).emit('new channel', {channel: server.channels[server.channels.length - 1], status_msg: status_message});
 
     } catch (error) {
         console.log(error);

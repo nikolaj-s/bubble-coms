@@ -1,6 +1,5 @@
+const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
-
-const {v4: uuidv4 } = require('uuid');
 
 const KickUserSocket = async (socket, data, cb, channelList) => {
     try {
@@ -23,12 +22,9 @@ const KickUserSocket = async (socket, data, cb, channelList) => {
         
         const user_to_kick_file = await server.get_member(data.username);        
 
-        console.log(user_to_kick_file.server_score)
-
         await server.update_member({...user_to_kick_file, _id: String(user_to_kick_file._id), server_score: (user_to_kick_file.server_score - 5)})
 
-        const status_msg = {
-            _id: uuidv4(),
+        const status_msg = await MessageSchema({
             channel_id: String(server._id),
             content: {
                 text: `Kicked ${user_to_kick_file?.display_name} from the server`,
@@ -38,9 +34,8 @@ const KickUserSocket = async (socket, data, cb, channelList) => {
             pinned: false,
             username: socket.AUTH.username,
             server_id: String(server._id),
-        }
-
-        await server.update_activity_feed(status_msg);
+            status: true
+        }).save();
 
         socket.to(user_to_kick).emit('kick', {kicked_by: member.display_name});
 
