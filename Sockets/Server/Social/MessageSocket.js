@@ -88,7 +88,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             video_upload: data.content.video_upload,
             link_preview: link_preview,
             emoji: data.content.emoji,
-            textStyle: data.content.textStyle
+            textStyle: data.content.textStyle,
+            fall_back_image: data.content.fall_back_image
         } 
         
         const mes = new MessageSchema({
