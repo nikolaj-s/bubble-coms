@@ -3,6 +3,8 @@ const fetch = require('node-fetch');
 
 const { v4: uuidv4} = require('uuid');
 const { ServerSchema } = require('../../../Schemas/Server/Server/ServerSchema');
+const FetchYoutubeVideo = require('../../../Util/Youtube/Youtube');
+const { query } = require('express');
 
 const AddSongToQueue = async (socket, data, cb, channelList) => {
     try {
@@ -40,22 +42,20 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
             const query = data.query;
 
             if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
-            console.log(query)
-            const song = await fetch(`https://bubble-music.herokuapp.com/fetch-song-info?query=${query}`)
-            .then(response => {
-                return response.json();
-            })
-            .catch(error => {
-                console.log(error);
-                return {error: true, errorMessage: 'fatal error'}
-            })
+            
+            const song = await FetchYoutubeVideo(query);
+
+            console.log(song)
 
             if (song.error || !song) return cb({error: true, errorMessage: song.errorMessage});
 
             channel.bot.pushNewSong({...song, _id: uuidv4(), liked: false}, user)
-
+            
         }
+
         cb({success: true});
+
+        
 
     } catch (error) {
         console.log(error);
