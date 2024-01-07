@@ -47,7 +47,7 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
             console.log(song)
 
-            if (song.error || !song) return cb({error: true, errorMessage: song.errorMessage});
+            if (song.error || !song) return cb({error: true, errorMessage: song.message});
 
             channel.bot.pushNewSong({...song, _id: uuidv4(), liked: false}, user)
             

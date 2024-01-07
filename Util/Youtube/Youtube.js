@@ -21,6 +21,7 @@ const FetchYoutubeVideo = async (query) => {
 
     } catch (error) {
         console.log(error);
+        return {error: true, message: 'Error Occured Fetching Meta Data'}
     }
 }
 

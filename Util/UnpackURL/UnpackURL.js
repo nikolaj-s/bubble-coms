@@ -76,7 +76,7 @@ const UnpackURL = async (data, image, video) => {
 
         if (link && !iFrame && (!image && !video) && (!link.includes('http://') || !link.includes('localhost') || !link.includes('127.0.0.1'))) {
 
-            let preview_data = await getLinkPreview(link, {timeout: 4000, followRedirects: 'follow', headers: { 'user-agent': 'googlebot', 'Accept-Language': 'en-US' }}).catch(err => {
+            let preview_data = await getLinkPreview(link, {timeout: 4000, followRedirects: 'follow', headers: link.includes('xquick') ? { 'user-agent': 'googlebot', 'Accept-Language': 'en-US' } : {}}).catch(err => {
                 console.log(err)
                 return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
             }).then(d => d);
