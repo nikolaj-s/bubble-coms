@@ -3,8 +3,9 @@ const youtube = require('scrape-youtube')
 
 const FetchYoutubeVideo = async (query) => {
     try {
-
+        console.log(query)
         const data = await youtube.search(query).then(res => {
+            console.log(res)
             return res.videos[0];
         })
 
