@@ -108,6 +108,7 @@ const UnpackURL = async (data, image, video) => {
 
                 }
             }).catch(err => {
+                console.log(err);
                 return {}
             })
 
