@@ -3,7 +3,7 @@ const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const ImageDelete = require("../../../Util/Image/ImageDelete");
 
 
-const DeleteChannel = async (socket, data, cb) => {
+const DeleteChannel = async (socket, data, channelList, cb) => {
     try {
 
         const server = await ServerSchema.findOne({_id: socket.current_server});
@@ -17,6 +17,11 @@ const DeleteChannel = async (socket, data, cb) => {
         const permissions = await server.get_server_group(member.server_group);
 
         if (permissions === -1 || permissions.user_can_manage_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
+
+        // check if users currently in channel
+        const active = channelList.get(`${socket.current_server}/${data.channel_id}`);
+
+        if (active?.returnPeerCount() > 0) return cb({error: true, errorMessage: "Cannot delete channel while containing active users"})
 
         const channel_to_delete = await server.get_channel(data.channel_id);
 

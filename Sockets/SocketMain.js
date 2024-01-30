@@ -117,7 +117,7 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('update channel', async (data, cb) => UpdateChannel(socket, data, cb));
         
-        socket.on('delete channel', async (data, cb) => DeleteChannel(socket, data, cb));
+        socket.on('delete channel', async (data, cb) => DeleteChannel(socket, data, channelList, cb));
 
         socket.on('move user', async (data, cb) => MoveUserSocket(socket, data, channelList, cb));
         

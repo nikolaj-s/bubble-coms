@@ -89,7 +89,7 @@ const UnpackURL = async (data, image, video) => {
 
         }
 
-        if (link.includes('reddit')) {
+        if (link?.includes('reddit')) {
             let prev_data = await Axios.get(link.split('?')[0] + '.json').then(res => {
                 let res_data = res.data[0].data.children[0].data;
 

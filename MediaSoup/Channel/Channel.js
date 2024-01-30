@@ -163,7 +163,9 @@ console.log(this.local_channel_id)
     getRtpCapabilities() {
         return this.router.rtpCapabilities;
     }
-
+    returnPeerCount() {
+        return this.peers.size;
+    }
     async createWebRtcTransport(socket_id) {
 
         const { maxIncomingBitrate, initialAvailableOutgoingBitRate } = config.mediasoup.webRtcTransport;
