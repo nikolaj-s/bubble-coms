@@ -5,9 +5,9 @@ const ChannelSchema = require("../Channel/ChannelSchema");
 const MemberSchema = require("../Member/MemberSchema");
 const BanSchema = require("../Ban/BanSchema");
 const ServerGroupSchema = require('../ServerGroup/ServerGroupSchema');
-const WidgetSchema = require('../Widget/WidgetSchema');
 
 const { v4: uuidv4} = require('uuid');
+const Categories = require('../Categories/Categories');
 
 const ServerSchema = new mongoose.Schema({
     server_name: {
@@ -71,8 +71,16 @@ const ServerSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    pinned_sub_reddits: [],
+    categories: [Categories]
     
 })
+
+ServerSchema.methods.update_pinned_sub_reddits = function(sub_reddits) {
+    this.pinned_sub_reddits = sub_reddits;
+
+    return this.save();
+}
 
 ServerSchema.methods.update_inactive_channel = function(channel_id) {
     this.inactive_channel = channel_id;
@@ -253,8 +261,20 @@ ServerSchema.methods.verify_user_group = function(member_index, action) {
 }
 
 // channel methods
-ServerSchema.methods.re_organize_channels = function(new_order) {
+ServerSchema.methods.re_organize_channels = function(new_order, category, channel_id) {
     try {
+
+        const channel = this.channels.findIndex(c => String(c._id) === channel_id);
+        console.log(channel)
+        if (channel !== -1) {
+            this.channels = this.channels.map(c => {
+                if (String(c._id) === channel_id) {
+                    return {...c, category: category}
+                } else {
+                    return c;
+                }
+            })
+        }
 
         this.channels.sort((a, b) => {
             return new_order.indexOf(String(a._id)) - new_order.indexOf(String(b._id));
@@ -393,7 +413,7 @@ ServerSchema.methods.update_channel = function(channel_id, channel, status) {
 
         this.channels = this.channels.map(c => {
             if (String(c._id) === channel_id) {
-                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon, channel_owner: channel.channel_owner, locked_media: channel.locked_media, media_auth: channel.media_auth, contain_background: channel.contain_background}
+                return {...c, channel_name: channel.channel_name, persist_social: channel.persist_social, widgets: channel.widgets, channel_background: channel?.channel_background ? channel.channel_background : c?.channel_background, background_blur: channel.background_blur, disable_streams: channel.disable_streams, auth_users: channel.auth_users, locked_channel: channel.locked_channel, icon: channel?.icon ? channel?.icon : c?.icon, channel_owner: channel.channel_owner, locked_media: channel.locked_media, media_auth: channel.media_auth, contain_background: channel.contain_background, block_nsfw_posting: channel.block_nsfw_posting}
             } else {
                 return c;
             }
@@ -684,6 +704,35 @@ ServerSchema.methods.update_welcome_message = function(data) {
 
 ServerSchema.methods.update_banned_keywords = function(data) {
     this.banned_keywords = data;
+
+    return this.save();
+}
+
+ServerSchema.methods.add_category = function(data) {
+    this.categories.push(data);
+
+    return this.save();
+}
+
+ServerSchema.methods.delete_category = function(categroy_id) {
+    this.categories = this.categories.filter(c => String(c._id) !== String(categroy_id));
+
+    this.channels = this.channels.map(c => {
+        if (String(c.category) === String(categroy_id)) {
+            return {...c, category: 'channels'}
+        } else {
+            return c;
+        }
+    })
+
+    return this.save();
+}
+
+ServerSchema.methods.re_order_categories = function(new_order) {
+    
+    this.categories.sort((a, b) => {
+        return new_order.indexOf(String(a._id)) - new_order.indexOf(String(b._id));
+    })
 
     return this.save();
 }

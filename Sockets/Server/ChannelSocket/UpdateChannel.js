@@ -98,7 +98,8 @@ const UpdateChannel = async (socket, data, cb) => {
             channel_owner: new_channel_data.channel_owner,
             locked_media: new_channel_data.lock_media_player,
             media_auth: new_channel_data.authMediaUsers,
-            contain_background: new_channel_data.contain_background
+            contain_background: new_channel_data.contain_background,
+            block_nsfw_posting: new_channel_data.block_nsfw_posting
         }
 
         if (new_channel_data.clear_social) {

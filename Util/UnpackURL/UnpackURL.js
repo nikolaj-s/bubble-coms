@@ -76,7 +76,7 @@ const UnpackURL = async (data, image, video) => {
 
         if (link && !iFrame && (!image && !video) && !link.includes('reddit') && (!link.includes('http://') || !link.includes('localhost') || !link.includes('127.0.0.1'))) {
 
-            let preview_data = await getLinkPreview(link, {timeout: 4000, followRedirects: 'follow', headers: link.includes('xquick') ? { 'user-agent': 'googlebot', 'Accept-Language': 'en-US' } : {}}).catch(err => {
+            let preview_data = await getLinkPreview(link, {timeout: 4000, followRedirects: 'follow', headers: link.includes('xquick') || link.includes('reddit') ? { 'user-agent': 'googlebot', 'Accept-Language': 'en-US' } : {}}).catch(err => {
                 console.log(err)
                 return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}
             }).then(d => d);
@@ -88,33 +88,6 @@ const UnpackURL = async (data, image, video) => {
             }
 
         }
-
-        if (link?.includes('reddit')) {
-            let prev_data = await Axios.get(link.split('?')[0] + '.json').then(res => {
-                let res_data = res.data[0].data.children[0].data;
-
-                let video;
-
-                if (res_data?.is_video) {
-                    video = res_data.preview?.reddit_video_preview?.fallback_url || res_data.media?.reddit_video?.fallback_url || res_data.secure_media?.reddit_video?.fallback_url;
-                }
-
-                return {
-                    url: link,
-                    images: res_data?.is_video ? [res_data?.thumbnail] : [res_data?.url],
-                    title: res_data?.subreddit_name_prefixed,
-                    videos: res_data?.is_video ? [video] : [],
-                    description: res_data?.title,
-
-                }
-            }).catch(err => {
-                console.log(err);
-                return {}
-            })
-
-            link_preview = prev_data;
-        }
-
 
         console.log(t)
         return {text: t, link: link, iFrame: iFrame, twitter: twitter, link_preview: link_preview}

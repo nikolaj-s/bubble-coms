@@ -1,10 +1,9 @@
 
-const fetch = require('node-fetch');
-
 const { v4: uuidv4} = require('uuid');
 const { ServerSchema } = require('../../../Schemas/Server/Server/ServerSchema');
 const FetchYoutubeVideo = require('../../../Util/Youtube/Youtube');
-const { query } = require('express');
+const { SongSchema } = require('../../../Schemas/Song/SongSchema');
+const { MessageSchema } = require('../../../Schemas/Message/MessageSchema');
 
 const AddSongToQueue = async (socket, data, cb, channelList) => {
     try {
@@ -31,9 +30,13 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
         const user = await channelList.get(socket.channel_id).return_peer_by_socket_id(socket.id);
 
+        let song;
+
         if (user.error) return cb({user});
         
         if (data.song) {
+
+            song = data.song;
 
             channel.bot.pushNewSong({...data.song}, user)
         
@@ -43,7 +46,7 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
 
             if (!query || query.length === 0) return cb({error: true, errorMessage: "Query cannot be empty"});
             
-            const song = await FetchYoutubeVideo(query);
+            song = await FetchYoutubeVideo(query);
 
             console.log(song)
 
@@ -53,9 +56,42 @@ const AddSongToQueue = async (socket, data, cb, channelList) => {
             
         }
 
-        cb({success: true});
+        let exists = await SongSchema.findOne({id: song.id});
 
+        if (!exists) {
+            
+            await new SongSchema({...song, server_id: socket.current_server}).save();      
         
+        }
+
+        let media_history_channel;
+
+        for (const c of server.channels) {
+            if (c.type === 'mediahistory') {
+                media_history_channel = c;
+                break;
+            }
+        }
+
+        if (media_history_channel) {
+            const log_message = {
+                content: {
+                    time: Date.now(),
+                    date: new Date,
+                    text: `Added:`,
+                    song: song
+                },
+                server_id: socket.current_server,
+                channel_id: String(media_history_channel._id),
+                pinned: false,
+                username: socket.AUTH.username,
+                song: true
+            }
+            console.log(log_message)
+            await new MessageSchema(log_message).save();
+        }
+
+        cb({success: true});
 
     } catch (error) {
         console.log(error);

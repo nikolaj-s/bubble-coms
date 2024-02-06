@@ -38,6 +38,10 @@ const MessageSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: false
+    },
+    song: {
+        type: Boolean,
+        default: false
     }
 })
 

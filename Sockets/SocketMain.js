@@ -52,6 +52,11 @@ const FetchMessages = require('./Server/Social/FetchMessages');
 const FetchPinnedMessages = require('./Server/Social/FetchPinnedMessages');
 const FetchScreenShots = require('./Server/Social/FetchScreenShots');
 const FetchActivityFeed = require('./Server/ActivityFeed/FetchActivityFeed');
+const SearchMedia = require('./Server/MusicWidget/SearchMedia');
+const AddCategory = require('./Server/Categories/AddCatagory');
+const DeleteCategory = require('./Server/Categories/DeleteCetagory');
+const ReOrderCategories = require('./Server/Categories/ReOrderCategories');
+const FetchRecentSongs = require('./Server/MusicWidget/FetchRecentSongs');
 
 const channelList = new Map();
 
@@ -166,6 +171,10 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
 
         socket.on('search songs', async (data, cb) => SearchSongs(socket, data, cb));
 
+        socket.on('search media', async (data, cb) => SearchMedia(socket, data, cb));
+
+        socket.on('fetch recent songs', async (data, cb) => FetchRecentSongs(socket, data, cb));
+
         // widget overlay
         socket.on('widget overlay action', async (data, cb) => WidgetOverlaySocket(socket, data, cb));
 
@@ -180,6 +189,13 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         
         // direct messaging
         socket.on('send direct message', async (data, cb) => DirectMessage(socket, data, serverList, cb));
+
+        // categories
+        socket.on('create category', async (data, cb) => AddCategory(socket, data, cb));
+
+        socket.on('delete category', async (data, cb) => DeleteCategory(socket, data, cb));
+
+        socket.on('reorder categories', async (data, cb) => ReOrderCategories(socket, data, cb));
     })
     
 }

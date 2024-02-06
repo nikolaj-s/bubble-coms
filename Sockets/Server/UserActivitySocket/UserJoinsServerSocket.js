@@ -89,7 +89,11 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 locked_media: channel.locked_media,
                 media_auth: channel.media_auth,
                 status: channelList.get(`${server._id}/${channel._id}`)?.returnChannelStatus(),
-                contain_background: channel.contain_background
+                contain_background: channel.contain_background,
+                block_nsfw_posting: channel.block_nsfw_posting,
+                media_state: channel.media_state,
+                type: channel.type,
+                category: channel.category
             }
         })
 
@@ -125,7 +129,9 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             image_of_the_day: imageOfTheDay,
             activity_feed: [],
             welcome_message: server.welcome_message,
-            banned_keywords: server.banned_keywords
+            banned_keywords: server.banned_keywords,
+            pinned_sub_reddits: server.pinned_sub_reddits,
+            categories: server.categories
         }
         
         socket.current_server = data.server_id;

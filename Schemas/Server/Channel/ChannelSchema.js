@@ -72,6 +72,20 @@ const ChannelSchema = new mongoose.Schema({
     contain_background: {
         type: Boolean,
         default: false
+    },
+    block_nsfw_posting: {
+        type: Boolean,
+        default: false
+    },
+    media_state: {
+        type: String
+    },
+    type: {
+        type: String
+    },
+    category: {
+        type: String,
+        default: 'channels'
     }
 })
 

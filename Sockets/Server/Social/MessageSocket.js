@@ -3,11 +3,8 @@ const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 // UTIL
 const ImageUpload = require("../../../Util/Image/ImageUpload");
 
-const ImageDelete = require("../../../Util/Image/ImageDelete");
-
 const UnpackURL = require("../../../Util/UnpackURL/UnpackURL");
 
-const { v4: uuidv4} = require('uuid');
 const { MessageSchema } = require("../../../Schemas/Message/MessageSchema");
 
 const MessageSocket = async (socket, data, channelList, cb) => {
@@ -37,6 +34,10 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         
         if (channel === -1) return cb({error: true, errorMessage: 'unauthorized activity'});
 
+        if (server?.channels[channel]?.block_nsfw_posting && data?.nsfw) return cb({error: true, errorMessage: "NSFW Posting has been blocked in this channel"});
+
+        if (server?.channels[channel]?.type === 'subreddit' || server?.channels[channel]?.type === 'screenshots' || server?.channels[channel]?.type === 'mediahistory') return cb({error: true, errorMessage: "This channel does not support that action"});
+
         // verify message contents
         const imageFormats = ['.webp', '.jpg', '.jpeg', '.png', '.gif', 'images'];
 
@@ -63,7 +64,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         let images = [];
 
         for (const chunk of data.content.text.split(/[\n\r\s]+/)) {
-            let chunk_valid = imageFormats.some(format => (chunk.includes(format) && chunk.includes('redgifs') === false && chunk.includes('mp4') === false && chunk.includes('https')))
+            let chunk_valid = imageFormats.some(format => (chunk.includes(format) && chunk.includes('redgifs') === false && chunk.includes('.mp4') === false && chunk.includes('https')))
 
             if (chunk_valid) images.push(chunk);
         }
@@ -89,7 +90,8 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             link_preview: link_preview,
             emoji: data.content.emoji,
             textStyle: data.content.textStyle,
-            fall_back_image: data.content.fall_back_image
+            fall_back_image: data.content.fall_back_image,
+            reddit: data.content.reddit
         } 
         
         const mes = new MessageSchema({
@@ -100,7 +102,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             server_id: String(server._id),
             screen_shot: data.screen_shot,
             nsfw: data.nsfw,
-            status: data.screen_shot
+            status: data.screen_shot,
         })
 
         const message = await mes.save();

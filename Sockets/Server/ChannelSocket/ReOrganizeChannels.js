@@ -16,7 +16,7 @@ const ReOrganizeChannels = async (socket, data, cb) => {
 
         if (permissions === -1 || permissions.user_can_manage_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
 
-        await server.re_organize_channels(data.new_order);
+        await server.re_organize_channels(data.new_order, data.category, data.channel_id);
 
         socket.to(socket.current_server).emit('new channel order', data);
 

@@ -111,6 +111,12 @@ const UpdateServer = async (socket, data, cb) => {
 
             await server.clear_activity_feed();
         }
+
+        if (data.pinned_sub_reddits) {
+            if (permissions.user_can_edit_server_banner === false && permissions.user_can_edit_server_name === false) return cb({error: true, errorMessage: "you do not have permissions to perform that action"});
+
+            await server.update_pinned_sub_reddits(data.pinned_sub_reddits);
+        }
         
         const data_to_send = {
             success: true, 
@@ -120,9 +126,12 @@ const UpdateServer = async (socket, data, cb) => {
                 inactive_channel: server.inactive_channel,
                 welcome_message: server.welcome_message,
                 banned_keywords: server.banned_keywords,
-                activity_feed: server.activity_feed
+                activity_feed: server.activity_feed,
+                pinned_sub_reddits: server.pinned_sub_reddits
             }
         }
+
+        console.log(data_to_send)
         
         cb(data_to_send);
 

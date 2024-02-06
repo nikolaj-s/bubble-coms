@@ -9,7 +9,7 @@ const UserCreatesChannel = async (socket, data, cb) => {
 
         const server = await ServerSchema.findOne({_id: mongoose.Types.ObjectId(data.server_id)})
 
-        if (server.channels.length > 20) return cb({error: true, errorMessage: "You have reached your servers channel limit of 12"})
+        if (server.channels.length > 35) return cb({error: true, errorMessage: "You have reached your servers channel limit of 12"})
         
         if (!server) return socket.emit({error: true, errorMessage: "validation error"});
         
@@ -42,13 +42,15 @@ const UserCreatesChannel = async (socket, data, cb) => {
             auth_users: auth_users,
             locked_channel: data.locked_channel,
             text_only: data.text_only,
-            channel_owner: user.username
+            channel_owner: user.username,
+            type: data.type,
+            media_state: data.media_state
         }
 
         const status_message = await new MessageSchema({
             channel_id: String(server._id),
             content: {
-                text: `Created a new ${data.text_only ? 'text only' : 'voice'} channel called ${data.channel_name}`,
+                text: `Created a new ${data.type} channel called ${data.channel_name}`,
                 date: new Date,
                 time: Date.now(),
             },
