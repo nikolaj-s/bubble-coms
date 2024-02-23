@@ -58,6 +58,12 @@ const UnpackURL = async (data, image, video) => {
                         let c = text.split('.com');
 
                         iFrame = c[0] + '.com/e' + c[1];
+                    } else if (text.includes('embed')) {
+
+                        iFrame = text;
+
+                        link = text;
+
                     } else if (text.includes('https')) {
 
                         link = text;
