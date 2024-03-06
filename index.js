@@ -175,6 +175,10 @@ const VerifyAccount = require('./Routes/Account/VerifyAccount/VerifyAccount');
 
 App.use('/verify-account', VerifyAccount);
 
+const SaveSocialData = require('./Routes/Account/SaveSocialData/SaveSocialData');
+
+App.use('/save-social-data', SaveSocialData);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })

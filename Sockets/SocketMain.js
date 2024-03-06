@@ -58,6 +58,7 @@ const DeleteCategory = require('./Server/Categories/DeleteCetagory');
 const ReOrderCategories = require('./Server/Categories/ReOrderCategories');
 const FetchRecentSongs = require('./Server/MusicWidget/FetchRecentSongs');
 const FilterMessages = require('./Server/Social/FilterMessages');
+const UpdateChannelStatus = require('./Server/Social/UpdateChannelStatus');
 
 const channelList = new Map();
 
@@ -143,6 +144,8 @@ const onConnection = async (server, workers, workerIndex, getMediasoupWorker) =>
         socket.on('fetch screen shots', async (data, cb) => FetchScreenShots(socket, data, cb));
 
         socket.on('fetch filtered messages', async (data, cb) => FilterMessages(socket, data, cb));
+
+        socket.on('update channel status', async (data, cb) => UpdateChannelStatus(socket, data, cb, serverList));
 
         // user status
         socket.on('user status', async (data, cb) => UserStatusSocket(socket, data, channelList, cb));

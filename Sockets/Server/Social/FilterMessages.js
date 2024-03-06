@@ -35,7 +35,7 @@ const FilterMessages = async (socket, data, cb) => {
             mediaTypeFilter = {...mediaTypeFilter, username: filter.username}
         }
 
-        const messages = await MessageSchema.find({channel_id: channel_id, date: filter.date && filter.date !== 'Default' ? {$gte : filter.date} : {$exists: true}, ...mediaTypeFilter}).limit(20);
+        const messages = await MessageSchema.find({server_id: socket.current_server, channel_id: channel_id, date: filter.date && filter.date !== 'Default' ? {$gte : filter.date} : {$exists: true}, ...mediaTypeFilter}).limit(20);
 
         cb({messages: messages});
 

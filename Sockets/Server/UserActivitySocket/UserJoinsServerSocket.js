@@ -49,7 +49,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             join_date: memberFile.join_date,
             server_score: (memberFile.server_score + 1),
             color: user.color,
-            last_online: Date.now()
+            last_online: Date.now(),
+            channel_status: false
         }
 
         await server.update_member(user_object);
@@ -93,7 +94,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
                 block_nsfw_posting: channel.block_nsfw_posting,
                 media_state: channel.media_state,
                 type: channel.type,
-                category: channel.category
+                category: channel.category,
+                guidelines: channel.guidelines
             }
         })
 

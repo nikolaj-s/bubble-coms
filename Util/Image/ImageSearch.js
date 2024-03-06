@@ -26,16 +26,19 @@ const ImageSearch = async (query, altQuery = "") => {
         let images = [];
         
         for (const [key, value] of Object.entries(inner_parse)) {
+            
+            let metadata = value?.alt;
+
             images.push({
                 image: value.origUrl,
                 preview: `https:${value.image}`,
                 query: altQuery,
                 type: 'image',
-                tags: value.alt,
+                tags: metadata,
                 nsfw: nsfw
             })
         }
-
+        console.log(images)
         return images;
     } catch (error) {
         console.log(error);

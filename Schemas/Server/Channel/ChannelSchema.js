@@ -86,6 +86,9 @@ const ChannelSchema = new mongoose.Schema({
     category: {
         type: String,
         default: 'channels'
+    },
+    guidelines: {
+        type: String
     }
 })
 

@@ -39,7 +39,7 @@ const MessageSocket = async (socket, data, channelList, cb) => {
         if (server?.channels[channel]?.type === 'subreddit' || server?.channels[channel]?.type === 'screenshots' || server?.channels[channel]?.type === 'mediahistory') return cb({error: true, errorMessage: "This channel does not support that action"});
 
         // verify message contents
-        const imageFormats = ['.webp', '.jpg', '.jpeg', '.png', '.gif', 'images'];
+        const imageFormats = ['.webp', '.jpg', '.jpeg', '.png', '.gif', 'images', '-jpg', '-jpeg', '-png'];
 
         const videoFormats = ['.webm', '.mp4', '.m4v', '.avi'];
 

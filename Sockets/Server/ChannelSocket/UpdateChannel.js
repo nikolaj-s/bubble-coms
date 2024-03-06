@@ -70,7 +70,15 @@ const UpdateChannel = async (socket, data, cb) => {
         }
 
         if (new_channel_data.channel_name !== channel_to_edit.channel_name) {
-            status_message += `changed channel name ${channel_to_edit.channel_name} to ${new_channel_data.channel_name}, `
+            status_message += `changed channel name ${channel_to_edit.channel_name}, `
+        }
+
+        if (new_channel_data.guidelines !== channel_to_edit.guidelines) {
+            status_message += "updated the guidelines, "
+        }
+
+        if (new_channel_data.locked_channel !== channel_to_edit.locked_channel) {
+            status_message += "modified locked status, "
         }
 
         new_channel_data.widgets.forEach(async widget => {
@@ -99,7 +107,8 @@ const UpdateChannel = async (socket, data, cb) => {
             locked_media: new_channel_data.lock_media_player,
             media_auth: new_channel_data.authMediaUsers,
             contain_background: new_channel_data.contain_background,
-            block_nsfw_posting: new_channel_data.block_nsfw_posting
+            block_nsfw_posting: new_channel_data.block_nsfw_posting,
+            guidelines: new_channel_data.guidelines
         }
 
         if (new_channel_data.clear_social) {
@@ -124,11 +133,11 @@ const UpdateChannel = async (socket, data, cb) => {
 
             status_message += 'cleared the social feed, '
         }
-
+        
         const status_msg = await new MessageSchema({
             channel_id: String(server._id),
             content: {
-                text: status_message += `to ${new_channel_data.channel_name}`,
+                text: status_message === 'Has: ' ? `Edited: ${new_channel_data.channel_name}` : status_message += `to ${new_channel_data.channel_name}`,
                 date: new Date,
                 time: Date.now(),
             },

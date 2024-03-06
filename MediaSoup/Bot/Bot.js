@@ -59,7 +59,7 @@ module.exports = class Bot {
         }
 
         if (this.song_queue.length === 0) {
-            this.sendUpdate(`Playing: ${data.title}`);
+            this.sendUpdate(`${data.title}`);
         }
 
         this.song_queue.push(data);
@@ -86,7 +86,7 @@ module.exports = class Bot {
             clearInterval(this.interval);
             this.interval = null;
         } else {
-            this.sendUpdate(`Playing: ${this.song_queue[0].title}`)
+            this.sendUpdate(`${this.song_queue[0].title}`)
         }
     
     }

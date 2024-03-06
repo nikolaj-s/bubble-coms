@@ -73,6 +73,12 @@ module.exports = class ServerUserStatus {
 
     }
 
+    update_user_social_status(id, channel_status) {
+        const user = this.users.get(id);
+
+        this.users.set(id, {...user, channel_status: channel_status});
+    }
+
     get_current_user_status(id) {
         return this.users.get(id);
     }

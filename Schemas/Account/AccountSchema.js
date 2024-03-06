@@ -86,10 +86,19 @@ const AccountSchema = new mongoose.Schema({
     verification_email_sent: {
         type: Boolean,
         default: false
+    },
+    social_data: {
+        type: String
     }
 })
 
 // handle sign in
+AccountSchema.methods.update_social_data = function(data) {
+    this.social_data = data;
+
+    return this.save();
+}
+
 AccountSchema.methods.update_color = function(color) {
     this.color = color;
 
