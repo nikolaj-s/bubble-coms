@@ -27,6 +27,10 @@ const ImageSearch = async (query, altQuery = "") => {
         
         for (const [key, value] of Object.entries(inner_parse)) {
             
+            if (!value.origUrl.includes('https://')) {
+                continue;
+            }
+
             let metadata = value?.alt;
 
             images.push({

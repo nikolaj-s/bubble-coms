@@ -16,7 +16,7 @@ const UnpackURL = async (data, image, video) => {
         if (data.includes('https')) {
             try {
                 for (const text of data.split(' ')) {
-                    if (text.includes('redgif')) {
+                    if (text.includes('redgifs.com/watch/')) {
                     
                         iFrame = "https://redgifs.com/ifr/" + (text.split('redgifs.com/')[1]?.includes('watch') ? text.split('redgifs.com/')[1]?.split('watch/')[1].toLowerCase() : text.split('redgifs.com/')[1]?.split('-')[0].toLowerCase());
                         
