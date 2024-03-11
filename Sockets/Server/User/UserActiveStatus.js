@@ -26,7 +26,7 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
             status = "Escape From Tarkov";
         } else if (lower_cased_data.includes('league of legends')) {
             status = 'League of Legends';
-        } else if (lower_cased_data.includes('microsoft edge')) {
+        } else if (lower_cased_data.includes('edge')) {
             status = 'Microsoft Edge';
         } else {
             status = data.value;
