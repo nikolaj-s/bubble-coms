@@ -89,8 +89,17 @@ const AccountSchema = new mongoose.Schema({
     },
     social_data: {
         type: String
+    },
+    decoration: {
+        type: String
     }
 })
+
+AccountSchema.methods.update_decoration = function(data) {
+    this.decoration = data;
+
+    return this.save();
+}
 
 // handle sign in
 AccountSchema.methods.update_social_data = function(data) {

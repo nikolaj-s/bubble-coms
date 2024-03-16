@@ -62,7 +62,8 @@ route.get('/', async (req, res, next) => {
                 showCaseScreenShots: Account.show_case_screen_shots,
                 verified: Account.verified,
                 email: email,
-                social_data: Account.social_data
+                social_data: Account.social_data,
+                decoration: Account.decoration
             }
 
             return res.send({success: true, account: {...acccount_details}})

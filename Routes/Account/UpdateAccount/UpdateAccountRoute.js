@@ -33,6 +33,10 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         }
 
+        if (new_data.decoration) {
+            await user.update_decoration(new_data.decoration);
+        }
+
         if (new_data.displayName !== user.display_name) {
 
             if (new_data.displayName.length > 15) return res.send({error: true, errorMessage: "display name cannot be greater than 30 characters"})
@@ -91,7 +95,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, }});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, decoration: user.decoration}});
 
     } catch (error) {
         console.log(error);

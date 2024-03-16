@@ -43,6 +43,9 @@ const MemberSchema = new mongoose.Schema({
     },
     color: {
         type: String
+    },
+    decoration: {
+        type: String
     }
 })
 

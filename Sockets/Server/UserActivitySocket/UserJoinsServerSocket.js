@@ -50,7 +50,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             server_score: (memberFile.server_score + 1),
             color: user.color,
             last_online: Date.now(),
-            channel_status: false
+            channel_status: false,
+            decoration: user.decoration
         }
 
         await server.update_member(user_object);

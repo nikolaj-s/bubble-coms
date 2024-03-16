@@ -179,6 +179,10 @@ const SaveSocialData = require('./Routes/Account/SaveSocialData/SaveSocialData')
 
 App.use('/save-social-data', SaveSocialData);
 
+const FetchProfileDecorations = require('./Routes/Misc/FetchProfileDecorations');
+
+App.use('/fetch-profile-decorations', FetchProfileDecorations);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })
