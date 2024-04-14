@@ -13,13 +13,17 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         
         const query = req.body.query;
 
+        const format = req.body.format;
+
+        const source = req.body.source;
+
         if (query.length < 1) return res.send({error: true, errorMessage: "Invalid Query"});
 
         const server_id = req.body.server_id;
 
         if (!server_id) {
 
-            const l_images = await ImageSearch(query);
+            const l_images = await ImageSearch(query, "", format, source);
 
             if (l_images.error || l_images.length === 0) return res.send({error: true, errorMessage: "No Results"});
 
@@ -52,7 +56,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         if (blocked) return res.send({error: true, errorMessage: "Your Search Has Been Blocked As It Contains A Banned Keyword"});
 
-        const images = await ImageSearch(query, query);
+        const images = await ImageSearch(query, query, format, source);
 
         if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 

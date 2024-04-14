@@ -5,6 +5,7 @@ const SearchYoutube = async (query) => {
     try {
 
         const results = await youtube.search(query).then(res => {
+            console.log(res);
             return res.videos;
         })
 
