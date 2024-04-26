@@ -22,19 +22,15 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
         
         if (member === -1) return res.send({error: true, errorMessage: "unauthorized activity"});
         
-        const server_group = await server.get_server_group(member.server_group);
-        
-        if (server_group === -1 || !server_group.user_can_post_channel_social) return res.send({error: true, errorMessage: "unauthorized activity"});
-
         const videos = await VideoSearch(query);
 
-        if (videos.error || videos.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
+        if (videos.error || videos.length === 0) return res.send({error: true, errorMessage: "No Video Results"});
 
         res.send({success: true, media: videos});
 
-        const data_to_save = [...videos.splice(6, 10), ...server.recent_image_searches];
+        const data_to_save = [...videos.splice(videos.length - 6, videos.length), ...server.recent_videos.splice(0, 44)];
 
-        await server.update_recent_image_searches(data_to_save);
+        await server.update_recent_videos(data_to_save);
 
     } catch (error) {
         console.log(error);

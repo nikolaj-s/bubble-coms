@@ -183,6 +183,10 @@ const FetchProfileDecorations = require('./Routes/Misc/FetchProfileDecorations')
 
 App.use('/fetch-profile-decorations', FetchProfileDecorations);
 
+const FindSimilarImages = require('./Routes/FindSimilarImages/FindSimilarImages');
+
+App.use('/find-similar-images', FindSimilarImages);
+
 server.listen(config.listenPort, () => {
     console.log(`server is running on ${config.listenPort}`)
 })

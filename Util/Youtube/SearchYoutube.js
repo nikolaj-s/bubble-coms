@@ -10,7 +10,7 @@ const SearchYoutube = async (query) => {
         })
 
         if (results.length === 0) return {error: true, message: 'No Results'};
-
+        console.log(results)
         const mapped_data = results.map(data => {
             return {
                 _id: data.id,
@@ -20,7 +20,8 @@ const SearchYoutube = async (query) => {
                 url: data.link,
                 title: data.title,
                 description: data.description,
-                author: data?.channel?.name
+                author: data?.channel?.name,
+                channel: data?.channel
             }
         })
         

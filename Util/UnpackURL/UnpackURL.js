@@ -58,7 +58,7 @@ const UnpackURL = async (data, image, video) => {
                         let c = text.split('.com');
 
                         iFrame = c[0] + '.com/e' + c[1];
-                    } else if (text.includes('embed')) {
+                    } else if (text.includes('embed') && !text.includes('.gif') && !text.includes('.jpeg') && !text.includes('.jpg') && !text.includes('.mp4')) {
 
                         iFrame = text;
 

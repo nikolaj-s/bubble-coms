@@ -42,6 +42,30 @@ const ServerGroupSchema = new mongoose.Schema({
     user_can_edit_server_password: {
         type: Boolean,
         default: false
+    },
+    user_can_create_channels: {
+        type: Boolean,
+        default: false
+    },
+    user_can_delete_channels: {
+        type: Boolean,
+        default: false
+    },
+    user_can_create_server_groups: {
+        type: Boolean,
+        default: false
+    },
+    user_can_delete_server_groups: {
+        type: Boolean,
+        default: false,
+    },
+    user_can_delete_other_users_messages: {
+        type: Boolean,
+        default: false
+    },
+    user_can_move_users: {
+        type: Boolean,
+        default: false
     }
 })
 

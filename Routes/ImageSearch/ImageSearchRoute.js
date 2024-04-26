@@ -5,6 +5,7 @@ const { ServerSchema } = require('../../Schemas/Server/Server/ServerSchema');
 const ImageSearch = require('../../Util/Image/ImageSearch');
 
 const { default: mongoose } = require('mongoose');
+const GetRecommendations = require('../../Util/Image/GetRecommendations');
 
 const route = require('express').Router();
 
@@ -17,13 +18,17 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         const source = req.body.source;
 
+        const sortBy = req.body.sortBy;
+
+        console.log(sortBy)
+
         if (query.length < 1) return res.send({error: true, errorMessage: "Invalid Query"});
 
         const server_id = req.body.server_id;
 
         if (!server_id) {
 
-            const l_images = await ImageSearch(query, "", format, source);
+            const l_images = await ImageSearch(query, "", format, source, sortBy);
 
             if (l_images.error || l_images.length === 0) return res.send({error: true, errorMessage: "No Results"});
 
@@ -67,29 +72,21 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         await server.update_search_times();
 
-        if (server.times_media_searched > 2 || server.recent_image_searches.length < 50) {
+        if (server.times_media_searched > 2 || server.recent_image_searches.length < 95) {
             
             try {
 
-                let related_query;
+                let related_image;
 
-                for (const i of images) {
-                    if (i.tags.length > 8) {
-                        related_query = i.tags;
-                        break;
-                    }
-                }
+                const randomIndex = Math.floor(Math.random()*images.length)
 
-                console.log('recommended', related_query)
-
-
-                if (!related_query || related_query === '' || related_query === ' ') return;
-    
-                const reccomendations = await ImageSearch(related_query, query);
+                related_image = images[randomIndex];
+                
+                const reccomendations = await GetRecommendations(related_image.query, related_image.preview, related_image.nsfw);
                 
                 if (reccomendations.length === 0) return;
 
-                const data_to_save = [...reccomendations.slice(0, 10), ...server.recent_image_searches.slice(0, 50)];
+                const data_to_save = [...reccomendations.slice(reccomendations.length - 6, reccomendations.length), ...server.recent_image_searches.slice(0, 95)];
             
                 await server.update_recent_image_searches(data_to_save);
             } catch (err) {
@@ -97,8 +94,6 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
             }
         
         }
-
-        
 
     } catch (error) {
         console.log(error);

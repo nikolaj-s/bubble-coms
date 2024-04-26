@@ -28,6 +28,8 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
             status = 'League of Legends';
         } else if (lower_cased_data.includes('edge')) {
             status = 'Microsoft Edge';
+        } else if (lower_cased_data.includes('steam')) {
+            status = "Steam";
         } else {
             status = data.value;
         }

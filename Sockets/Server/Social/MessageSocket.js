@@ -91,7 +91,9 @@ const MessageSocket = async (socket, data, channelList, cb) => {
             emoji: data.content.emoji,
             textStyle: data.content.textStyle,
             fall_back_image: data.content.fall_back_image,
-            reddit: data.content.reddit
+            reddit: data.content.reddit,
+            media_meta_data: data.content.media_meta_data,
+            media_video: data.content.media_video
         } 
         
         const mes = new MessageSchema({

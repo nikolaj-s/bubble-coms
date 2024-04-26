@@ -48,6 +48,12 @@ const ServerSchema = new mongoose.Schema({
                 user_can_edit_server_banner: false,
                 user_can_edit_server_name: false,
                 user_can_edit_server_password: false,
+                user_can_create_channels: false,
+                user_can_delete_channels: false,
+                user_can_create_server_groups: false,
+                user_can_delete_server_groups: false,
+                user_can_delete_other_users_messages: false,
+                user_can_move_users: false
             }, {
             server_group_name: "Owner",
             user_can_view_channel_content: true,
@@ -59,6 +65,12 @@ const ServerSchema = new mongoose.Schema({
             user_can_edit_server_banner: true,
             user_can_edit_server_name: true,
             user_can_edit_server_password: true,
+            user_can_create_channels: true,
+            user_can_delete_channels: true,
+            user_can_create_server_groups: true,
+            user_can_delete_server_groups: true,
+            user_can_delete_other_users_messages: true,
+            user_can_move_users: true
         }]
     },
     server_owner: {
@@ -72,7 +84,8 @@ const ServerSchema = new mongoose.Schema({
         default: 0
     },
     pinned_sub_reddits: [],
-    categories: [Categories]
+    categories: [Categories],
+    recent_videos: [],
     
 })
 
@@ -576,7 +589,13 @@ ServerSchema.methods.update_search_times = function() {
 ServerSchema.methods.update_recent_image_searches = function(arr) {
     try {
 
-        this.recent_image_searches = arr;
+        let shuffled = arr
+        .map(value => ({value, sort: Math.random()}))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({value}) => value);
+
+
+        this.recent_image_searches = shuffled;
 
         this.times_media_searched = 0;
 
@@ -584,6 +603,23 @@ ServerSchema.methods.update_recent_image_searches = function(arr) {
 
     } catch (error) {
         return error;
+    }
+}
+
+ServerSchema.methods.update_recent_videos = function(arr) {
+    try {
+        let shuffled = arr
+        .map(value => ({value, sort: Math.random()}))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({value}) => value);
+
+        this.recent_videos = shuffled;
+
+        this.times_media_searched = 0;
+
+        return this.save();
+    } catch (er) {
+        return;
     }
 }
 

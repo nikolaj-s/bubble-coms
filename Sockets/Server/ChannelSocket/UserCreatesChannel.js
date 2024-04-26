@@ -22,13 +22,13 @@ const UserCreatesChannel = async (socket, data, cb) => {
         // validate users permissions
         const user = await server.get_member(socket.AUTH.username);
 
-        if (user === -1) return socket.emit('error', {error: true, errorMessage: "validation error"});
+        if (user === -1) return cb({error: true, errorMessage: "validation error"});
 
         const server_group = await server.get_server_group(user.server_group)
 
-        if (server_group === -1) return socket.emit('error', {error: true, errorMessage: "validation error"});
+        if (server_group === -1) return cb({error: true, errorMessage: "validation error"});
 
-        if (server_group.user_can_manage_channels === false) return socket.emit('error', {error: true, errorMessage: "you do not have permissions to perform this action"})
+        if (server_group.user_can_create_channels === false) return cb({error: true, errorMessage: "you do not have permissions to perform this action"})
 
         let auth_users;
 

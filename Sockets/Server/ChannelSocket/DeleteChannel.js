@@ -16,7 +16,7 @@ const DeleteChannel = async (socket, data, channelList, cb) => {
 
         const permissions = await server.get_server_group(member.server_group);
 
-        if (permissions === -1 || permissions.user_can_manage_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
+        if (permissions === -1 || permissions.user_can_delete_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
 
         // check if users currently in channel
         const active = channelList.get(`${socket.current_server}/${data.channel_id}`);

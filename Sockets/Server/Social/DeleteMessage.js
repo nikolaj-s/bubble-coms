@@ -16,7 +16,7 @@ const DeleteMessage = async (socket, data, cb) => {
 
         const permissions = await server.get_server_group(member.server_group);
 
-        if (permissions === -1 || permissions.user_can_manage_channels === false) return cb({error: true, errorMessage: "not authorized to perform this action"});
+        if (permissions === -1) return cb({error: true, errorMessage: "not authorized to perform this action"});
 
         const message_id = data.message_id;
 
@@ -24,10 +24,14 @@ const DeleteMessage = async (socket, data, cb) => {
 
         if (!message_id || message_id === 'undefined') return cb({error: true, errorMessage: "Error Deleting Message"});
 
-        if (!channel_id || channel_id === 'undefined') return cb({error: true, errorMessage: "Invalid Channel Id"});
+        if (!channel_id || channel_id === 'undefined') return cb({error: true, errorMessage: "ERROR: Invalid Channel Id"});
 
         // remove image from cdn
         const msg = await MessageSchema.findOne({_id: message_id});
+
+        if (!msg) return cb({error: true, errorMessage: "ERROR: Unable to find message to delete"});
+
+        if (msg.username !== socket.AUTH.username && !permissions?.user_can_delete_other_users_messages) return cb({error: true, errorMessage: "ERROR: you are not authorized to delete other users posts."});
 
         if (msg.content.image) {
             if (msg.content.image.includes('cloudinary')) {
