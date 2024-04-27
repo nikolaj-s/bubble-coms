@@ -92,8 +92,26 @@ const AccountSchema = new mongoose.Schema({
     },
     decoration: {
         type: String
+    },
+    user_banner_gif_frame: {
+        type: String
+    },
+    user_image_gif_frame: {
+        type: String
     }
 })
+
+AccountSchema.methods.update_user_image_gif_frame = function(data) {
+    this.user_image_gif_frame = data;
+
+    return this.save();
+}
+
+AccountSchema.methods.update_user_banner_gif_frame = function(data) {
+    this.user_banner_gif_frame = data;
+
+    return this.save();
+}
 
 AccountSchema.methods.update_decoration = function(data) {
     this.decoration = data;

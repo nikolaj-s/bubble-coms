@@ -29,7 +29,9 @@ const UserUpdatesAccount = async (socket, data, cb, channelList, serverList) => 
             join_date: memberFile.join_date,
             profile_picture_shape: user.profile_picture_shape,
             color: user.color,
-            decoration: user.decoration
+            decoration: user.decoration,
+            user_image_gif_frame: user.user_image_gif_frame,
+            user_banner_gif_frame: user.user_banner_gif_frame
         }
 
         await server.update_member(user_object);

@@ -46,6 +46,12 @@ const MemberSchema = new mongoose.Schema({
     },
     decoration: {
         type: String
+    },
+    user_image_gif_frame: {
+        type: String,
+    },
+    user_banner_gif_frame: {
+        type: String
     }
 })
 

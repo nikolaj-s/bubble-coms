@@ -51,7 +51,9 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             color: user.color,
             last_online: Date.now(),
             channel_status: false,
-            decoration: user.decoration
+            decoration: user.decoration,
+            user_image_gif_frame: user.user_image_gif_frame,
+            user_banner_gif_frame: user.user_banner_gif_frame
         }
 
         await server.update_member(user_object);

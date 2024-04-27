@@ -59,23 +59,60 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
         }
 
         if (images) {
+
+
             if (images.userImage) {
+
+                if (images.userImage.mimetype === "image/gif" && !images.userImageGifFrame) return res.send({error: true, errorMessage: "You must update before uploading a gif image."})
+
                 if (user.user_image) await ImageDelete(user.user_image);
+
+                if (user.user_image_gif_frame) await ImageDelete(user.user_image_gif_frame);
 
                 const userImage = await ImageUpload(images.userImage);
 
                 if (userImage.error) return res.send({error: true, errorMessage: userImage.errorMessage});
 
                 await user.update_user_image(userImage.url);
+
+                if (images.userImageGifFrame) {
+                
+                    const userImageGifFrame = await ImageUpload(images.userImageGifFrame);
+
+                    if (userImageGifFrame.url) await user.update_user_image_gif_frame(userImageGifFrame.url);
+
+                } else {
+
+                    await user.update_user_image_gif_frame("");
+                
+                }
             }
             if (images.userBanner) {
+
+                if (images.userBanner.mimetype === "image/gif" && !images.userBannerGifFrame) return res.send({error: true, errorMessage: "You must update before uploading a gif image."})
+
                 if (user.user_banner) await ImageDelete(user.user_banner);
+
+                if (user.user_banner_gif_frame) await ImageDelete(user.user_image_gif_frame);
 
                 const userBanner = await ImageUpload(images.userBanner);
 
                 if (userBanner.error) return res.send({error: true, errorMessage: userBanner.errorMessage});
 
                 await user.update_user_banner(userBanner.url, new_data.color);
+
+                if (images.userBannerGifFrame) {
+                
+                    const userBannerGifFrame = await ImageUpload(images.userBannerGifFrame);
+
+                    if (userBannerGifFrame.url) await user.update_user_banner_gif_frame(userBannerGifFrame.url);
+
+                } else {
+
+                    await user.update_user_banner_gif_frame("");
+                
+                }
+
             }
         }
 
@@ -95,7 +132,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, decoration: user.decoration}});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, decoration: user.decoration, user_banner_gif_frame: user.user_banner_gif_frame, user_image_gif_frame: user.user_image_gif_frame}});
 
     } catch (error) {
         console.log(error);
