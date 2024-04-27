@@ -37,7 +37,8 @@ const VideoSearch = async (query) => {
                     duration: durations[key]?.children[1]?.data,
                     title: titles[key]?.attribs?.title,
                     author: artists[key]?.attribs?.title,
-                    type: 'video'
+                    type: 'video',
+                    query: query
                 }
 
                 data.push(video);
