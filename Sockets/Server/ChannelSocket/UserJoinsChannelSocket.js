@@ -31,8 +31,8 @@ const UserJoinsChannelSocket = async (socket, data, io, channelList, getMediasou
             display_name: data.user.display_name,
             mirror_web_cam: data.user.mirror_web_cam,
             color: data.user.color,
-            user_image_gif_frame: user.user_image_gif_frame,
-            user_banner_gif_frame: user.user_banner_gif_frame
+            user_image_gif_frame: user?.user_image_gif_frame,
+            user_banner_gif_frame: user?.user_banner_gif_frame
         }
 
         channelList.get(channel_id).addPeer(new Peer(socket.id, socket.AUTH.username, data_to_send));
