@@ -24,7 +24,7 @@ const DirectMessage = async (socket, data, serverList, cb) => {
 
         const video = videoFormats.some(format => (data.content.text.includes(format) && data.content.text.includes('redgifs') === false)) ? data.content.text : false;
 
-        const {text, iFrame, link, twitter} = await UnpackURL(data.content.text, image, video);
+        const {text, iFrame, link, twitter, link_preview} = await UnpackURL(data.content.text, image, video);
 
         const content = {
             image: image,
@@ -37,7 +37,11 @@ const DirectMessage = async (socket, data, serverList, cb) => {
             date: new Date(),
             time: Date.now(),
             emoji:data.content.emoji,
-            textStyle: data.content.textStyle
+            textStyle: data.content.textStyle,
+            link_preview: link_preview,
+            reddit: data.content.reddit,
+            media_meta_data: data.content.media_meta_data,
+            media_video: data.content.media_video
         }
 
         const message = {

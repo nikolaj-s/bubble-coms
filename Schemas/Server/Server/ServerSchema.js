@@ -629,6 +629,8 @@ ServerSchema.methods.clear_image_search_data = function() {
 
         this.recent_image_searches = [];
 
+        this.recent_videos = [];
+
         return this.save();
         
     } catch (error) {

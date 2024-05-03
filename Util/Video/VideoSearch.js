@@ -22,6 +22,22 @@ const VideoSearch = async (query) => {
 
         const artists = ch('.VideoHostExtended-Channel');
 
+        const bem = ch('.internal-store-updater');
+
+        let nsfw = false;
+
+        if (bem['0']) {
+
+            let attr = JSON.parse(bem['0'].attribs['data-bem']);
+
+            if (attr['internal-store-updater']?.seo?.hasPorno) {
+
+                nsfw = true;
+            
+            }
+
+        }
+        
         const data = [];
 
         for (const [key, value] of Object.entries(videos)) {
@@ -38,7 +54,8 @@ const VideoSearch = async (query) => {
                     title: titles[key]?.attribs?.title,
                     author: artists[key]?.attribs?.title,
                     type: 'video',
-                    query: query
+                    query: query,
+                    nsfw: nsfw
                 }
 
                 data.push(video);
