@@ -27,7 +27,8 @@ const UserLeavesChannel = async (socket, data, channelList, cb) => {
     } catch (error) {
         console.log(error);
         console.log(socket.AUTH.username)
-        socket.emit('error', {error: true, errorMessage: "error disconnecting from channel"})
+        socket.emit('error', {error: true, errorMessage: "error disconnecting from channel"});
+        cb({value: true})
     }
 }
 

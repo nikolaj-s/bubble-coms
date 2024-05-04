@@ -72,7 +72,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         await server.update_search_times();
 
-        if (server.times_media_searched > 2 || server.recent_image_searches.length < 95) {
+        if (server.times_media_searched > 2 || server.recent_image_searches.length <= 100) {
             
             try {
 
@@ -86,7 +86,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
                 
                 if (reccomendations.length === 0) return;
 
-                const data_to_save = [...reccomendations.slice(reccomendations.length - 6, reccomendations.length), ...server.recent_image_searches.slice(0, 95)];
+                const data_to_save = [...reccomendations.slice(1, 8), ...server.recent_image_searches.slice(0, 92)];
             
                 await server.update_recent_image_searches(data_to_save);
             } catch (err) {
