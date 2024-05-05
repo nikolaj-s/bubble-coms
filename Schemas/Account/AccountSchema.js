@@ -98,8 +98,18 @@ const AccountSchema = new mongoose.Schema({
     },
     user_image_gif_frame: {
         type: String
+    },
+    hot_link_posts_disabled: {
+        type: Boolean,
+        default: false
     }
 })
+
+AccountSchema.methods.update_hot_link_state = function(data) {
+    this.hot_link_posts_disabled = data;
+    
+    return this.save();
+}
 
 AccountSchema.methods.update_user_image_gif_frame = function(data) {
     this.user_image_gif_frame = data;

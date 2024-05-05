@@ -19,6 +19,10 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
             await user.toggle_show_case_screen_shot(new_data.showCaseScreenShots);
         }
 
+        if (new_data.hotLinkPostsDisabled !== user.hot_link_posts_disabled) {
+            await user.update_hot_link_state(new_data.hotLinkPostsDisabled);
+        }
+
         if (new_data.password) {
 
             if (new_data.newPassword === new_data.password) return res.send({error: true, errorMessage: "New password cannot be the same as the old password"});
@@ -132,7 +136,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
 
         await user.save();
 
-        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, decoration: user.decoration, user_banner_gif_frame: user.user_banner_gif_frame, user_image_gif_frame: user.user_image_gif_frame}});
+        res.send({success: true, user: {display_name: user.display_name, user_banner: user.user_banner, user_image: user.user_image, profile_picture_shape: user.profile_picture_shape, bio: user.bio, color: user.color, decoration: user.decoration, user_banner_gif_frame: user.user_banner_gif_frame, user_image_gif_frame: user.user_image_gif_frame, hot_link_posts_disabled: user.hot_link_posts_disabled}});
 
     } catch (error) {
         console.log(error);

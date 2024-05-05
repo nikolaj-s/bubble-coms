@@ -65,7 +65,8 @@ route.get('/', async (req, res, next) => {
                 social_data: Account.social_data,
                 decoration: Account.decoration,
                 user_image_gif_frame: Account.user_image_gif_frame,
-                user_banner_gif_frame: Account.user_banner_gif_frame
+                user_banner_gif_frame: Account.user_banner_gif_frame,
+                hot_link_posts_disabled: Account.hot_link_posts_disabled
             }
 
             return res.send({success: true, account: {...acccount_details}})
