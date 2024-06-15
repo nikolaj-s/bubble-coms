@@ -29,6 +29,12 @@ const UpdateServer = async (socket, data, cb) => {
 
         let newServerBanner;
 
+        if (data.disable_safe_search !== server.disable_safe_search) {
+            if (!permissions.user_can_manage_server_safe_search) return cb({error: true, errorMessage: "ERROR: Unauthorized to make this change"});
+
+            await server.update_safe_search_state(data.disable_safe_search);
+        }
+
         // validate if password change
         if (data.server_password !== null && data.server_password.length > 1) {
             if (permissions.user_can_edit_server_password === false) return cb({error: true, errorMessage: "You do not have to required permissions to perform this action"});
@@ -127,7 +133,8 @@ const UpdateServer = async (socket, data, cb) => {
                 welcome_message: server.welcome_message,
                 banned_keywords: server.banned_keywords,
                 activity_feed: server.activity_feed,
-                pinned_sub_reddits: server.pinned_sub_reddits
+                pinned_sub_reddits: server.pinned_sub_reddits,
+                disable_safe_search: server.disable_safe_search
             }
         }
 

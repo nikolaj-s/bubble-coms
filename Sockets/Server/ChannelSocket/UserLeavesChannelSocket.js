@@ -13,7 +13,7 @@ const UserLeavesChannel = async (socket, data, channelList, cb) => {
 
         socket.leave(socket.channel_id);
 
-        if (channelList.get(socket.channel_id).getPeers().size === 0) {
+        if (channelList.get(socket.channel_id)?.getPeers().size === 0) {
 
             await channelList.get(socket.channel_id).cleanUp();
 

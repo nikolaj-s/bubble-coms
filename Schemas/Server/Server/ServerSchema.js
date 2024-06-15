@@ -53,7 +53,8 @@ const ServerSchema = new mongoose.Schema({
                 user_can_create_server_groups: false,
                 user_can_delete_server_groups: false,
                 user_can_delete_other_users_messages: false,
-                user_can_move_users: false
+                user_can_move_users: false,
+                user_can_manage_server_safe_search: false
             }, {
             server_group_name: "Owner",
             user_can_view_channel_content: true,
@@ -70,7 +71,8 @@ const ServerSchema = new mongoose.Schema({
             user_can_create_server_groups: true,
             user_can_delete_server_groups: true,
             user_can_delete_other_users_messages: true,
-            user_can_move_users: true
+            user_can_move_users: true,
+            user_can_manage_server_safe_search: true,
         }]
     },
     server_owner: {
@@ -86,8 +88,17 @@ const ServerSchema = new mongoose.Schema({
     pinned_sub_reddits: [],
     categories: [Categories],
     recent_videos: [],
-    
+    disable_safe_search: {
+        type: Boolean,
+        default: false
+    }
 })
+
+ServerSchema.methods.update_safe_search_state = function(bool) {
+    this.disable_safe_search = bool;
+
+    return this.save();
+}
 
 ServerSchema.methods.update_pinned_sub_reddits = function(sub_reddits) {
     this.pinned_sub_reddits = sub_reddits;

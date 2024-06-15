@@ -137,7 +137,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
             banned_keywords: server.banned_keywords,
             pinned_sub_reddits: server.pinned_sub_reddits,
             categories: server.categories,
-            recent_videos: server.recent_videos
+            recent_videos: server.recent_videos,
+            disable_safe_search: server.disable_safe_search 
         }
         
         socket.current_server = data.server_id;

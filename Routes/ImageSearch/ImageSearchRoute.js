@@ -61,7 +61,7 @@ route.post('/', ValidationMiddleWare, async (req, res) => {
 
         if (blocked) return res.send({error: true, errorMessage: "Your Search Has Been Blocked As It Contains A Banned Keyword"});
 
-        const images = await ImageSearch(query, query, format, source);
+        const images = await ImageSearch(query, query, format, source, sortBy, server.disable_safe_search);
 
         if (images.error || images.length === 0) return res.send({error: true, errorMessage: "No Image Results"});
 

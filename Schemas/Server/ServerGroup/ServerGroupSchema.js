@@ -66,6 +66,10 @@ const ServerGroupSchema = new mongoose.Schema({
     user_can_move_users: {
         type: Boolean,
         default: false
+    },
+    user_can_manage_server_safe_search: {
+        type: Boolean,
+        default: false
     }
 })
 

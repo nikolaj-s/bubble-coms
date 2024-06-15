@@ -30,6 +30,10 @@ const UserActiveStatus = async (socket, data, cb, serverList) => {
             status = 'Microsoft Edge';
         } else if (lower_cased_data.includes('steam')) {
             status = "Steam";
+        } else if (lower_cased_data.includes('spotify')) {
+
+            status = "Spotify";
+            
         } else {
             status = data.value;
         }
