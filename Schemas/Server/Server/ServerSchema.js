@@ -642,6 +642,8 @@ ServerSchema.methods.clear_image_search_data = function() {
 
         this.recent_videos = [];
 
+        this.image_of_the_day = {};
+
         return this.save();
         
     } catch (error) {
