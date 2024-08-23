@@ -19,7 +19,7 @@ route.post('/', ValidationMiddleWare, async (req, res, next) => {
             await user.toggle_show_case_screen_shot(new_data.showCaseScreenShots);
         }
 
-        if (new_data.hotLinkPostsDisabled !== user.hot_link_posts_disabled) {
+        if (new_data?.hotLinkPostsDisabled === true || new_data?.hotLinkPostsDisabled === false) {
             await user.update_hot_link_state(new_data.hotLinkPostsDisabled);
         }
 
