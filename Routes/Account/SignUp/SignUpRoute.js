@@ -36,8 +36,6 @@ route.post('/', async (req, res, next) => {
 
         const newAccount = new AccountSchema({
             username: data.username,
-            user_image: "https://res.cloudinary.com/drlkgoter/image/upload/v1663868935/1-Blank-TikTok-Default-PFP_jt6guo.jpg",
-            user_banner: "https://res.cloudinary.com/drlkgoter/image/upload/v1665247424/wallhaven-x1395d_s3jgpw.jpg",
             email: data.email,
             display_name: data.username,
             password: hashedPassword

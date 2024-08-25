@@ -695,18 +695,20 @@ ServerSchema.methods.un_like_song = function(channel_id, song) {
     return this.save();
 }
 
-ServerSchema.methods.update_image_of_the_day = function() {
-
-    const media_to_pick_from = [...this.recent_image_searches, ...this.recent_videos];
+ServerSchema.methods.update_image_of_the_day = function(media_to_pick_from = []) {
 
     if (media_to_pick_from.length === 0 && !this.image_of_the_day?.date) return {};
 
+    if (media_to_pick_from.length === 0) return {};
+
+    const random = Math.floor(Math.random() * media_to_pick_from.length);
+
+    const media = {date: Date.now(), ...media_to_pick_from[random]}
+
     if (!this.image_of_the_day?.date) {
-
-        const random = Math.floor(Math.random() * media_to_pick_from.length);
         
-        this.image_of_the_day = {date: Date.now(), ...media_to_pick_from[random]};
-
+        this.image_of_the_day = media;
+        
         this.save();
     } else if (this.image_of_the_day?.date) {
 
@@ -714,14 +716,10 @@ ServerSchema.methods.update_image_of_the_day = function() {
         
         if (data >= 1440) {
 
-            let recent_images = media_to_pick_from.filter(i => i.image !== this.image_of_the_day?.image);
-            
-            const random = Math.floor(Math.random() * recent_images.length);
-
-            this.image_of_the_day = {date: Date.now(), ...recent_images[random]};
+            this.image_of_the_day = media;
 
             this.save();
-        
+    
         }
 
     }

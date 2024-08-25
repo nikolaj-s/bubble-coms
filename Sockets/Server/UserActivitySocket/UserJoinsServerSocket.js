@@ -3,6 +3,7 @@ const { AccountSchema } = require("../../../Schemas/Account/AccountSchema");
 const { ServerSchema } = require("../../../Schemas/Server/Server/ServerSchema");
 const { StatusIcon } = require("../../../Schemas/StatusIcon/StatusIcon");
 const ServerUserStatus = require("../../../ServerUserStatus/ServerUserStatus");
+const HandleMediaOfTheDay = require("../../../Util/HandleMediaOfTheDay/HandleMediaOfTheDay");
 
 const userJoinsServer = async (socket, data, channelList, serverList, cb, io) => {
     try {
@@ -116,8 +117,8 @@ const userJoinsServer = async (socket, data, channelList, serverList, cb, io) =>
         
         }
 
-        const imageOfTheDay = await server.update_image_of_the_day();
-    
+        const imageOfTheDay = await HandleMediaOfTheDay(server);
+        
         const server_data = {
             server_name: server.server_name,
             server_banner: server.server_banner,
