@@ -19,24 +19,29 @@ const FetchYoutubeVideo = async (query) => {
         }
 
         if (!video_id) video_id = query;
+        console.log(video_id);
 
         const data = await youtube.search(video_id).then(res => {
-            console.log(res)
+            
             console.log(res.videos)
-            return res.videos[0];
+            console.log(res.streams)
+            return [...res.videos, ...res.streams].filter(v => v.id === video_id)[0];
         })
+
+        console.log(data)
 
         if (!data?.id) {return {error: true, message: 'no results'}}
 
         return {
             _id: data.id,
             id: data.id,
-            duration: data.duration,
+            duration: data.watching ? 9999999999 : data.duration,
             thumbnail: data.thumbnail,
             url: data.link,
             title: data.title,
             description: data.description,
-            author: data?.channel?.name
+            author: data?.channel?.name,
+            livestream: data.watching ? true : false
         }
 
     } catch (error) {

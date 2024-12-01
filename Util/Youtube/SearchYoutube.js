@@ -6,7 +6,7 @@ const SearchYoutube = async (query) => {
 
         const results = await youtube.search(query).then(res => {
             console.log(res);
-            return res.videos;
+            return [...res.videos, ...res.streams];
         })
 
         if (results.length === 0) return {error: true, message: 'No Results'};
@@ -15,13 +15,14 @@ const SearchYoutube = async (query) => {
             return {
                 _id: data.id,
                 id: data.id,
-                duration: data.duration,
+                duration: data.watching || !data.duration ? 9999999999999 : data.duration,
                 thumbnail: data.thumbnail,
                 url: data.link,
                 title: data.title,
                 description: data.description,
                 author: data?.channel?.name,
-                channel: data?.channel
+                channel: data?.channel,
+                livestream: data.watching ? true : false
             }
         })
         
