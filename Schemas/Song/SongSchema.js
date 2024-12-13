@@ -32,6 +32,9 @@ const SongSchema = new mongoose.Schema({
     },
     server_id: {
         type: String
+    },
+    livestream: {
+        type: Boolean
     }
 })
 
